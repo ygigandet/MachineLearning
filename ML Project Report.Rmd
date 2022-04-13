@@ -1,0 +1,75 @@
+---
+title: "ML Project Report"
+output: html_document
+date: '2022-04-12'
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduction
+
+xxx
+
+
+```{r}
+
+```
+
+# Dataset 
+
+Details on dataset(s) used and what they include
+
+```{r echo=FALSE}
+
+```
+
+
+# Exploratory Data Analysis (EDA) 
+
+xxx
+```{r echo=FALSE}
+
+```
+
+# Supervised Learning
+
+## Method of Supervised Learning selected
+
+xxx
+
+```{r echo=FALSE}
+
+```
+
+## Supervised Learning Findings
+xxx
+
+```{r echo=FALSE}
+
+```
+
+
+# Unsupervised Learning
+
+## Method of Unsupervised Learning selected
+
+xxx
+
+```{r echo=FALSE}
+
+```
+
+## Unsupervised Learning Findings
+
+xx
+
+```{r echo=FALSE}
+
+```
+
+# Conclusion
+
+xxx
