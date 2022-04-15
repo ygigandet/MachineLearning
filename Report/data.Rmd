@@ -4,14 +4,81 @@
 source(here::here("scripts/setup.R"))
 ```
 
-Details on dataset(s) used and what they include
+For our project, a prediction of the Premier League rankings, we have several datasets.
 
-```{r echo=FALSE}
-# Importing the data sets into R
+The first one is called `game_results` containing the results of 4'560 Premier League games (380 games over 12 seasons from 2006/2007 to 2017/2018):
+
+
+```{r echo=FALSE, include=FALSE}
+# Importing the games_results dataset into R
 setwd(here::here(("Data/")))
 
 game_results <- readr::read_csv("results.csv")
+```
+
+```{r, echo=FALSE}
+# Show the dataset
+
+game_results[1:5,] %>% 
+  rename("home team" = home_team,
+         "away team" = away_team,
+         "home goals" = home_goals,
+         "away goals" = away_goals) %>% 
+  knitr::kable(caption = "**Table 1: Premier League results (from 2006 to 2018)**") %>% 
+  kable_styling(bootstrap_options = c("striped","hover","condensed"),
+                fixed_thead = T)
+```
+
+The second dataset `team_stats` is about the statistics of each team in every season from 2006/2007 to 2017/2018. The statistics can be split into 5 categories: general, attack, defence, team play and others.
+
+```{r, echo=FALSE, include=FALSE}
+# Importing the team_stats dataset into R
+setwd(here::here(("Data/")))
+
 team_stats <- readr::read_csv("stats.csv")
+```
+
+```{r, echo=FALSE}
+# Show the dataset
+
+team_stats[1:5,] %>% 
+  select(team, wins, losses, goals, total_yel_card, total_scoring_att, saves, season) %>% 
+  rename("total yellow cards" = total_yel_card,
+         "total scoring attempts" = total_scoring_att) %>% 
+  knitr::kable(caption = "**Table 2: Premier League teams statistics (from 2006 to 2018)**") %>% 
+  kable_styling(bootstrap_options = c("striped","hover","condensed"),
+                fixed_thead = T)
+  
+```
+
+The third dataset `players_stats` is about the statistics of the players of Premier League until september 2020.
+
+```{r, echo=FALSE, include=FALSE}
+# Importing the players_stats dataset into R
+setwd(here::here(("Data/")))
+
 players_stats <- readr::read_csv("dataset - 2020-09-24.csv")
+```
+
+```{r, echo=FALSE}
+players_stats[1:5,] %>% 
+  select(Name, Club, Position, Appearances, Wins, Passes, Saves) %>% 
+  knitr::kable(caption = "**Table 3: Premier League players statistics (until 2020)**") %>% 
+  kable_styling(bootstrap_options = c("striped","hover","condensed"),
+                fixed_thead = T)
+  
+```
+
+The last dataset `players_value` contains information about the market value for the season 2016/2017
+
+```{r, echo=FALSE, include=FALSE}
+# Importing the players_value dataset into R
+setwd(here::here(("Data/")))
+
 players_value <- readr::read_csv("england_premier_league_players_data.csv")
 ```
+
+```{r, echo=FALSE}
+
+```
+

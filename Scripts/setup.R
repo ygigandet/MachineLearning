@@ -5,7 +5,7 @@
 # load the required packages
 packages <- c(
   "here", # for the project's organization
-  "tidyverse",
+  "tidyverse", "kableExtra",
   "usethis" # git 
 )
 
