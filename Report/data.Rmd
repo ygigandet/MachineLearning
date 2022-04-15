@@ -1,0 +1,17 @@
+# Data
+
+```{r, echo = FALSE, message = FALSE}
+source(here::here("scripts/setup.R"))
+```
+
+Details on dataset(s) used and what they include
+
+```{r echo=FALSE}
+# Importing the data sets into R
+setwd(here::here(("Data/")))
+
+game_results <- readr::read_csv("results.csv")
+team_stats <- readr::read_csv("stats.csv")
+players_stats <- readr::read_csv("dataset - 2020-09-24.csv")
+players_value <- readr::read_csv("england_premier_league_players_data.csv")
+```
