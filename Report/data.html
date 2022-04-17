@@ -171,8 +171,16 @@ pre code {
 
 <div id="data" class="section level1">
 <h1>Data</h1>
-<p>For our project, a prediction of the Premier League rankings, we have several datasets.</p>
-<p>The first one is called <code>game_results</code> containing the results of 4’560 Premier League games (380 games over 12 seasons from 2006/2007 to 2017/2018):</p>
+<p>For our project, we will be providing a prediction of the Premier League rankings. We will be using several datasets to which we will apply different models to get a prediction then test its accuracy.</p>
+<p>The first dataset is called <code>game_results</code> containing the results of 4’560 Premier League games (380 games over 12 seasons from 2006/2007 to 2017/2018). The below are the variables in the dataset and their details:</p>
+<ul>
+<li><code>home_team</code> - Team playing in their home stadium.</li>
+<li><code>away_team</code> - Team playing in the stadium of their opponent.</li>
+<li><code>home_goals</code> - Number of goals scored by the home team.</li>
+<li><code>away_goals</code> - Number of goals scored by the away team</li>
+<li><code>results</code> - Winner of the match (H-home team, A-away team, D-draw)</li>
+<li><code>season</code> - Mentions the season in which the match took place</li>
+</ul>
 <table class="table table-striped table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
 <strong>Table 1: Premier League results (from 2006 to 2018)</strong>
@@ -302,7 +310,14 @@ H
 </tr>
 </tbody>
 </table>
-<p>The second dataset <code>team_stats</code> is about the statistics of each team in every season from 2006/2007 to 2017/2018. The statistics can be split into 5 categories: general, attack, defence, team play and others.</p>
+<p>The second dataset <code>team_stats</code> is about the statistics of each team in every season from 2006/2007 to 2017/2018. This dataset splits the statistics into 5 categories: general, attack, defence, team play and others. These categories are shown as follows in the dataset:</p>
+<ul>
+<li><code>General</code> - Columns 1-6</li>
+<li><code>Attack</code> - Columns 7-16</li>
+<li><code>Defence</code> - Columns 17-29</li>
+<li><code>Team Player</code> - Columns 30-35</li>
+<li><code>Others</code> - Columns 36-42</li>
+</ul>
 <table class="table table-striped table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
 <strong>Table 2: Premier League teams statistics (from 2006 to 2018)</strong>
@@ -468,7 +483,7 @@ Tottenham Hotspur
 </tr>
 </tbody>
 </table>
-<p>The third dataset <code>players_stats</code> is about the statistics of the players of Premier League until september 2020.</p>
+<p>The third dataset <code>players_stats</code> is about the statistics of the players of the Premier League until September 2020. This dataset contains 59 variable combining all details for each Premier League player such as their club, position, nationality, wins, losses, passes, saves, and much more.</p>
 <table class="table table-striped table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
 <strong>Table 3: Premier League players statistics (until 2020)</strong>
@@ -616,7 +631,118 @@ NA
 </tr>
 </tbody>
 </table>
-<p>The last dataset <code>players_value</code> contains information about the market value for the season 2016/2017</p>
+<p>The last dataset which we will be using is <code>players_value</code> contains information about the market value for the season 2016/2017. This dataset contains 17 variables and 461 entries. Each entry corresponds to a player, the club he plays with, his age, his position, his market value, and other details about him.</p>
+<table class="table table-striped table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
+<caption>
+<strong>Table 4: Premier League players market values (season 2016/2017)</strong>
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+name
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+club
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+age
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+position
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+market value
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Alexis Sanchez
+</td>
+<td style="text-align:left;">
+Arsenal
+</td>
+<td style="text-align:right;">
+28
+</td>
+<td style="text-align:left;">
+LW
+</td>
+<td style="text-align:right;">
+65
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mesut Ozil
+</td>
+<td style="text-align:left;">
+Arsenal
+</td>
+<td style="text-align:right;">
+28
+</td>
+<td style="text-align:left;">
+AM
+</td>
+<td style="text-align:right;">
+50
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Petr Cech
+</td>
+<td style="text-align:left;">
+Arsenal
+</td>
+<td style="text-align:right;">
+35
+</td>
+<td style="text-align:left;">
+GK
+</td>
+<td style="text-align:right;">
+7
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Theo Walcott
+</td>
+<td style="text-align:left;">
+Arsenal
+</td>
+<td style="text-align:right;">
+28
+</td>
+<td style="text-align:left;">
+RW
+</td>
+<td style="text-align:right;">
+20
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Laurent Koscielny
+</td>
+<td style="text-align:left;">
+Arsenal
+</td>
+<td style="text-align:right;">
+31
+</td>
+<td style="text-align:left;">
+CB
+</td>
+<td style="text-align:right;">
+22
+</td>
+</tr>
+</tbody>
+</table>
 </div>
 
 
