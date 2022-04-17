@@ -3,11 +3,11 @@
 ```{r, echo = FALSE, message = FALSE}
 source(here::here("scripts/setup.R"))
 ```
-
+<div>
 For our project, we will be providing a prediction of the Premier League rankings. We will be using several datasets to which we will apply different models to get a prediction then test its accuracy.
 
 The first dataset is called `game_results` containing the results of 4'560 Premier League games (380 games over 12 seasons from 2006/2007 to 2017/2018). The below are the variables in the dataset and their details:
-
+</div>
  + `home_team` - Team playing in their home stadium.
  + `away_team` - Team playing in the stadium of their opponent.
  + `home_goals` - Number of goals scored by the home team.
@@ -36,6 +36,8 @@ game_results[1:5,] %>%
                 fixed_thead = T)
 ```
 
+<br>
+
 The second dataset `team_stats` is about the statistics of each team in every season from 2006/2007 to 2017/2018. This dataset splits the statistics into 5 categories: general, attack, defence, team play and others. These categories are shown as follows in the dataset:
 
   + `General` - Columns 1-6
@@ -60,11 +62,10 @@ team_stats[1:5,] %>%
   rename("total yellow cards" = total_yel_card,
          "total scoring attempts" = total_scoring_att) %>% 
   knitr::kable(caption = "**Table 2: Premier League teams statistics (from 2006 to 2018)**") %>% 
-  kable_styling(bootstrap_options = c("striped","hover","condensed"),
+ kable_styling(bootstrap_options = c("striped","hover","condensed"),
                 fixed_thead = T)
-  
 ```
-
+<br>
 The third dataset `players_stats` is about the statistics of the players of the Premier League until September 2020. This dataset contains 59 variable combining all details for each Premier League player such as their club, position, nationality, wins, losses, passes, saves, and much more.
 
 ```{r, echo=FALSE, include=FALSE}
@@ -82,7 +83,7 @@ players_stats[1:5,] %>%
                 fixed_thead = T)
   
 ```
-
+<br>
 The last dataset which we will be using is `players_value` contains information about the market value for the season 2016/2017. This dataset contains 17 variables and 461 entries. Each entry corresponds to a player, the club he plays with, his age, his position, his market value, and other details about him. 
 
 ```{r, echo=FALSE, include=FALSE}

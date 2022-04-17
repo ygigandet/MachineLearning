@@ -6,7 +6,8 @@
 packages <- c(
   "here", # for the project's organization
   "tidyverse", "kableExtra",
-  "usethis" # git 
+  "usethis", # git
+  "plot_ly" #for plotting
 )
 
 purrr::walk(packages, library, character.only = TRUE)

@@ -3,3 +3,51 @@
 ```{r, echo = FALSE, message = FALSE}
 source(here::here("scripts/setup.R"))
 ```
+
+## Games Results
+
+```{r, echo=FALSE}
+
+```
+
+
+```{r, echo=FALSE}
+
+```
+
+<br>
+
+## Players Stats
+
+```{r, echo=FALSE}
+
+WithPercentage <- players_stats %>% mutate(Wins_Perc = Wins/Appearances, .after= Wins) #to know who relatively has the highest wins percentage - we can remove this later if it will not help us with our EDA. 
+
+BarGraphTest  <- plot_ly(WithPercentage, x = ~Name, y = ~Wins_Perc, type = 'bar', name = 'Wins Percentage per player') 
+
+
+```
+
+<br>
+## Players Value
+
+```{r, echo=FALSE}
+
+```
+
+
+```{r, echo=FALSE}
+
+```
+
+<br>
+## Team Stats
+
+```{r, echo=FALSE}
+
+```
+
+
+```{r, echo=FALSE}
+
+```
