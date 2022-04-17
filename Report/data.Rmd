@@ -4,7 +4,7 @@
 source(here::here("scripts/setup.R"))
 ```
 
-For our project, we will be providing a prediction of the Premier League rankings. We will be using several datasets to which we will apply different models to get a prediction then test it's accuracy.
+For our project, we will be providing a prediction of the Premier League rankings. We will be using several datasets to which we will apply different models to get a prediction then test its accuracy.
 
 The first dataset is called `game_results` containing the results of 4'560 Premier League games (380 games over 12 seasons from 2006/2007 to 2017/2018). The below are the variables in the dataset and their details:
 
@@ -65,7 +65,7 @@ team_stats[1:5,] %>%
   
 ```
 
-The third dataset `players_stats` is about the statistics of the players of the Premier League until september 2020. This dataset contains 59 variale combining all details for each Premier League player such as their club, position, nationality, wins, losses, passes, saves, and much more.
+The third dataset `players_stats` is about the statistics of the players of the Premier League until September 2020. This dataset contains 59 variable combining all details for each Premier League player such as their club, position, nationality, wins, losses, passes, saves, and much more.
 
 ```{r, echo=FALSE, include=FALSE}
 # Importing the players_stats dataset into R
@@ -93,6 +93,11 @@ players_value <- readr::read_csv("england_premier_league_players_data.csv")
 ```
 
 ```{r, echo=FALSE}
-
+players_value[1:5,] %>% 
+  select(name, club, age, position, market_value) %>% 
+  rename("market value" = market_value) %>% 
+  knitr::kable(caption = "**Table 4: Premier League players market values (season 2016/2017)**") %>% 
+  kable_styling(bootstrap_options = c("striped","hover","condensed"),
+                fixed_thead = T)
 ```
 
