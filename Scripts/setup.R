@@ -4,6 +4,7 @@
 
 # load the required packages
 packages <- c(
+  "knitr",
   "here", # for the project's organization
   "tidyverse", "kableExtra",
   "usethis", # git
