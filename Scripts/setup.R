@@ -41,6 +41,6 @@ opts_chunk$set(
   fig.asp = 0.618,
   fig.show = "hold",
   message = FALSE,
- echo = FALSE
+  echo = FALSE
  )
 
