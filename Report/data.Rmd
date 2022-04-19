@@ -63,7 +63,7 @@ team_stats[1:5,] %>%
          "total scoring attempts" = total_scoring_att) %>% 
   knitr::kable(caption = "**Table 2: Premier League teams statistics (from 2006 to 2018)**") %>% 
  kable_styling(bootstrap_options = c("striped","hover","condensed"),
-                fixed_thead = T)
+                fixed_thead = T) 
 ```
 <br>
 The third dataset `players_stats` is about the statistics of the players of the Premier League until September 2020. This dataset contains 59 variable combining all details for each Premier League player such as their club, position, nationality, wins, losses, passes, saves, and much more.
@@ -80,8 +80,8 @@ players_stats[1:5,] %>%
   select(Name, Club, Position, Appearances, Wins, Passes, Saves) %>% 
   knitr::kable(caption = "**Table 3: Premier League players statistics (until 2020)**") %>% 
   kable_styling(bootstrap_options = c("striped","hover","condensed"),
-                fixed_thead = T)
-  
+                fixed_thead = T) 
+
 ```
 <br>
 The last dataset which we will be using is `players_value` contains information about the market value for the season 2016/2017. This dataset contains 17 variables and 461 entries. Each entry corresponds to a player, the club he plays with, his age, his position, his market value, and other details about him. 

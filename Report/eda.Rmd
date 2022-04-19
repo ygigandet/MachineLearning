@@ -27,8 +27,18 @@ players_value_cleaned <- read_csv("players_value_cleaned.csv")
 
 WithPercentage <- players_stats %>% mutate(Wins_Perc = Wins/Appearances, .after= Wins) #to know who relatively has the highest wins percentage - we can remove this later if it will not help us with our EDA. 
 
-BarGraphTest  <- plot_ly(WithPercentage, x = ~Name, y = ~Wins_Perc, type = 'bar', name = 'Wins Percentage per player') 
+highest_wins_perc <- plot_ly(WithPercentage, x = ~Name, y = ~Wins_Perc, type = 'bar', name = 'Wins Percentage per player') 
 
+highest_wins_perc
+```
+
+```{r, echo=FALSE}
+#To check if age has any effect on the goals that players score
+age_wins_corrplot <- plot(WithPercentage$Age, WithPercentage$Wins_Perc, pch = 19, col = "blue")
+abline(lm(WithPercentage$Wins_Perc~WithPercentage$Age), col = "red", lwd = 3)
+text(paste("Correlation:", round(cor(WithPercentage$Age, WithPercentage$Wins_Perc), 7)), x = 25, y = 95)
+
+age_wins_corrplot
 ```
 
 <br>
