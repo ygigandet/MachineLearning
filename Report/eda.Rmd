@@ -7,12 +7,7 @@ source(here::here("scripts/setup.R"))
 ## Games Results
 
 ```{r, echo=FALSE}
-
-```
-
-
-```{r, echo=FALSE}
-
+  
 ```
 
 <br>
@@ -24,7 +19,6 @@ source(here::here("scripts/setup.R"))
 WithPercentage <- players_stats %>% mutate(Wins_Perc = Wins/Appearances, .after= Wins) #to know who relatively has the highest wins percentage - we can remove this later if it will not help us with our EDA. 
 
 BarGraphTest  <- plot_ly(WithPercentage, x = ~Name, y = ~Wins_Perc, type = 'bar', name = 'Wins Percentage per player') 
-
 
 ```
 
@@ -44,6 +38,26 @@ BarGraphTest  <- plot_ly(WithPercentage, x = ~Name, y = ~Wins_Perc, type = 'bar'
 ## Team Stats
 
 ```{r, echo=FALSE}
+# Just verifying we have all the data for the team stats for all the games of the season.
+
+team_stats_verification <- team_stats %>% 
+  group_by(season) %>% 
+  mutate(number_of_team = n(), # number of team per season
+         draw = (number_of_team-1)*2 - wins - losses, # draw is missing
+         total = wins + losses + draw) %>%  # verifying the data
+  select(team, wins, losses, draw, total, everything())
+
+# Creating a dataset for the exploratory data analysis
+team_stats_EDA <- team_stats_verification %>% 
+  group_by(season) %>% 
+  mutate(number_of_points = 3*wins + 1*draw)
+
+# Looking for plausible correlation with the "attack" category
+p1 <- team_stats_EDA %>% 
+  select(c(2, 4, 9:19)) %>% 
+  GGally::ggpairs()
+
+p1
 
 ```
 
