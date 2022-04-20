@@ -1,6 +1,6 @@
 # Data
 
-```{r, echo = FALSE, message = FALSE}
+```{r, echo = FALSE, include = FALSE, message = FALSE}
 source(here::here("scripts/setup.R"))
 ```
 <div>
