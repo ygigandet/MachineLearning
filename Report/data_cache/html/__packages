@@ -12,3 +12,5 @@ forcats
 kableExtra
 usethis
 plotly
+DataExplorer
+GGally
