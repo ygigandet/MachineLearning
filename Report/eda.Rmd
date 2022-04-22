@@ -15,8 +15,9 @@ players_value_cleaned <- read_csv("players_value_cleaned.csv")
 
 ## Games Results
 
-```{r, echo=FALSE, warning=FALSE}
+```{r, echo=FALSE, warning= FALSE}
 #Since the season is a fixed parameter (2006-2007), we can focus on the team players and the result according to where the game happen.
+
 home <- ggplot(data=game_results, aes(x=home_team, y=result, fill=result)) +
   geom_bar(stat="identity")+
   scale_fill_brewer(palette="Blues")+
@@ -26,12 +27,14 @@ home
 
 Resultat <- ggplot(data=game_results, aes(x=home_team, y=away_team)) +
   geom_point(aes(colour = factor(result)))
+
 Resultat
 
 
 ```
 
 <br>
+
 
 ## Players Stats
 
@@ -42,7 +45,7 @@ Resultat
 
 win_percentage <- players_stats %>% mutate(Wins_Perc = Wins/Appearances, .after= Wins)
 
-win_percentage_plot <- plot_ly(win_percentage, x = ~Name, y = ~Wins_Perc, type = 'bar', name = "Wins Percentage per player", width = 1000, height = 600, color = ~Club ) %>%
+win_percentage_plot <- plot_ly(win_percentage, x = ~Name, y = ~Wins_Perc, type = 'bar', width = 1000, height = 600, color = ~Club ) %>%
   layout(title= 'Wins Percentage per Player' )
 
 win_percentage_plot
@@ -103,6 +106,7 @@ goals_forward_plot
 ```
 
 <br> 
+
 ```{r, echo=FALSE}
 #Goas to Shots percentage for each forward player
 
@@ -115,6 +119,7 @@ highest_goals_forward
 ```
 
 <br>
+
 ```{r, echo=FALSE}
 #To check if age has any effect on the goals that players score
 age_wins_corrplot <- plot(WinPercentage$Age, WinPercentage$Wins_Perc, main = "Age Vs Wins", pch = 19, col = "blue", xlab = "Age", ylab = "Percentage of Wins")
