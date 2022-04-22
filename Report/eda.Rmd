@@ -16,7 +16,7 @@ players_value_cleaned <- read_csv("players_value_cleaned.csv")
 ## Games Results
 
 ```{r, echo=FALSE, warning=FALSE}
-#Since the season is a fixed parameter (2006-2007), we can focus on the team players and the result according to where the game happen.
+#Since the season is a fixed parameter (2006-2007), we can focus on the team players and the result  according to where the game happen.
 home <- ggplot(data=game_results, aes(x=home_team, y=result, fill=result)) +
   geom_bar(stat="identity")+
   scale_fill_brewer(palette="Blues")+
@@ -143,7 +143,7 @@ team_stats_EDA <- team_stats_verification %>%
   group_by(season) %>% 
   mutate(number_of_points = 3*wins + 1*draw)
 
-# Looking for plausible correlation with the "attack" category
+# Looking for plausible correlation within the "attack" category
 p1 <- team_stats_EDA %>% 
   select(c(2, 4, 9:19)) %>% 
   GGally::ggpairs()
