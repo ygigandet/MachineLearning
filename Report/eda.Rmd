@@ -162,12 +162,32 @@ team_stats_EDA <- team_stats_verification %>%
   group_by(season) %>% 
   mutate(number_of_points = 3*wins + 1*draw)
 
-# Looking for plausible correlation within the "attack" category
-p1 <- team_stats_EDA %>% 
-  select(c(2, 4, 9:19)) %>% 
-  GGally::ggpairs()
+team_stats %>%
+  select(-c(team,season)) %>%
+  cor()
 
-p1
+str(team_stats_EDA)
+
+# Too confusing, too much infos on one graph. Too small, not very helpful
+
+# Correlation between points and goals?
+
+team_stats_EDA %>% ggplot(aes(x=number_of_points, y=goals)) +
+  geom_point() +
+  geom_smooth(method='lm', ) +
+  facet_wrap(. ~ season, ncol = 3)
+
+# Obviously a nice correlation
+
+# Yellow cards?
+
+team_stats_EDA %>% ggplot(aes(x=number_of_points, y=total_yel_card)) +
+  geom_point() +
+  geom_smooth(method='lm', ) +
+  facet_wrap(. ~ season, ncol = 3)
+
+# No real correlation
+
 
 ```
 
