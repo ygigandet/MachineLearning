@@ -15,8 +15,14 @@ players_value_cleaned <- read_csv("players_value_cleaned.csv")
 
 ## Games Results
 
+
 ```{r, echo=FALSE, warning= FALSE}
-#Since the season is a fixed parameter (2006-2007), we can focus on the team players and the result according to where the game happen.
+#Home Vs Away wins
+
+```
+
+```{r, echo=FALSE, warning=FALSE}
+#Since the season is a fixed parameter (2006-2007), we can focus on the team players and the result  according to where the game happen.
 
 home <- ggplot(data=game_results, aes(x=home_team, y=result, fill=result)) +
   geom_bar(stat="identity")+
@@ -41,6 +47,7 @@ Resultat
 
 
 ```{r, echo=FALSE}
+#Ask TA if we should focus on teams or players
 #to know who relatively has the highest wins percentage - we can remove this later if it will not help us with our EDA.
 
 win_percentage <- players_stats %>% mutate(Wins_Perc = Wins/Appearances, .after= Wins)
@@ -58,12 +65,12 @@ groupedby_club <- win_percentage [!is.na(win_percentage$Wins_Perc),]%>% group_by
 groupedbymean_club_plot <- plot_ly(groupedby_club, x = ~Club, y = ~Wins_Perc_mean, type = 'bar', width = 1000, height = 600, color = ~Club ) %>%
   layout(title= 'Wins Percentage Mean per Club' )
 
-groupedbymedian_club_plot <- plot_ly(groupedby_club, x = ~Club, y = ~Wins_Perc_median, type = 'bar', width = 1000, height = 600, color = ~Club ) %>%
-  layout(title= 'Wins Percentage Median per Club' )
+# groupedbymedian_club_plot <- plot_ly(groupedby_club, x = ~Club, y = ~Wins_Perc_median, type = 'bar', width = 1000, height = 600, color = ~Club ) %>%
+#   layout(title= 'Wins Percentage Median per Club' )
 
 groupedbymean_club_plot 
 
-groupedbymedian_club_plot
+# groupedbymedian_club_plot
 
 ```
 
@@ -80,6 +87,7 @@ goals_defender_plot <- plot_ly(goals_defender, x = ~Name, y = ~Goals_Perc, type 
 
 goals_defender_plot
 ```
+
 <br>
 
 ```{r, echo=FALSE}
@@ -167,12 +175,32 @@ team_stats_EDA <- team_stats_verification %>%
   group_by(season) %>% 
   mutate(number_of_points = 3*wins + 1*draw)
 
-# Looking for plausible correlation with the "attack" category
-p1 <- team_stats_EDA %>% 
-  select(c(2, 4, 9:19)) %>% 
-  GGally::ggpairs()
+team_stats %>%
+  select(-c(team,season)) %>%
+  cor()
 
-p1
+str(team_stats_EDA)
+
+# Too confusing, too much infos on one graph. Too small, not very helpful
+
+# Correlation between points and goals?
+
+team_stats_EDA %>% ggplot(aes(x=number_of_points, y=goals)) +
+  geom_point() +
+  geom_smooth(method='lm', ) +
+  facet_wrap(. ~ season, ncol = 3)
+
+# Obviously a nice correlation
+
+# Yellow cards?
+
+team_stats_EDA %>% ggplot(aes(x=number_of_points, y=total_yel_card)) +
+  geom_point() +
+  geom_smooth(method='lm', ) +
+  facet_wrap(. ~ season, ncol = 3)
+
+# No real correlation
+
 
 ```
 
