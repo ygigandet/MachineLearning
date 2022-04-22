@@ -37,16 +37,15 @@ Resultat
 
 
 
-```{r, echo=FALSE, warning=FALSE}
+```{r, echo=FALSE}
 #to know who relatively has the highest wins percentage - we can remove this later if it will not help us with our EDA.
 
-WinPercentage <- players_stats %>% mutate(Wins_Perc = Wins/Appearances, .after= Wins) 
+win_percentage <- players_stats %>% mutate(Wins_Perc = Wins/Appearances, .after= Wins)
 
-highest_wins_perc <- plot_ly(WinPercentage, x = ~Name, y = ~Wins_Perc, type = 'bar', name = "Wins Percentage per player", width = 1000, height = 600 ) %>% 
+win_percentage_plot <- plot_ly(WinPercentage, x = ~Name, y = ~Wins_Perc, type = 'bar', name = "Wins Percentage per player", width = 1000, height = 600 ) %>%
   layout(title= 'Wins Percentage per Player' )
 
-highest_wins_perc
-
+win_percentage_plot
 ```
 
 ```{r, echo=FALSE}
@@ -54,10 +53,10 @@ highest_wins_perc
 
 goals_defender <- players_stats %>% filter(Position == "Defender") %>% mutate(Goals_Perc = Goals/Appearances, .after= Goals)
 
-highest_goals_defender <- plot_ly(goals_defender, x = ~Name, y = ~Goals_Perc, type = 'bar', name = ~Club, width = 1000, height = 600, color = ~Club ) %>%
+goals_defender_plot <- plot_ly(goals_defender, x = ~Name, y = ~Goals_Perc, type = 'bar', name = ~Club, width = 1000, height = 600, color = ~Club ) %>%
   layout(title= 'Goals Percentage per Defender' )
 
-highest_goals_defender
+goals_defender_plot
 ```
 <br>
 
@@ -66,10 +65,10 @@ highest_goals_defender
 
 goals_midfielder <- players_stats %>% filter(Position == "Midfielder") %>% mutate(Goals_Perc = Goals/Appearances, .after= Goals) 
 
-highest_goals_midfielder <- plot_ly(goals_midfielder, x = ~Name, y = ~Goals_Perc, type = 'bar', name = ~Club, width = 1000, height = 600 , color = ~Club) %>%
+goals_midfielder_plot <- plot_ly(goals_midfielder, x = ~Name, y = ~Goals_Perc, type = 'bar', name = ~Club, width = 1000, height = 600 , color = ~Club) %>%
   layout(title= 'Goals Percentage per Midfielder' )
 
-highest_goals_midfielder
+goals_midfielder_plot
 ```
 <br>
 
@@ -78,14 +77,25 @@ highest_goals_midfielder
 
 goals_forward <- players_stats %>% filter(Position == "Forward") %>% mutate(Goals_Perc = Goals/Appearances, .after= Goals) 
 
-highest_goals_forward <- plot_ly(goals_forward, x = ~Name, y = ~Goals_Perc, type = 'bar', name = ~Club, width = 1000, height = 600, color = ~Club ) %>%
+goals_forward_plot <- plot_ly(goals_forward, x = ~Name, y = ~Goals_Perc, type = 'bar', name = ~Club, width = 1000, height = 600, color = ~Club ) %>%
   layout(title= 'Goals Percentage per Forward' )
+
+goals_forward_plot
+```
+
+<br> 
+```{r, echo=FALSE}
+#Goas to Shots percentage for each forward player
+
+goals_shots <- players_stats %>% filter(Position == "Forward") %>% mutate(goals_shots = Goals/Shots, .after= Goals) 
+
+goals_shots_plot <- plot_ly(goals_shots, x = ~Name, y = ~goals_shots, type = 'bar', name = ~Club, width = 1000, height = 600, color = ~Club ) %>%
+  layout(title= 'Goals/ Shots per Forward Player' )
 
 highest_goals_forward
 ```
 
-<br> 
-
+<br>
 ```{r, echo=FALSE}
 #To check if age has any effect on the goals that players score
 age_wins_corrplot <- plot(WinPercentage$Age, WinPercentage$Wins_Perc, main = "Age Vs Wins", pch = 19, col = "blue", xlab = "Age", ylab = "Percentage of Wins")
