@@ -49,6 +49,7 @@ Resultat
 ```{r, echo=FALSE}
 #Ask TA if we should focus on teams or players
 #to know who relatively has the highest wins percentage - we can remove this later if it will not help us with our EDA.
+#Limitation: We do not have the number of minutes which each player played. Some of their apperences might include only 10 minutes and some might be 90 minutes but we do not have data that is that detailed.
 
 win_percentage <- players_stats %>% mutate(Wins_Perc = Wins/Appearances, .after= Wins)
 
@@ -123,15 +124,15 @@ goals_shots <- players_stats %>% filter(Position == "Forward") %>% mutate(goals_
 goals_shots_plot <- plot_ly(goals_shots, x = ~Name, y = ~goals_shots, type = 'bar', name = ~Club, width = 1000, height = 600, color = ~Club ) %>%
   layout(title= 'Goals/ Shots per Forward Player' )
 
-highest_goals_forward
+goals_shots_plot
 ```
 
 <br>
 
 ```{r, echo=FALSE}
 #To check if age has any effect on the goals that players score
-age_wins_corrplot <- plot(WinPercentage$Age, WinPercentage$Wins_Perc, main = "Age Vs Wins", pch = 19, col = "blue", xlab = "Age", ylab = "Percentage of Wins")
-abline(lm(WinPercentage$Wins_Perc~WinPercentage$Age), col = "green", lwd = 3)
+age_wins_corrplot <- plot(win_percentage$Age, win_percentage$Wins_Perc, main = "Age Vs Wins", pch = 19, col = "blue", xlab = "Age", ylab = "Percentage of Wins")
+abline(lm(win_percentage$Wins_Perc~win_percentage$Age), col = "green", lwd = 3)
 
 age_wins_corrplot
 
@@ -142,7 +143,7 @@ abline(lm(age_goals$Goals_Perc~age_goals$Age), col = "red", lwd = 3)
 age_goals_corrplot
 
 #Another way to do the scatter plot
-# corrplottest<- plot_ly(WinPercentage, x = ~Age, y = ~Wins_Perc , type = 'scatter', width = 1000, height = 600 ) 
+# corrplottest<- plot_ly(win_percentage, x = ~Age, y = ~Wins_Perc , type = 'scatter', width = 1000, height = 600 ) 
 
 #corrplottest
 ```

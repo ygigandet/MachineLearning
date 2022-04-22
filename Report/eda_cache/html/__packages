@@ -13,9 +13,5 @@ kableExtra
 DataExplorer
 usethis
 plotly
-<<<<<<< HEAD
-=======
-DataExplorer
->>>>>>> caacdd792d5d056c3c24aec0473a5c61948f908d
 GGally
 corrplot
