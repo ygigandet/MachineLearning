@@ -42,11 +42,30 @@ Resultat
 
 win_percentage <- players_stats %>% mutate(Wins_Perc = Wins/Appearances, .after= Wins)
 
-win_percentage_plot <- plot_ly(WinPercentage, x = ~Name, y = ~Wins_Perc, type = 'bar', name = "Wins Percentage per player", width = 1000, height = 600 ) %>%
+win_percentage_plot <- plot_ly(win_percentage, x = ~Name, y = ~Wins_Perc, type = 'bar', name = "Wins Percentage per player", width = 1000, height = 600, color = ~Club ) %>%
   layout(title= 'Wins Percentage per Player' )
 
 win_percentage_plot
 ```
+<br>
+
+```{r}
+groupedby_club <- win_percentage [!is.na(win_percentage$Wins_Perc),]%>% group_by(Club) %>%  summarise(Wins_Perc_mean = mean(Wins_Perc ), Wins_Perc_median = median(Wins_Perc))
+
+groupedbymean_club_plot <- plot_ly(groupedby_club, x = ~Club, y = ~Wins_Perc_mean, type = 'bar', width = 1000, height = 600, color = ~Club ) %>%
+  layout(title= 'Wins Percentage Mean per Club' )
+
+groupedbymedian_club_plot <- plot_ly(groupedby_club, x = ~Club, y = ~Wins_Perc_median, type = 'bar', width = 1000, height = 600, color = ~Club ) %>%
+  layout(title= 'Wins Percentage Median per Club' )
+
+groupedbymean_club_plot 
+
+groupedbymedian_club_plot
+
+```
+
+
+<br>
 
 ```{r, echo=FALSE}
  #to know who relatively scored the highest goals between the defenders. 
