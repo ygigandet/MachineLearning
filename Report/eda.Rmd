@@ -49,7 +49,7 @@ Resultat
 ```{r, echo=FALSE}
 #Ask TA if we should focus on teams or players
 #to know who relatively has the highest wins percentage - we can remove this later if it will not help us with our EDA.
-#Limitation: We do not have the number of minutes which each player played. Some of their apperences might include only 10 minutes and some might be 90 minutes but we do not have data that is that detailed.
+#Limitation: We do not have the number of minutes which each player played. Some of their appeaerences might include only 10 minutes and some might be 90 minutes but we do not have data that is that detailed.
 
 win_percentage <- players_stats %>% mutate(Wins_Perc = Wins/Appearances, .after= Wins)
 
@@ -117,7 +117,7 @@ goals_forward_plot
 <br> 
 
 ```{r, echo=FALSE}
-#Goas to Shots percentage for each forward player
+#Goals to Shots percentage for each forward player
 
 goals_shots <- players_stats %>% filter(Position == "Forward") %>% mutate(goals_shots = Goals/Shots, .after= Goals) 
 
