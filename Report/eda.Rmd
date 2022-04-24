@@ -205,6 +205,29 @@ team_stats_EDA %>% ggplot(aes(x=number_of_points, y=total_yel_card)) +
 
 ```
 
+```{r, echo=FALSE}
+#wins and goals per team per season
+
+team_stats_filtered <- team_stats %>% select(team, wins, losses, goals, season)
+
+winsbyseason_plot <- plot_ly(team_stats_filtered, x = ~team, y = ~wins, type = 'bar', width = 1000, height = 600, color = ~season ) %>%
+  layout(title= 'Wins by Seasons' )
+
+goalsbyseason_plot <- plot_ly(team_stats_filtered, x = ~team, y = ~goals, type = 'bar', width = 1000, height = 600, color = ~season ) %>%
+  layout(title= 'Goals by Seasons' )
+
+winsbyseason_plot
+
+goalsbyseason_plot
+```
+
+```{r, echo=FALSE}
+
+```
+
+```{r, echo=FALSE}
+
+```
 
 ```{r, echo=FALSE}
 
