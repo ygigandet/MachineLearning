@@ -4,9 +4,7 @@
 source(here::here("scripts/setup.R"))
 ```
 <div>
-For our project, we will be providing a prediction of the Premier League rankings. We will be using several datasets to which we will apply different models to get a prediction then test its accuracy.
-
-The dataset is called xxx containing the results of Premier League games over (380 games over 12 seasons from 2006/2007 to 2017/2018). The below are the variables in the dataset and their details:
+For our project, we will be providing a prediction of the Premier League rankings. We will be using datasets from xxx, called xxx containing the results of Premier League games for seasons 2017-18 and 2018-19. Below are the variables in the datasets and their details:
 </div>
  + `xxx` - ...
  + `xxx` - ...
