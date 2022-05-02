@@ -24,6 +24,10 @@ premier_league_results_1718 <- readr::read_csv("season-1718_csv.csv")
 premier_league_results_1819 <- readr::read_csv("season-1819_csv.csv")
 premier_league_results_1718 <- subset(premier_league_results_1718, select = -c(LBH,LBD,LBA) )
 premier_league_results <- full_join(premier_league_results_1718, premier_league_results_1819, by = c("Div","Date","HomeTeam","AwayTeam","FTHG","FTAG","FTR","HTHG","HTAG","HTR","Referee","HS","AS","HST","AST","HF","AF","HC","AC","HY","AY","HR","AR","B365H","B365D","B365A","BWH","BWD","BWA","IWH","IWD","IWA","PSH","PSD","PSA","WHH","WHD","WHA","VCH","VCD","VCA","Bb1X2","BbMxH","BbAvH","BbMxD","BbAvD","BbMxA","BbAvA","BbOU","BbMx>2.5","BbAv>2.5","BbMx<2.5","BbAv<2.5","BbAH","BbAHh","BbMxAHH","BbAvAHH","BbMxAHA","BbAvAHA","PSCH","PSCD","PSCA"))
+
+# Checking if same teams are present in both seasons
+unique(premier_league_results_1718$HomeTeam)
+unique(premier_league_results_1819$HomeTeam)
 ```
 
 ```{r, echo=FALSE}
