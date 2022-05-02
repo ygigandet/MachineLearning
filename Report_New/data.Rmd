@@ -1,0 +1,44 @@
+# Data
+
+```{r, echo = FALSE, include = FALSE, message = FALSE}
+source(here::here("scripts/setup.R"))
+```
+<div>
+For our project, we will be providing a prediction of the Premier League rankings. We will be using several datasets to which we will apply different models to get a prediction then test its accuracy.
+
+The first dataset is called `game_results` containing the results of 4'560 Premier League games (380 games over 12 seasons from 2006/2007 to 2017/2018). The below are the variables in the dataset and their details:
+</div>
+ + `home_team` - Team playing in their home stadium.
+ + `away_team` - Team playing in the stadium of their opponent.
+ + `home_goals` - Number of goals scored by the home team.
+ + `away_goals` - Number of goals scored by the away team
+ + `results` - Winner of the match (H-home team, A-away team, D-draw)
+ + `season` - Mentions the season in which the match took place
+
+
+```{r echo=FALSE, include=FALSE}
+# Importing the games_results dataset into R
+setwd(here::here(("Data/")))
+
+game_results <- readr::read_csv("results.csv")
+```
+
+```{r, echo=FALSE}
+# Show the dataset
+
+game_results[1:5,] %>% 
+  rename("home team" = home_team,
+         "away team" = away_team,
+         "home goals" = home_goals,
+         "away goals" = away_goals) %>% 
+  knitr::kable(caption = "**Table 1: Premier League results (from 2006 to 2018)**") %>% 
+  kable_styling(bootstrap_options = c("striped","hover","condensed"),
+                fixed_thead = T)
+```
+
+```{r}
+# Write CSV files
+
+setwd(here::here("data/"))
+write_csv(game_results,"game_results_cleaned.csv")
+```
