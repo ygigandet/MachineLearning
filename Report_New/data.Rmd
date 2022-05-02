@@ -22,13 +22,28 @@ setwd(here::here(("Data_New/")))
 
 premier_league_results_1718 <- readr::read_csv("season-1718_csv.csv")
 premier_league_results_1819 <- readr::read_csv("season-1819_csv.csv")
-premier_league_results_1718 <- subset(premier_league_results_1718, select = -c(LBH,LBD,LBA) )
-premier_league_results <- full_join(premier_league_results_1718, premier_league_results_1819, by = c("Div","Date","HomeTeam","AwayTeam","FTHG","FTAG","FTR","HTHG","HTAG","HTR","Referee","HS","AS","HST","AST","HF","AF","HC","AC","HY","AY","HR","AR","B365H","B365D","B365A","BWH","BWD","BWA","IWH","IWD","IWA","PSH","PSD","PSA","WHH","WHD","WHA","VCH","VCD","VCA","Bb1X2","BbMxH","BbAvH","BbMxD","BbAvD","BbMxA","BbAvA","BbOU","BbMx>2.5","BbAv>2.5","BbMx<2.5","BbAv<2.5","BbAH","BbAHh","BbMxAHH","BbAvAHH","BbMxAHA","BbAvAHA","PSCH","PSCD","PSCA"))
 
-# Checking if same teams are present in both seasons
-unique(premier_league_results_1718$HomeTeam)
-unique(premier_league_results_1819$HomeTeam)
+premier_league_results_1718 <- subset(premier_league_results_1718, select = -c(LBH,LBD,LBA) )
+
+premier_league_results <- full_join(premier_league_results_1718, premier_league_results_1819, by = c("Div","Date","HomeTeam","AwayTeam","FTHG","FTAG","FTR","HTHG","HTAG","HTR","Referee","HS","AS","HST","AST","HF","AF","HC","AC","HY","AY","HR","AR","B365H","B365D","B365A","BWH","BWD","BWA","IWH","IWD","IWA","PSH","PSD","PSA","WHH","WHD","WHA","VCH","VCD","VCA","Bb1X2","BbMxH","BbAvH","BbMxD","BbAvD","BbMxA","BbAvA","BbOU","BbMx>2.5","BbAv>2.5","BbMx<2.5","BbAv<2.5","BbAH","BbAHh","BbMxAHH","BbAvAHH","BbMxAHA","BbAvAHA","PSCH","PSCD","PSCA"))
 ```
+
+We should also check if teams present in both seasons are the same.
+
+```{r, echo=FALSE}
+# Checking if same teams are present in both seasons
+unique(premier_league_results_1718$HomeTeam) %>% knitr::kable(caption = "**Table 2: Premier League Teams 2017-18**", col.names = "Teams") %>% kable_styling(bootstrap_options = c("striped","hover","condensed"), fixed_thead = T)
+
+unique(premier_league_results_1819$HomeTeam) %>% knitr::kable(caption = "**Table 3: Premier League Teams 2018-19**", col.names = "Teams") %>% kable_styling(bootstrap_options = c("striped","hover","condensed"), fixed_thead = T)
+```
+
+We see that the teams Swansea, Stoke and West Brom are not playing in the 2018-19 season. Additionally, the teams Fulham, Wolves and Cardiff are not playing in the 2017-18 neither. We should take them out.
+
+```{r}
+premier_league_results <- subset(premier_league_results, HomeTeam!="Swansea" & HomeTeam!="Stoke" & HomeTeam!="West Brom" & HomeTeam!="Fulham" & HomeTeam!="Wolves" & HomeTeam!="Cardiff" & AwayTeam!="Swansea" & AwayTeam!="Stoke" & AwayTeam!="West Brom" & AwayTeam!="Fulham" & AwayTeam!="Wolves" & AwayTeam!="Cardiff")
+```
+
+Now we rename the columns to make them more easily understandable.
 
 ```{r, echo=FALSE}
 # Show the dataset
@@ -39,9 +54,20 @@ premier_league_results %>% knitr::kable(caption = "**Table 1: Premier League res
                 fixed_thead = T)
 ```
 
+Let's check if our dataset contains missing values.
+
+```{r}
+any(is.na(premier_league_results))
+```
+
+Now that we have a clean dataset, let's check out our data closer with a summary.
+```{r}
+dfSummary(premier_league_results)
+```
+
 ```{r}
 # Write CSV files
 
-setwd(here::here("data/"))
-write_csv(xxx,"xxx")
+setwd(here::here("Data_New/"))
+write_csv(premier_league_results,"premier_league_results_clean.csv")
 ```
