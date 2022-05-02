@@ -6,32 +6,35 @@ source(here::here("scripts/setup.R"))
 <div>
 For our project, we will be providing a prediction of the Premier League rankings. We will be using several datasets to which we will apply different models to get a prediction then test its accuracy.
 
-The first dataset is called `game_results` containing the results of 4'560 Premier League games (380 games over 12 seasons from 2006/2007 to 2017/2018). The below are the variables in the dataset and their details:
+The dataset is called xxx containing the results of Premier League games over (380 games over 12 seasons from 2006/2007 to 2017/2018). The below are the variables in the dataset and their details:
 </div>
- + `home_team` - Team playing in their home stadium.
- + `away_team` - Team playing in the stadium of their opponent.
- + `home_goals` - Number of goals scored by the home team.
- + `away_goals` - Number of goals scored by the away team
- + `results` - Winner of the match (H-home team, A-away team, D-draw)
- + `season` - Mentions the season in which the match took place
+ + `xxx` - ...
+ + `xxx` - ...
+ + `xxx` - ...
+ + `xxx` - ...
+ + `xxx` - ...
+ + `xxx` - ...
 
 
 ```{r echo=FALSE, include=FALSE}
 # Importing the games_results dataset into R
-setwd(here::here(("Data/")))
+setwd(here::here(("Data_New/")))
 
-game_results <- readr::read_csv("results.csv")
+premier_league_results_1718 <- readr::read_csv("season-1718_csv.csv")
+premier_league_results_1819 <- readr::read_csv("season-1819_csv.csv")
+premier_league_results_1718 <- subset(premier_league_results_1718, select = -c(LBH,LBD,LBA) )
+premier_league_results <- full_join(premier_league_results_1718, premier_league_results_1819, by = c("Div","Date","HomeTeam","AwayTeam","FTHG","FTAG","FTR","HTHG","HTAG","HTR","Referee","HS","AS","HST","AST","HF","AF","HC","AC","HY","AY","HR","AR","B365H","B365D","B365A","BWH","BWD","BWA","IWH","IWD","IWA","PSH","PSD","PSA","WHH","WHD","WHA","VCH","VCD","VCA","Bb1X2","BbMxH","BbAvH","BbMxD","BbAvD","BbMxA","BbAvA","BbOU","BbMx>2.5","BbAv>2.5","BbMx<2.5","BbAv<2.5","BbAH","BbAHh","BbMxAHH","BbAvAHH","BbMxAHA","BbAvAHA","PSCH","PSCD","PSCA"))
 ```
 
 ```{r, echo=FALSE}
 # Show the dataset
 
-game_results[1:5,] %>% 
+premier_league_results_1718[1:5,] %>% 
   rename("home team" = home_team,
          "away team" = away_team,
          "home goals" = home_goals,
          "away goals" = away_goals) %>% 
-  knitr::kable(caption = "**Table 1: Premier League results (from 2006 to 2018)**") %>% 
+  knitr::kable(caption = "**Table 1: Premier League results (seasons 2017-18 and 2018-2019)**") %>% 
   kable_styling(bootstrap_options = c("striped","hover","condensed"),
                 fixed_thead = T)
 ```
@@ -40,5 +43,5 @@ game_results[1:5,] %>%
 # Write CSV files
 
 setwd(here::here("data/"))
-write_csv(game_results,"game_results_cleaned.csv")
+write_csv(xxx,"xxx")
 ```
