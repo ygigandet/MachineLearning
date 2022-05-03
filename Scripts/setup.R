@@ -8,7 +8,7 @@ packages <- c(
   "here", # for the project's organization
   "tidyverse", "kableExtra", "DataExplorer",
   "usethis", # git
-  "plotly", "GGally", "corrplot" #for plotting
+  "plotly", "GGally", "corrplot", #for plotting
   "summarytools"
 )
 
