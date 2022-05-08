@@ -287,12 +287,7 @@ premier_league_results %>%
 ### Premiere League Results 2017-2018
 
 ```{r, echo=FALSE}
-premier_league_results <- premier_league_results %>% mutate(year= paste(20,substr(match_date, 7, 8), sep = ""), .after = match_date )
-```
-
-
-```{r, echo=FALSE}
-PLR17 <- premier_league_results %>% filter(year <=2017)
+PLR17 <- premier_league_results %>% filter(match_date <= as.Date("2018-05-13"))	
 ```
 
 ```{r, echo=FALSE}
@@ -332,7 +327,7 @@ PLR17 %>%
 
 
 ```{r, echo=FALSE}
-PLR18 <- premier_league_results %>% filter(year >=2018)
+PLR18 <- premier_league_results %>% filter(match_date > as.Date("2018-05-13"))
 ```
 
 ```{r, echo=FALSE}
