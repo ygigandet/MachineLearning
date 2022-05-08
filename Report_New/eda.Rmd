@@ -24,7 +24,12 @@ str(premier_league_results)
 ### Premiere League Results 2017-2018
 
 ```{r, echo=FALSE}
-PLR17 <- premier_league_results %>% mutate(year= paste(20,substr(match_date, 7, 8), sep = ""), .after = match_date )
+premier_league_results <- premier_league_results %>% mutate(year= paste(20,substr(match_date, 7, 8), sep = ""), .after = match_date )
+```
+
+
+```{r, echo=FALSE}
+PLR17 <- premier_league_results %>% filter(year <=2017)
 ```
 
 ```{r, echo=FALSE}
@@ -39,15 +44,80 @@ data_frame(PLR17$full_time_home_goals, PLR17$full_time_away_goals, PLR17$full_ti
   plot_density(ncol = 3)
 ```
 
+```{r, echo=FALSE}
+data_frame(PLR17$full_time_home_goals, PLR17$full_time_away_goals, PLR17$full_time_results, PLR17$home_shots, PLR17$away_shots, PLR17$home_fouls, PLR17$away_fouls, PLR17$home_yellow_cards, PLR17$away_yellow_cards, PLR17$home_red_cards, PLR17$away_red_cards) %>%
+  plot_correlation()
+```
 
 ```{r, echo=FALSE}
-
+PLR17 %>%
+  group_by(home_team, full_time_results) %>% summarise(counts = n(), .groups = 'drop') %>%
+  plot_ly(x = ~home_team, y = ~counts, type = 'bar', color = ~full_time_results, height = 500, width = 1000) %>%
+  layout(title= 'Number of wins when Home 17-18', barmode = 'stack' )
 ```
+
+
+```{r, echo=FALSE}
+PLR17 %>%
+  group_by(away_team, full_time_results) %>% summarise(counts = n(), .groups = 'drop') %>%
+  plot_ly(x = ~away_team, y = ~counts, type = 'bar', color = ~full_time_results, height = 500, width = 1000) %>%
+  layout(title= 'Number of wins when Away 17-18', barmode = 'stack' )
+```
+
+
+### Premiere League Results 2017-2018
+
+
+```{r, echo=FALSE}
+PLR18 <- premier_league_results %>% filter(year >=2018)
+```
+
+```{r, echo=FALSE}
+data_frame(PLR18$full_time_home_goals, PLR18$full_time_away_goals, PLR18$full_time_results, PLR18$home_shots, PLR18$away_shots, PLR18$home_fouls, PLR18$away_fouls, PLR18$home_yellow_cards, PLR18$away_yellow_cards, PLR18$home_red_cards, PLR18$away_red_cards) %>%
+  plot_histogram(ncol = 3)
+```
+
+
+```{r, echo=FALSE}
+data_frame(PLR18$full_time_home_goals, PLR18$full_time_away_goals, PLR18$full_time_results, PLR18$home_shots, PLR18$away_shots, PLR18$home_fouls, PLR18$away_fouls, PLR18$home_yellow_cards, PLR18$away_yellow_cards, PLR18$home_red_cards, PLR18$away_red_cards) %>%
+  plot_density(ncol = 3)
+```
+
+```{r, echo=FALSE}
+data_frame(PLR18$full_time_home_goals, PLR18$full_time_away_goals, PLR18$full_time_results, PLR18$home_shots, PLR18$away_shots, PLR18$home_fouls, PLR18$away_fouls, PLR18$home_yellow_cards, PLR18$away_yellow_cards, PLR18$home_red_cards, PLR18$away_red_cards) %>%
+  plot_correlation()
+```
+
+
+```{r, echo=FALSE}
+PLR18 %>%
+  group_by(home_team, full_time_results) %>% summarise(counts = n(), .groups = 'drop') %>%
+  plot_ly(x = ~home_team, y = ~counts, type = 'bar', color = ~full_time_results, height = 500, width = 1000) %>%
+  layout(title= 'Number of wins when Home 18-19', barmode = 'stack' )
+```
+
+
+```{r, echo=FALSE}
+PLR18 %>%
+  group_by(away_team, full_time_results) %>% summarise(counts = n(), .groups = 'drop') %>%
+  plot_ly(x = ~away_team, y = ~counts, type = 'bar', color = ~full_time_results, height = 500, width = 1000) %>%
+  layout(title= 'Number of wins when Away 18-19', barmode = 'stack' )
+```
+
+
+
+
+
+
+
 
 ```{r, echo=FALSE}
 data_frame(premier_league_results$full_time_home_goals, premier_league_results$full_time_away_goals, premier_league_results$full_time_results, premier_league_results$home_shots, premier_league_results$away_shots, premier_league_results$home_fouls, premier_league_results$away_fouls, premier_league_results$home_yellow_cards, premier_league_results$away_yellow_cards, premier_league_results$home_red_cards, premier_league_results$away_red_cards) %>%
   plot_histogram(ncol = 3)
 ```
+
+
+
 
 
 ```{r, echo=FALSE}
@@ -63,9 +133,13 @@ data_frame(premier_league_results$full_time_home_goals, premier_league_results$f
 ```
 
 ```{r, echo=FALSE}
-premier_league_results$year <- 
+
 ```
 
+
+```{r, echo=FALSE}
+
+```
 
 ```{r, echo=FALSE}
 
@@ -75,30 +149,6 @@ premier_league_results$year <-
 
 ```
 
-```{r, echo=FALSE}
-
-```
 
 
-```{r, echo=FALSE}
-premier_league_results %>%
-  group_by(full_time_results, home_team) %>% summarise(counts = n(), .groups = 'drop') %>%
-  plot_ly(x = ~home_team, y = ~counts, type = 'bar', color = ~full_time_results, height = 1000, width = 600) %>%
-  layout(title= 'Number of wins when Home', barmode = 'stack' )
-```
-
-```{r, echo=FALSE}
-
-home_team_results <- ggplot(data=premier_league_results, aes(x=home_team, y=full_time_results, fill=full_time_results)) +
-  geom_bar(stat="identity")+
-  scale_fill_brewer(palette="Blues")+
-  geom_text(aes(label=full_time_home_goals), vjust=1.6, color="white",
-            position = position_dodge(0.9), size=3.5)
-home_team_results
-
-away_team_results <- ggplot(data=premier_league_results, aes(x=home_team, y=away_team)) +
-  geom_point(aes(colour = factor(result)))
-
-away_team_results
-```
 
