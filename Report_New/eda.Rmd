@@ -18,6 +18,269 @@ premier_league_results <- read_csv("premier_league_results_clean.csv")
 str(premier_league_results)
 ```
 
+```{r}
+# League_division
+premier_league_results %>%
+  select(league_division) %>% 
+  ggplot(aes(x = league_division)) +
+  geom_bar()
+
+# Unique value - therefore we can remove the column league_division
+```
+
+```{r}
+# match_date
+premier_league_results %>% 
+  select(match_date) %>% 
+  ggplot(aes(x = year(match_date))) +
+  geom_bar()
+
+# Ok seems good for the repartition of the years
+```
+
+```{r}
+# Home team
+premier_league_results %>% 
+  select(home_team) %>% 
+  ggplot(aes(x = home_team)) +
+  geom_bar()
+
+# All good, same numbers
+```
+```{r}
+# Home team
+premier_league_results %>% 
+  select(away_team) %>% 
+  ggplot(aes(x = away_team)) +
+  geom_bar()
+
+# All good, same numbers
+```
+```{r}
+# Full-time home goals
+premier_league_results %>% 
+  select(full_time_home_goals) %>% 
+  ggplot(aes(x = full_time_home_goals)) +
+  geom_boxplot()
+
+# half-time home goals
+premier_league_results %>% 
+  select(half_time_home_goals) %>% 
+  ggplot(aes(x = half_time_home_goals)) +
+  geom_boxplot()
+
+# Full-time against half-time - home team
+premier_league_results %>% 
+  select(full_time_home_goals, half_time_home_goals) %>% 
+  ggplot(aes(x = full_time_home_goals, y = half_time_home_goals)) +
+  geom_point() +
+  geom_abline(intercept = 0, slope = 1)
+
+# Full-time away goals
+premier_league_results %>% 
+  select(full_time_away_goals) %>% 
+  ggplot(aes(x = full_time_away_goals)) +
+  geom_boxplot()
+
+# half-time away goals
+premier_league_results %>% 
+  select(half_time_away_goals) %>% 
+  ggplot(aes(x = half_time_away_goals)) +
+  geom_boxplot()
+
+# Full-time against half-time - away team
+
+premier_league_results %>% 
+  select(full_time_away_goals, half_time_away_goals) %>% 
+  ggplot(aes(x = full_time_away_goals, y = half_time_away_goals)) +
+  geom_point() +
+  geom_abline(intercept = 0, slope = 1)
+```
+```{r}
+# full-time results
+premier_league_results %>% 
+  select(full_time_results) %>% 
+  ggplot(aes(x = full_time_results)) +
+  geom_bar()
+
+# half-time results
+premier_league_results %>% 
+  select(half_time_results) %>% 
+  ggplot(aes(x = half_time_results)) +
+  geom_bar()
+```
+
+```{r}
+# referee
+premier_league_results %>% 
+  select(referee) %>% 
+  ggplot(aes(x = referee)) +
+  geom_bar()
+
+# Ok not interesting, except if we say that referees are corrupted :)
+```
+```{r}
+# home shots
+premier_league_results %>% 
+  select(home_shots) %>% 
+  ggplot(aes(x = home_shots)) +
+  geom_boxplot()
+
+# home shots on target
+premier_league_results %>% 
+  select(home_shots_ontarget) %>% 
+  ggplot(aes(x = home_shots_ontarget)) +
+  geom_boxplot()
+
+# shots versus on target
+premier_league_results %>% 
+  select(home_shots, home_shots_ontarget) %>% 
+  ggplot(aes(x = home_shots, y = home_shots_ontarget)) +
+  geom_point() +
+  geom_abline(intercept = 0, slope = 1)
+```
+```{r}
+# home shots
+premier_league_results %>% 
+  select(away_shots) %>% 
+  ggplot(aes(x = away_shots)) +
+  geom_boxplot()
+
+# home shots on target
+premier_league_results %>% 
+  select(away_shots_ontarget) %>% 
+  ggplot(aes(x = away_shots_ontarget)) +
+  geom_boxplot()
+
+# shots versus on target
+premier_league_results %>% 
+  select(away_shots, away_shots_ontarget) %>% 
+  ggplot(aes(x = away_shots, y = away_shots_ontarget)) +
+  geom_point() +
+  geom_abline(intercept = 0, slope = 1)
+```
+
+```{r}
+# fouls
+premier_league_results %>% 
+  select(home_fouls) %>% 
+  ggplot(aes(x = home_fouls)) +
+  geom_boxplot()
+
+premier_league_results %>% 
+  select(away_fouls) %>% 
+  ggplot(aes(x = away_fouls)) +
+  geom_boxplot()
+```
+```{r}
+# corners
+premier_league_results %>% 
+  select(home_corners) %>% 
+  ggplot(aes(x = home_corners)) +
+  geom_boxplot()
+
+premier_league_results %>% 
+  select(away_corners) %>% 
+  ggplot(aes(x = away_corners)) +
+  geom_boxplot()
+```
+```{r}
+# yellow cards
+premier_league_results %>% 
+  select(home_yellow_cards) %>% 
+  ggplot(aes(x = home_yellow_cards)) +
+  geom_boxplot()
+
+premier_league_results %>% 
+  select(away_yellow_cards) %>% 
+  ggplot(aes(x = away_yellow_cards)) +
+  geom_boxplot()
+```
+
+```{r}
+# red cards
+premier_league_results %>% 
+  select(home_red_cards) %>% 
+  ggplot(aes(x = home_red_cards)) +
+  geom_boxplot()
+
+premier_league_results %>% 
+  select(away_red_cards) %>% 
+  ggplot(aes(x = away_red_cards)) +
+  geom_boxplot()
+```
+
+```{r}
+# betting website - bet365
+premier_league_results %>% 
+  select(bet365_home_win_odds) %>% 
+  ggplot(aes(x = bet365_home_win_odds)) +
+  geom_boxplot()
+
+premier_league_results %>% 
+  select(bet365_away_win_odds) %>% 
+  ggplot(aes(x = bet365_away_win_odds)) +
+  geom_boxplot()
+
+premier_league_results %>% 
+  select(bet365_draw_odds) %>% 
+  ggplot(aes(x = bet365_draw_odds)) +
+  geom_boxplot()
+```
+```{r}
+# betting website - bet&win
+premier_league_results %>% 
+  select(`bet&win_home_win_odds`) %>% 
+  ggplot(aes(x = `bet&win_home_win_odds`)) +
+  geom_boxplot()
+
+premier_league_results %>% 
+  select(`bet&win_away_win_odds`) %>% 
+  ggplot(aes(x = `bet&win_away_win_odds`)) +
+  geom_boxplot()
+
+premier_league_results %>% 
+  select(`bet&win_draw_odds`) %>% 
+  ggplot(aes(x = `bet&win_draw_odds`)) +
+  geom_boxplot()
+```
+
+```{r}
+# betting website - interwetten
+premier_league_results %>% 
+  select(interwetten_home_win_odds) %>% 
+  ggplot(aes(x = interwetten_home_win_odds)) +
+  geom_boxplot()
+
+premier_league_results %>% 
+  select(interwetten_away_win_odds) %>% 
+  ggplot(aes(x = interwetten_away_win_odds)) +
+  geom_boxplot()
+
+premier_league_results %>% 
+  select(interwetten_draw_odds) %>% 
+  ggplot(aes(x = interwetten_draw_odds)) +
+  geom_boxplot()
+```
+```{r}
+# betting website - pinnacle
+premier_league_results %>% 
+  select(pinnacle_home_win_odds) %>% 
+  ggplot(aes(x = pinnacle_home_win_odds)) +
+  geom_boxplot()
+
+premier_league_results %>% 
+  select(pinnacle_away_win_odds) %>% 
+  ggplot(aes(x = pinnacle_away_win_odds)) +
+  geom_boxplot()
+
+premier_league_results %>% 
+  select(pinnacle_draw_odds) %>% 
+  ggplot(aes(x = pinnacle_draw_odds)) +
+  geom_boxplot()
+```
+
+
 ## Multivariate Analysis
 
 

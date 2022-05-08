@@ -6,7 +6,7 @@
 packages <- c(
   "knitr",
   "here", # for the project's organization
-  "tidyverse", "kableExtra", "DataExplorer",
+  "tidyverse", "kableExtra", "DataExplorer", "lubridate", #Cleaning and exploring
   "usethis", # git
   "plotly", "GGally", "corrplot", #for plotting
   "summarytools"

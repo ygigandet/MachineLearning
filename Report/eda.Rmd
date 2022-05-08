@@ -4,7 +4,7 @@
 source(here::here("scripts/setup.R"))
 ```
 
-```{r}
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
 #  Load the cleaned data sets from the data.Rmd
 setwd(here::here("data/"))
 game_results <- read_csv("game_results_cleaned.csv")
@@ -15,6 +15,9 @@ players_value_cleaned <- read_csv("players_value_cleaned.csv")
 
 ## Games Results
 
+```{r}
+
+```
 
 ```{r, echo=FALSE, warning= FALSE}
 #Home Vs Away wins
