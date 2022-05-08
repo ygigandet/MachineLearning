@@ -56,6 +56,7 @@ premier_league_results %>%
 
 # All good, same numbers
 ```
+
 ```{r}
 # Full-time home goals
 premier_league_results %>% 
@@ -317,6 +318,7 @@ data_frame(PLR17$full_time_home_goals, PLR17$full_time_away_goals, PLR17$full_ti
 ```
 
 ```{r, echo=FALSE}
+#not sure if we should keep this
 data_frame(PLR17$full_time_home_goals, PLR17$full_time_away_goals, PLR17$full_time_results, PLR17$home_shots, PLR17$away_shots, PLR17$home_fouls, PLR17$away_fouls, PLR17$home_yellow_cards, PLR17$away_yellow_cards, PLR17$home_red_cards, PLR17$away_red_cards) %>%
   plot_correlation()
 ```
@@ -330,10 +332,27 @@ PLR17 %>%
 
 
 ```{r, echo=FALSE}
+# to discuss which type to keep
 PLR17 %>%
   group_by(away_team, full_time_results) %>% summarise(counts = n(), .groups = 'drop') %>%
   plot_ly(x = ~away_team, y = ~counts, type = 'bar', color = ~full_time_results, height = 500, width = 1000) %>%
-  layout(title= 'Number of wins when Away 17-18', barmode = 'stack' )
+  layout(title= 'Number of wins when Away 17-18', barmode = 'group' )
+```
+
+
+```{r}
+ggplot(PLR17, aes(x = full_time_home_goals, y = home_team, fill = home_team)) +
+  geom_density_ridges() +
+  theme_ridges() + 
+  theme(legend.position = "none")
+```
+
+
+```{r}
+ggplot(PLR17, aes(x = full_time_away_goals, y = away_team, fill = away_team)) +
+  geom_density_ridges() +
+  theme_ridges() + 
+  theme(legend.position = "none")
 ```
 
 
@@ -378,12 +397,27 @@ PLR18 %>%
 
 
 
+```{r}
+ggplot(PLR18, aes(x = full_time_home_goals, y = home_team, fill = home_team)) +
+  geom_density_ridges() +
+  theme_ridges() + 
+  theme(legend.position = "none")
+```
 
 
+```{r}
+ggplot(PLR18, aes(x = full_time_away_goals, y = away_team, fill = away_team)) +
+  geom_density_ridges() +
+  theme_ridges() + 
+  theme(legend.position = "none")
+```
 
+
+#Premiere League Results
 
 
 ```{r, echo=FALSE}
+#might remove
 data_frame(premier_league_results$full_time_home_goals, premier_league_results$full_time_away_goals, premier_league_results$full_time_results, premier_league_results$home_shots, premier_league_results$away_shots, premier_league_results$home_fouls, premier_league_results$away_fouls, premier_league_results$home_yellow_cards, premier_league_results$away_yellow_cards, premier_league_results$home_red_cards, premier_league_results$away_red_cards) %>%
   plot_histogram(ncol = 3)
 ```
@@ -393,6 +427,7 @@ data_frame(premier_league_results$full_time_home_goals, premier_league_results$f
 
 
 ```{r, echo=FALSE}
+#might remove
 data_frame(premier_league_results$full_time_home_goals, premier_league_results$full_time_away_goals, premier_league_results$full_time_results, premier_league_results$home_shots, premier_league_results$away_shots, premier_league_results$home_fouls, premier_league_results$away_fouls, premier_league_results$home_yellow_cards, premier_league_results$away_yellow_cards, premier_league_results$home_red_cards, premier_league_results$away_red_cards) %>%
   plot_density(ncol = 3)
 ```
@@ -404,8 +439,18 @@ data_frame(premier_league_results$full_time_home_goals, premier_league_results$f
   plot_correlation()
 ```
 
-
-
+```{r}
+ggplot(premier_league_results, aes(x = full_time_home_goals, y = home_team, fill = home_team)) +
+  geom_density_ridges() +
+  theme_ridges() + 
+  theme(legend.position = "none")
+```
+```{r}
+ggplot(premier_league_results, aes(x = full_time_away_goals, y = away_team, fill = away_team)) +
+  geom_density_ridges() +
+  theme_ridges() + 
+  theme(legend.position = "none")
+```
 
 
 
