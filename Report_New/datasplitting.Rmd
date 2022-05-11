@@ -6,4 +6,38 @@ source(here::here("scripts/setup.R"))
 
 ## Cross validation
 
-xxx
+# Essaie avec full_time_results comme training set
+
+```{r, echo = FALSE, message = FALSE}
+
+premier_league_results$full_time_results = as.factor(premier_league_results$full_time_results) #to transform our response variable to a factor in order to take into consideration the levels
+
+train_indexes = createDataPartition(premier_league_results$full_time_results,p=0.8,list=FALSE) # p percentage of the training set, in this case 80%
+
+train_data = premier_league_results[train_indexes,]  #this is the training set
+
+test_data = premier_league_results[-train_indexes,]  #the test set
+
+reasampling_method1 = trainControl(method  = "cv",number  = 10) 
+#cv means cross-validation and the number 10 means 10 folds
+#reasampling _method is control to use when training a model
+
+```
+
+
+# Essaie avec teams comme training set
+```{r, echo = FALSE, message = FALSE}
+
+premier_league_results$home_team = as.factor(premier_league_results$home_team) #to transform our response variable to a factor in order to take into consideration the levels
+
+train_indexes = createDataPartition(premier_league_results$home_team,p=0.8,list=FALSE) # p percentage of the training set, in this case 80%
+
+train_data = premier_league_results[train_indexes,]  #this is the training set
+
+test_data = premier_league_results[-train_indexes,]  #the test set
+
+reasampling_method2 = trainControl(method  = "cv",number  = 10) 
+#cv means cross-validation and the number 10 means 10 folds
+#reasampling _method is control to use when training a model
+
+```

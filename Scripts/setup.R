@@ -10,7 +10,7 @@ packages <- c(
   "usethis", # git
   "plotly", "GGally", "corrplot", "ggridges", #for plotting
   "summarytools",
-  "caret"
+  "caret", "lattice"
 )
 
 purrr::walk(packages, library, character.only = TRUE)
