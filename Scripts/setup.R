@@ -9,7 +9,8 @@ packages <- c(
   "tidyverse", "kableExtra", "DataExplorer", "lubridate", #Cleaning and exploring
   "usethis", # git
   "plotly", "GGally", "corrplot", "ggridges", #for plotting
-  "summarytools"
+  "summarytools",
+  "caret"
 )
 
 purrr::walk(packages, library, character.only = TRUE)
