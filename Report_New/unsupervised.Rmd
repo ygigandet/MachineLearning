@@ -4,9 +4,54 @@
 source(here::here("scripts/setup.R"))
 ```
 
-## Method of Unsupervised Learning selected
+## Clustering
 
 xxx
+
+
+## PCA
+
+```{r, echo=FALSE}
+PLR.numeric <- premier_league_results %>% dplyr::select(where(is.numeric))
+
+PLR.pca <- PCA(PLR.numeric, ncp = 11, graph = FALSE)
+PLR.pca
+```
+
+```{r, echo=FALSE}
+fviz_pca_var(PLR.pca)
+```
+
+
+```{r, echo=FALSE}
+fviz_contrib(PLR.pca, choice = "var", axes = 1)
+```
+
+```{r, echo=FALSE}
+fviz_pca_ind(PLR.pca) ## only the individuals
+fviz_pca_biplot(PLR.pca) ## biplot
+```
+
+
+```{r, echo=FALSE}
+fviz_eig(PLR.pca, addlabels = TRUE, ncp=11)
+```
+
+
+```{r, echo=FALSE}
+p1 <- fviz_pca_biplot(PLR.pca, axes = 1:2) 
+p2 <- fviz_pca_biplot(PLR.pca, axes = 3:4) 
+p3 <- fviz_pca_biplot(PLR.pca, axes = 5:6) 
+grid.arrange(p1, p2, p3, nrow = 2, ncol=2)
+```
+
+```{r, echo=FALSE}
+#to be fixed
+# wine.hc <- hclust(dist(wine[,-12], method = "manhattan"))
+# wine.clust <- cutree(wine.hc, k = 4)
+# fviz_pca_biplot(wine.pca,
+#              col.ind = factor(wine.clust))
+```
 
 ## Unsupervised Learning Findings
 

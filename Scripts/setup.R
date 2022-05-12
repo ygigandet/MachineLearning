@@ -8,9 +8,9 @@ packages <- c(
   "here", # for the project's organization
   "tidyverse", "kableExtra", "DataExplorer", "lubridate", #Cleaning and exploring
   "usethis", # git
-  "plotly", "GGally", "corrplot", "ggridges", #for plotting
+  "plotly", "GGally", "corrplot", "ggridges", "ggcorrplot", #for plotting
   "summarytools",
-  "caret", "lattice"
+  "caret", "lattice", "FactoMineR", "factoextra", "gridExtra"
 )
 
 purrr::walk(packages, library, character.only = TRUE)
