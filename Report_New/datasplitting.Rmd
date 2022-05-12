@@ -12,11 +12,11 @@ source(here::here("scripts/setup.R"))
 
 premier_league_results$full_time_results = as.factor(premier_league_results$full_time_results) #to transform our response variable to a factor in order to take into consideration the levels
 
-train_indexes = createDataPartition(premier_league_results$full_time_results,p=0.8,list=FALSE) # p percentage of the training set, in this case 80%
+train_indexes1 = createDataPartition(premier_league_results$full_time_results,p=0.8,list=FALSE) # p percentage of the training set, in this case 80%
 
-train_data = premier_league_results[train_indexes,]  #this is the training set
+train_data1 = premier_league_results[train_indexes1,]  #this is the training set
 
-test_data = premier_league_results[-train_indexes,]  #the test set
+test_data1 = premier_league_results[-train_indexes1,]  #the test set
 
 reasampling_method1 = trainControl(method  = "cv",number  = 10) 
 #cv means cross-validation and the number 10 means 10 folds
@@ -25,19 +25,38 @@ reasampling_method1 = trainControl(method  = "cv",number  = 10)
 ```
 
 
-# Essaie avec teams comme training set
+# Essaie avec teams comme training set (a demander à l'assistant)
 ```{r, echo = FALSE, message = FALSE}
 
 premier_league_results$home_team = as.factor(premier_league_results$home_team) #to transform our response variable to a factor in order to take into consideration the levels
+unique.home_team <- unique(premier_league_results$home_team)
 
-train_indexes = createDataPartition(premier_league_results$home_team,p=0.8,list=FALSE) # p percentage of the training set, in this case 80%
+train_indexes2 = createDataPartition(premier_league_results$home_team,p=0.8,list=FALSE) # p percentage of the training set, in this case 80%
 
-train_data = premier_league_results[train_indexes,]  #this is the training set
+train_data2 = premier_league_results[train_indexes2,]  #this is the training set
 
-test_data = premier_league_results[-train_indexes,]  #the test set
+test_data2 = premier_league_results[-train_indexes2,]  #the test set
 
 reasampling_method2 = trainControl(method  = "cv",number  = 10) 
 #cv means cross-validation and the number 10 means 10 folds
 #reasampling _method is control to use when training a model
+
+```
+
+# Essaie avec teams comme training set (unique home_team)
+```{r, echo = FALSE, message = FALSE}
+
+premier_league_results$home_team = as.factor(premier_league_results$home_team) #to transform our response variable to a factor in order to take into consideration the levels
+
+unique.home_team <- unique(premier_league_results$home_team) #Home teams are taken only once. 
+
+train_indexes3 = createDataPartition(unique.home_team,p=0.8,list=FALSE) # p percentage of the training set, in this case 80%
+
+train_data3 = premier_league_results[train_indexes3,]  #this is the training set
+
+test_data3 = premier_league_results[-train_indexes3,]  #the test set
+
+reasampling_method3 = trainControl(method  = "cv",number  = 10) 
+
 
 ```
