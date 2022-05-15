@@ -4,23 +4,14 @@
 source(here::here("scripts/setup.R"))
 ```
 
-## Method of Supervised Learning selected
-
-xxx
-
-## Supervised Learning Findings
-
-xxx
-
-## Neural Networks
+## Selection of a method of Supervised Learning
 
 ```{r}
-# Remove the unused variables from the premier league results
-premier_league_results <- premier_league_results %>% 
-  select(-league_division, -match_date, -referee, -c(bet365_home_win_odds:betbrain_max_over_2.5goals))
-
 #### Take the data splitting from Amina ####
-premier_league_results$full_time_results = as.factor(premier_league_results$full_time_results)
+# Need to factorise some variables - namely the characters
+premier_league_results$home_team = as.factor(premier_league_results$home_team)
+premier_league_results$away_team = as.factor(premier_league_results$away_team)
+premier_league_results$half_time_results = as.factor(premier_league_results$half_time_results)
 
 # Set the seeds to have the same samples over and over
 set.seed(234)
@@ -31,13 +22,44 @@ train_data1 = premier_league_results[train_indexes1,]  # this is the training se
 test_data1 = premier_league_results[-train_indexes1,]  # this is the test set
 
 ### End of data splitting from Amina ####
-
-# Need to factorise some variables - namely the characters
-
-premier_league_results$home_team = as.factor(premier_league_results$home_team)
-premier_league_results$away_team = as.factor(premier_league_results$away_team)
-premier_league_results$half_time_results = as.factor(premier_league_results$half_time_results)
 ```
+
+### Naive Bayes
+```{r}
+naivebayesfit <- naive_bayes(premier_league_results$full_time_results ~ ., data=train_data1, usekernel=TRUE)
+
+naivebayespred <- predict(naivebayesfit, newdata = test_data1, type="class")
+
+confusionMatrix(data=as.factor(naivebayespred), reference = test_data1$full_time_results)
+```
+
+
+### K-NN
+```{r}
+knnfit <- knn3(premier_league_results$full_time_results ~ ., data=train_data1, k=2)
+
+knnpred <- predict(knnfit, newdata = test_data1, type="class")
+
+confusionMatrix(data=as.factor(knnpred), reference = test_data1$full_time_results)
+```
+
+
+### Classification Tree
+```{r}
+classtreefit <- rpart(premier_league_results$full_time_results ~ ., data=train_data1)
+
+rpart.plot(classtreefit)
+
+plotcp(classtreefit)
+classtreefit.pruned <- prune(classtreefit, cp=0.025)
+
+classtreepred <- predict(classtreefit, newdata=test_data1, type="class")
+
+confusionMatrix(data=as.factor(classtreepred), reference = test_data1$full_time_results)
+```
+
+
+### Neural Networks
 
 ```{r}
 # Now that our sets are ready, let's apply the neural network with caret
@@ -59,3 +81,6 @@ nnetFit <- train(premier_league_results$full_time_results ~ .,
 plot(nnetFit)
 ```
 
+## Supervised Learning Findings
+
+xxx
