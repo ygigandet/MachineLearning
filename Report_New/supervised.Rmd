@@ -4,6 +4,12 @@
 source(here::here("scripts/setup.R"))
 ```
 
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+#  Load the cleaned dataset from the data.Rmd
+setwd(here::here("Data_New/"))
+premier_league_results <- read_csv("premier_league_results_clean.csv")
+```
+
 ## Method of Supervised Learning selected
 
 xxx
@@ -15,9 +21,10 @@ xxx
 ## Neural Networks
 
 ```{r}
-# Remove the unused variables from the premier league results
+# Just removing the match data, full_time_home_goals and full_time_away_goals
+
 premier_league_results <- premier_league_results %>% 
-  select(-league_division, -match_date, -referee, -c(bet365_home_win_odds:betbrain_max_over_2.5goals))
+  select(-match_date, -full_time_home_goals, -full_time_away_goals)
 
 #### Take the data splitting from Amina ####
 premier_league_results$full_time_results = as.factor(premier_league_results$full_time_results)
@@ -49,7 +56,7 @@ fitControl <- trainControl(method = "cv", # cv stands for cross-validation
 nnetGrid <-  expand.grid(size = seq(from = 1, to = 10, by = 1),
                         decay = seq(from = 0.1, to = 0.5, by = 0.1))
 
-nnetFit <- train(premier_league_results$full_time_results ~ ., 
+nnetFit <- train(full_time_results ~ ., 
                  data = train_data1,
                  method = "nnet",
                  metric = "Accuracy",
@@ -57,5 +64,30 @@ nnetFit <- train(premier_league_results$full_time_results ~ .,
                  trControl = fitControl)
 
 plot(nnetFit)
+```
+
+```{r}
+# We have an idea of the model, let's apply it. Regarding the graph above, choose decay of 0.5 and size of 1 nodes.
+
+nn <- nnet(full_time_results~., data=train_data1, size=1, decay=0.5)
+
+pred1 <- predict(nn, type="class")
+
+tab1 <- table(Obs=train_data1$full_time_results, Pred=pred1)
+tab1
+
+(acc1 <- sum(diag(tab1))/sum(tab1))
+
+# Accuracy of 75%, let's see with the test set
+
+pred2 <- predict(nn, test_data1, type="class")
+tab2 <- table(Obs=test_data1$full_time_results, Pred=pred2)
+tab2
+
+(acc2 <- sum(diag(tab2))/sum(tab2))
+
+# We drop by 65.7%, might be overfitting the data.
+
+# So is is because the data is unbalanced? Or do I misinterpret the graph above.
 ```
 

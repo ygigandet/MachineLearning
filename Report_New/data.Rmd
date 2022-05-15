@@ -40,6 +40,9 @@ We should also check if teams present in both seasons are the same.
 unique(premier_league_results_1718$HomeTeam) %>% knitr::kable(caption = "**Table 2: Premier League Teams 2017-18**", col.names = "Teams") %>% kable_styling(bootstrap_options = c("striped","hover","condensed"), fixed_thead = T)
 
 unique(premier_league_results_1819$HomeTeam) %>% knitr::kable(caption = "**Table 3: Premier League Teams 2018-19**", col.names = "Teams") %>% kable_styling(bootstrap_options = c("striped","hover","condensed"), fixed_thead = T)
+
+# Removing the unused datasets
+rm(premier_league_results_1718, premier_league_results_1819)
 ```
 
 We see that the teams Swansea, Stoke and West Brom are not playing in the 2018-19 season. Additionally, the teams Fulham, Wolves and Cardiff are not playing in the 2017-18 neither. We should take them out.
@@ -72,7 +75,28 @@ dfSummary(premier_league_results, style = 'grid', plain.ascii = FALSE, tmp.img.d
 ```
 
 ```{r}
+####################################
+#        NEW PART FROM EDA
+####################################
+
+# Remove the first column - namely league_division
+
+premier_league_results <- premier_league_results %>% 
+  select(-league_division)
+
+# Remove referee variable
+
+premier_league_results <- premier_league_results %>% 
+  select(-referee)
+
+# Remove all the variables from betting website - because they contain information about what we want to predict
+
+premier_league_results <- premier_league_results[,1:21]
+```
+
+```{r}
 # Write CSV files
 setwd(here::here("Data_New/"))
 write_csv(premier_league_results,"premier_league_results_clean.csv")
 ```
+

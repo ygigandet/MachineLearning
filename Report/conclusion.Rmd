@@ -1,5 +1,0 @@
-# Conclusion
-
-```{r, echo = FALSE, message = FALSE}
-source(here::here("scripts/setup.R"))
-```

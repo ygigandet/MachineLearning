@@ -19,16 +19,6 @@ str(premier_league_results)
 ```
 
 ```{r}
-# League_division
-premier_league_results %>%
-  select(league_division) %>% 
-  ggplot(aes(x = league_division)) +
-  geom_bar()
-
-# Unique value - therefore we can remove the column league_division
-```
-
-```{r}
 # match_date
 premier_league_results %>% 
   select(match_date) %>% 
@@ -116,15 +106,6 @@ premier_league_results %>%
 ```
 
 ```{r}
-# referee
-premier_league_results %>% 
-  select(referee) %>% 
-  ggplot(aes(x = referee)) +
-  geom_bar()
-
-# Ok not interesting, except if we say that referees are corrupted :)
-```
-```{r}
 # home shots
 premier_league_results %>% 
   select(home_shots) %>% 
@@ -146,6 +127,7 @@ premier_league_results %>%
   geom_point() +
   geom_abline(intercept = 0, slope = 1)
 ```
+
 ```{r}
 # home shots
 premier_league_results %>% 
@@ -197,6 +179,7 @@ premier_league_results %>%
   geom_boxplot() +
   xlim(0,20)
 ```
+
 ```{r}
 # yellow cards
 premier_league_results %>% 
@@ -224,77 +207,6 @@ premier_league_results %>%
   ggplot(aes(x = away_red_cards)) +
   geom_boxplot()
 ```
-
-```{r}
-# betting website - bet365
-premier_league_results %>% 
-  select(bet365_home_win_odds) %>% 
-  ggplot(aes(x = bet365_home_win_odds)) +
-  geom_boxplot()
-
-premier_league_results %>% 
-  select(bet365_away_win_odds) %>% 
-  ggplot(aes(x = bet365_away_win_odds)) +
-  geom_boxplot()
-
-premier_league_results %>% 
-  select(bet365_draw_odds) %>% 
-  ggplot(aes(x = bet365_draw_odds)) +
-  geom_boxplot()
-```
-```{r}
-# betting website - bet&win
-premier_league_results %>% 
-  select(`bet&win_home_win_odds`) %>% 
-  ggplot(aes(x = `bet&win_home_win_odds`)) +
-  geom_boxplot()
-
-premier_league_results %>% 
-  select(`bet&win_away_win_odds`) %>% 
-  ggplot(aes(x = `bet&win_away_win_odds`)) +
-  geom_boxplot()
-
-premier_league_results %>% 
-  select(`bet&win_draw_odds`) %>% 
-  ggplot(aes(x = `bet&win_draw_odds`)) +
-  geom_boxplot()
-```
-
-```{r}
-# betting website - interwetten
-premier_league_results %>% 
-  select(interwetten_home_win_odds) %>% 
-  ggplot(aes(x = interwetten_home_win_odds)) +
-  geom_boxplot()
-
-premier_league_results %>% 
-  select(interwetten_away_win_odds) %>% 
-  ggplot(aes(x = interwetten_away_win_odds)) +
-  geom_boxplot()
-
-premier_league_results %>% 
-  select(interwetten_draw_odds) %>% 
-  ggplot(aes(x = interwetten_draw_odds)) +
-  geom_boxplot()
-```
-```{r}
-# betting website - pinnacle
-premier_league_results %>% 
-  select(pinnacle_home_win_odds) %>% 
-  ggplot(aes(x = pinnacle_home_win_odds)) +
-  geom_boxplot()
-
-premier_league_results %>% 
-  select(pinnacle_away_win_odds) %>% 
-  ggplot(aes(x = pinnacle_away_win_odds)) +
-  geom_boxplot()
-
-premier_league_results %>% 
-  select(pinnacle_draw_odds) %>% 
-  ggplot(aes(x = pinnacle_draw_odds)) +
-  geom_boxplot()
-```
-
 
 ## Multivariate Analysis
 
