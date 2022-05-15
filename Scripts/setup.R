@@ -11,7 +11,8 @@ packages <- c(
   "plotly", "GGally", "corrplot", "ggridges", "ggcorrplot", #for plotting
   "summarytools",
   "lattice", "FactoMineR", "factoextra", "gridExtra",
-  "nnet", "neuralnet", "caret" #Neural networks
+  "nnet", "neuralnet", "caret", #Neural networks
+  "e1071" # SVM
 )
 
 purrr::walk(packages, library, character.only = TRUE)

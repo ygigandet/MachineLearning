@@ -91,3 +91,31 @@ tab2
 # So is is because the data is unbalanced? Or do I misinterpret the graph above.
 ```
 
+## Support Vector Machines
+
+```{r}
+# Tuning the hyperparameters
+trctrl <- trainControl(method = "cv", number=5)
+grid <- expand.grid(C = c(0.01, 0.1, 1, 10, 100, 1000))
+
+set.seed(143)
+svm_Linear_Grid <- train(full_time_results ~., data = train_data1, method = "svmLinear",
+                           trControl=trctrl,
+                           tuneGrid = grid)
+svm_Linear_Grid
+plot(svm_Linear_Grid)
+svm_Linear_Grid$bestTune
+```
+
+```{r}
+# Now that we know the tuning hyperparameters, let's apply it
+
+svm_tuned <- svm(full_time_results~., data = train_data1,
+                 kernel = "linear",
+                 cost = svm_Linear_Grid$bestTune$C)
+
+
+svm.tuned.pred <- predict(svm_tuned, newdata = train_data1)
+confusionMatrix(data=svm.tuned.pred, reference = train_data1$full_time_results)
+```
+
