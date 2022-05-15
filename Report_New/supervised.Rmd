@@ -115,7 +115,9 @@ svm_tuned <- svm(full_time_results~., data = train_data1,
                  cost = svm_Linear_Grid$bestTune$C)
 
 
-svm.tuned.pred <- predict(svm_tuned, newdata = train_data1)
-confusionMatrix(data=svm.tuned.pred, reference = train_data1$full_time_results)
+svm.tuned.pred <- predict(svm_tuned, newdata = test_data1)
+confusionMatrix(data=svm.tuned.pred, reference = test_data1$full_time_results)
 ```
+
+Not so bad, let's see with the others models if we reach a better accuracy.
 
