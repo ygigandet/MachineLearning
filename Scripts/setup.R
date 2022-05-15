@@ -10,7 +10,8 @@ packages <- c(
   "usethis", # git
   "plotly", "GGally", "corrplot", "ggridges", "ggcorrplot", #for plotting
   "summarytools",
-  "caret", "lattice", "FactoMineR", "factoextra", "gridExtra"
+  "lattice", "FactoMineR", "factoextra", "gridExtra",
+  "nnet", "neuralnet", "caret" #Neural networks
 )
 
 purrr::walk(packages, library, character.only = TRUE)
