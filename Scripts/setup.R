@@ -4,12 +4,11 @@
 
 # load the required packages
 packages <- c(
-  "knitr",
+  "knitr", "readr", "dplyr", "reshape2",
   "here", # for the project's organization
-  "tidyverse", "kableExtra", "DataExplorer", "lubridate", #Cleaning and exploring
+  "tidyverse", "kableExtra", "DataExplorer", "lubridate", "summarytools", #Cleaning and exploring
   "usethis", # git
-  "plotly", "GGally", "corrplot", "ggridges", "ggcorrplot", #for plotting
-  "summarytools",
+  "plotly", "GGally", "corrplot", "ggplot2", "ggridges", "ggcorrplot", #for plotting
   "lattice", "FactoMineR", "factoextra", "gridExtra",
   "nnet", "neuralnet", "caret", #Neural networks
   "naivebayes", #Naive Bayes
