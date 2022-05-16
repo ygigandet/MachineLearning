@@ -15,3 +15,13 @@ plotly
 DataExplorer
 GGally
 corrplot
+base
+summarytools
+lubridate
+ggridges
+ggcorrplot
+lattice
+caret
+FactoMineR
+factoextra
+gridExtra

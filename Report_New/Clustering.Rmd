@@ -1,0 +1,88 @@
+## Clustering
+
+
+
+```{r, echo=FALSE}
+library(gridExtra)
+library(readr)
+library(dplyr)
+library(FactoMineR)
+library(factoextra)
+library(ggplot2)
+library(reshape2)
+
+setwd(here::here("Data_New/"))
+
+premier_league_results <- read_csv("premier_league_results_clean.csv")
+
+head(premier_league_results)
+summary(premier_league_results)
+
+#select the numeric variables
+PLR.numeric <- premier_league_results %>% dplyr::select(where(is.numeric))
+
+## scale all the features
+PLR.numeric.scale <- scale(PLR.numeric[,]) 
+
+# matrix of Manhattan distances 
+PLR.d <- dist(PLR.numeric.scale[,], method = "manhattan") 
+
+# create a data frame of the distances in long format
+PLR.melt <- melt(as.matrix(PLR.d))
+
+head(PLR.melt)
+
+ggplot(data = PLR.melt, aes(x=Var1, y=Var2, fill=value)) + 
+  geom_tile()
+
+#dendrogram using a complete linkage
+
+PLR.hc <- hclust(PLR.d, method = "complete")
+plot(PLR.hc, hang=-1)
+
+#We cut the tree to 4 clusters, and represent the result.
+#We also extract the cluster assignment of each wine.
+
+plot(PLR.hc, hang=-1)
+rect.hclust(PLR.hc, k=4)
+PLR.clust <- cutree(PLR.hc, k=4)
+PLR.clust
+
+
+fviz_nbclust(PLR.numeric.scale,
+             hcut, hc_method="complete",
+             hc_metric="manhattan",
+             method = "wss", 
+             k.max = 25, verbose = FALSE)
+fviz_nbclust(PLR.numeric.scale,
+             hcut, hc_method="complete",
+             hc_metric="manhattan",
+             method = "silhouette", 
+             k.max = 25, verbose = FALSE)
+fviz_nbclust(PLR.numeric.scale,
+             hcut, hc_method="complete",
+             hc_metric="manhattan",
+             method = "gap", 
+             k.max = 25, verbose = FALSE)
+#K-means
+fviz_nbclust(PLR.numeric.scale,
+             kmeans,
+             method = "wss", 
+             k.max = 25, verbose = FALSE)
+fviz_nbclust(PLR.numeric.scale,
+             kmeans, 
+             method = "silhouette", 
+             k.max = 25, verbose = FALSE)
+fviz_nbclust(PLR.numeric.scale,
+             kmeans,
+             method = "gap", 
+             k.max = 25, verbose = FALSE)
+
+PLR.km <- kmeans(PLR.numeric.scale, centers=2)
+PLR.km$cluster
+
+
+```
+
+
+
