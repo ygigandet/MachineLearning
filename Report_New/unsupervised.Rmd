@@ -13,8 +13,8 @@ xxx
 
 ```{r, echo=FALSE}
 PLR.numeric <- premier_league_results %>% dplyr::select(where(is.numeric))
-
 PLR.pca <- PCA(PLR.numeric, ncp = 11, graph = FALSE)
+
 PLR.pca
 ```
 
@@ -24,7 +24,8 @@ fviz_pca_var(PLR.pca)
 
 
 ```{r, echo=FALSE}
-fviz_contrib(PLR.pca, choice = "var", axes = 1)
+# Extract the contributions of each features in the dimension.
+fviz_contrib(PLR.pca, choice = "var", axes = 1) #aes determines which dimension
 ```
 
 ```{r, echo=FALSE}
@@ -47,10 +48,10 @@ grid.arrange(p1, p2, p3, nrow = 2, ncol=2)
 
 ```{r, echo=FALSE}
 #to be fixed
-# wine.hc <- hclust(dist(wine[,-12], method = "manhattan"))
-# wine.clust <- cutree(wine.hc, k = 4)
-# fviz_pca_biplot(wine.pca,
-#              col.ind = factor(wine.clust))
+PLR.hc <- hclust(dist(premier_league_results, method = "manhattan"))
+PLR.clust <- cutree(PLR.hc, k = 6)
+fviz_pca_biplot(PLR.pca,
+             col.ind = factor(PLR.clust))
 ```
 
 ## Unsupervised Learning Findings

@@ -147,14 +147,14 @@ premier_league_results %>%
   geom_abline(intercept = 0, slope = 1)
 ```
 ```{r}
-# home shots
+# away shots
 premier_league_results %>% 
   select(away_shots) %>% 
   ggplot(aes(x = away_shots)) +
   geom_boxplot() +
   xlim(0,40)
 
-# home shots on target
+# away shots on target
 premier_league_results %>% 
   select(away_shots_ontarget) %>% 
   ggplot(aes(x = away_shots_ontarget)) +

@@ -65,6 +65,13 @@ Let's check if our dataset contains missing values.
 ```{r}
 any(is.na(premier_league_results))
 ```
+Half of the variables in the dataset are odds from betting websites, which are calculated from past match results. This can cause correlation with our outcome variable, therefore we will take them out. 
+
+```{r}
+# Remove the unused variables from the premier league results
+premier_league_results <- premier_league_results %>% 
+  select(-league_division, -match_date, -referee, -c(bet365_home_win_odds:betbrain_max_over_2.5goals), -c(PSCH:PSCA))
+```
 
 Now that we have a clean dataset, let's check out our data closer with a summary.
 ```{r}

@@ -60,3 +60,4 @@ reasampling_method3 = trainControl(method  = "cv",number  = 10)
 
 
 ```
+--> isn't the last one like the 2nd one except the unique home teams are taken ?
