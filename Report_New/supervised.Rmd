@@ -49,6 +49,45 @@ premier_league_results$half_time_results = as.factor(premier_league_results$half
 We see that our dataset is unbalanced as there are more away and home wins than draws. We need to rebalance our training dataset.
 
 ```{r}
+### YOOBY ###
+
+# See the distribution of H, D and A
+table(train_data1$full_time_results)
+
+# Sub-sampling
+
+n_draw <- min(table(train_data1$full_time_results))
+
+train_data1_h <- filter(train_data1, full_time_results=="H") # Home
+train_data1_a <- filter(train_data1, full_time_results=="A") # Away
+train_data1_d <- filter(train_data1, full_time_results=="D") # Draw
+
+index.a <- sample(size=n_draw, x=1:nrow(train_data1_a), replace=FALSE) ## sub-sample 97 instances from the "A"
+index.h <- sample(size=n_draw, x=1:nrow(train_data1_h), replace=FALSE) ## sub-sample 97 instances from the "H"
+
+train_data1_subs <- data.frame(rbind(train_data1_d, train_data1_a[index.a,], train_data1_h[index.h,]))
+
+table(train_data1_subs$full_time_results)
+
+# Re-sampling
+
+# We know that home wins are bigger 205.
+
+n_home <- max(table(train_data1$full_time_results))
+
+train_data1_h <- filter(train_data1, full_time_results=="H") # Home
+train_data1_a <- filter(train_data1, full_time_results=="A") # Away
+train_data1_d <- filter(train_data1, full_time_results=="D") # Draw
+
+index.a <- sample(size=n_home, x=1:nrow(train_data1_a), replace=TRUE)
+index.d <- sample(size=n_home, x=1:nrow(train_data1_d), replace=TRUE)
+
+train_data1_res <- data.frame(rbind(train_data1_d[index.d,], train_data1_a[index.a,], train_data1_h))
+
+table(train_data1_res$full_time_results)
+
+
+### ALESYA ###
 index.home <- train_data1$full_time_results == "H"
 index.draw <- train_data1$full_time_results == "D"
 index.away <- train_data1$full_time_results == "A"
