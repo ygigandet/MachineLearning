@@ -49,25 +49,22 @@ premier_league_results$half_time_results = as.factor(premier_league_results$half
 We see that our dataset is unbalanced as there are more away and home wins than draws. We need to rebalance our training dataset.
 
 ```{r}
-### YOOBY ###
-
 # See the distribution of H, D and A
 table(train_data1$full_time_results)
 
 # Sub-sampling
 
-n_draw <- min(table(train_data1$full_time_results))
+#n_draw <- min(table(train_data1$full_time_results))
 
-train_data1_h <- filter(train_data1, full_time_results=="H") # Home
-train_data1_a <- filter(train_data1, full_time_results=="A") # Away
-train_data1_d <- filter(train_data1, full_time_results=="D") # Draw
+#train_data1_h <- filter(train_data1, full_time_results=="H") # Home
+#train_data1_a <- filter(train_data1, full_time_results=="A") # Away
+#train_data1_d <- filter(train_data1, full_time_results=="D") # Draw
 
-index.a <- sample(size=n_draw, x=1:nrow(train_data1_a), replace=FALSE) ## sub-sample 97 instances from the "A"
-index.h <- sample(size=n_draw, x=1:nrow(train_data1_h), replace=FALSE) ## sub-sample 97 instances from the "H"
+#index.a <- sample(size=n_draw, x=1:nrow(train_data1_a), replace=FALSE) ## sub-sample 97 instances from the "A"
+#index.h <- sample(size=n_draw, x=1:nrow(train_data1_h), replace=FALSE) ## sub-sample 97 instances from the "H"
 
-train_data1_subs <- data.frame(rbind(train_data1_d, train_data1_a[index.a,], train_data1_h[index.h,]))
+#train_data1_subs <- data.frame(rbind(train_data1_d, #train_data1_a[index.a,], train_data1_h[index.h,]))
 
-table(train_data1_subs$full_time_results)
 
 # Re-sampling
 
@@ -86,20 +83,6 @@ train_data1_res <- data.frame(rbind(train_data1_d[index.d,], train_data1_a[index
 
 table(train_data1_res$full_time_results)
 
-
-### ALESYA ###
-index.home <- train_data1$full_time_results == "H"
-index.draw <- train_data1$full_time_results == "D"
-index.away <- train_data1$full_time_results == "A"
-
-n.home <- sum(index.home)
-n.draw <- sum(index.draw)
-n.away <- sum(index.away)
-
-set.seed(1234)
-premier_league_results.rs <- rbind(train_data1[index.home], train_data1[sample(x=which(index.draw), size = n.home, replace=FALSE)], train_data1[sample(x=which(index.away), size = n.home, replace=FALSE)])
-
-
 ```
 
 
@@ -114,7 +97,7 @@ nnetGrid <-  expand.grid(size = seq(from = 1, to = 10, by = 1),
                         decay = seq(from = 0.1, to = 0.5, by = 0.1))
 
 nnetFit <- train(full_time_results ~ ., 
-                 data = train_data1,
+                 data = train_data1_res,
                  method = "nnet",
                  metric = "Accuracy",
                  tuneGrid = nnetGrid,
@@ -124,13 +107,13 @@ plot(nnetFit)
 ```
 
 ```{r}
-# We have an idea of the model, let's apply it. Regarding the graph above, choose decay of 0.5 and size of 1 nodes.
+# We have an idea of the model, let's apply it. Regarding the graph above, choose decay of 0.4 and size of 9 nodes.
 
-nn <- nnet(full_time_results~., data=train_data1, size=1, decay=0.5)
+nn <- nnet(full_time_results~., data=train_data1_res, size=9, decay=0.4)
 
 pred1 <- predict(nn, type="class")
 
-tab1 <- table(Obs=train_data1$full_time_results, Pred=pred1)
+tab1 <- table(Obs=train_data1_res$full_time_results, Pred=pred1)
 tab1
 
 (acc1 <- sum(diag(tab1))/sum(tab1))
@@ -156,7 +139,7 @@ trctrl <- trainControl(method = "cv", number=5)
 grid <- expand.grid(C = c(0.01, 0.1, 1, 10, 100, 1000))
 
 set.seed(143)
-svm_Linear_Grid <- train(full_time_results ~., data = train_data1, method = "svmLinear",
+svm_Linear_Grid <- train(full_time_results ~., data = train_data1_res, method = "svmLinear",
                            trControl=trctrl,
                            tuneGrid = grid)
 svm_Linear_Grid
@@ -167,7 +150,7 @@ svm_Linear_Grid$bestTune
 ```{r}
 # Now that we know the tuning hyperparameters, let's apply it
 
-svm_tuned <- svm(full_time_results~., data = train_data1,
+svm_tuned <- svm(full_time_results~., data = train_data1_res,
                  kernel = "linear",
                  cost = svm_Linear_Grid$bestTune$C)
 
@@ -181,7 +164,7 @@ Not so bad, let's see with the others models if we reach a better accuracy.
 ### Naive Bayes
 
 ```{r}
-naivebayesfit <- naive_bayes(full_time_results~., data = train_data1, usekernel=TRUE)
+naivebayesfit <- naive_bayes(full_time_results~., data = train_data1_res, usekernel=TRUE)
 
 naivebayespred <- predict(naivebayesfit, newdata = test_data1, type="class")
 
@@ -191,7 +174,15 @@ confusionMatrix(data=as.factor(naivebayespred), reference = test_data1$full_time
 
 ### K-NN
 ```{r}
-knnfit <- knn3(full_time_results ~ ., data=train_data1, k=2)
+#Tuning hyperparameter
+ctrl <- trainControl(method = "cv", number=10)
+knngrid <- train(full_time_results ~., data = train_data1_res, method = "knn", trControl=ctrl, tuneGrid = data.frame(k=c(1,2,5,10,50,100)))
+
+knngrid
+```
+
+```{r}
+knnfit <- knn3(full_time_results ~ ., data=train_data1_res, k=1)
 
 knnpred <- predict(knnfit, newdata = test_data1, type="class")
 
@@ -201,12 +192,12 @@ confusionMatrix(data=as.factor(knnpred), reference = test_data1$full_time_result
 
 ### Classification Tree
 ```{r}
-classtreefit <- rpart(full_time_results ~ ., data=train_data1)
+classtreefit <- rpart(full_time_results ~ ., data=train_data1_res)
 
 rpart.plot(classtreefit)
 
 plotcp(classtreefit)
-classtreefit.pruned <- prune(classtreefit, cp=0.025)
+classtreefit.pruned <- prune(classtreefit, cp=0.018)
 
 classtreepred <- predict(classtreefit, newdata=test_data1, type="class")
 
