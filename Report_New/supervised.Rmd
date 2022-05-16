@@ -4,15 +4,30 @@
 source(here::here("scripts/setup.R"))
 ```
 
-## Selection of a method of Supervised Learning
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+#  Load the cleaned dataset from the data.Rmd
+setwd(here::here("Data_New/"))
+premier_league_results <- read_csv("premier_league_results_clean.csv")
+```
+
+## Method of Supervised Learning selected
+
+xxx
+
+## Supervised Learning Findings
+
+xxx
+
+## Neural Networks
 
 ```{r}
+# Just removing the match data, full_time_home_goals and full_time_away_goals
+
+premier_league_results <- premier_league_results %>% 
+  select(-match_date, -full_time_home_goals, -full_time_away_goals)
+
 #### Take the data splitting from Amina ####
-# Need to factorise some variables - namely the characters
-premier_league_results$home_team = as.factor(premier_league_results$home_team)
-premier_league_results$away_team = as.factor(premier_league_results$away_team)
-premier_league_results$half_time_results = as.factor(premier_league_results$half_time_results)
-premier_league_results$full_time_results = as.factor(premier_league_results$half_time_results)
+premier_league_results$full_time_results = as.factor(premier_league_results$full_time_results)
 
 # Set the seeds to have the same samples over and over
 set.seed(234)
@@ -23,44 +38,13 @@ train_data1 = premier_league_results[train_indexes1,]  # this is the training se
 test_data1 = premier_league_results[-train_indexes1,]  # this is the test set
 
 ### End of data splitting from Amina ####
+
+# Need to factorise some variables - namely the characters
+
+premier_league_results$home_team = as.factor(premier_league_results$home_team)
+premier_league_results$away_team = as.factor(premier_league_results$away_team)
+premier_league_results$half_time_results = as.factor(premier_league_results$half_time_results)
 ```
-
-### Naive Bayes
-```{r}
-naivebayesfit <- naive_bayes(premier_league_results$full_time_results ~ ., data=train_data1, usekernel=TRUE)
-
-naivebayespred <- predict(naivebayesfit, newdata = test_data1, type="class")
-
-confusionMatrix(data=as.factor(naivebayespred), reference = test_data1$full_time_results)
-```
-
-
-### K-NN
-```{r}
-knnfit <- knn3(premier_league_results$full_time_results ~ ., data=train_data1, k=2)
-
-knnpred <- predict(knnfit, newdata = test_data1, type="class")
-
-confusionMatrix(data=as.factor(knnpred), reference = test_data1$full_time_results)
-```
-
-
-### Classification Tree
-```{r}
-classtreefit <- rpart(premier_league_results$full_time_results ~ ., data=train_data1)
-
-rpart.plot(classtreefit)
-
-plotcp(classtreefit)
-classtreefit.pruned <- prune(classtreefit, cp=0.025)
-
-classtreepred <- predict(classtreefit, newdata=test_data1, type="class")
-
-confusionMatrix(data=as.factor(classtreepred), reference = test_data1$full_time_results)
-```
-
-
-### Neural Networks
 
 ```{r}
 # Now that our sets are ready, let's apply the neural network with caret
@@ -72,7 +56,7 @@ fitControl <- trainControl(method = "cv", # cv stands for cross-validation
 nnetGrid <-  expand.grid(size = seq(from = 1, to = 10, by = 1),
                         decay = seq(from = 0.1, to = 0.5, by = 0.1))
 
-nnetFit <- train(premier_league_results$full_time_results ~ ., 
+nnetFit <- train(full_time_results ~ ., 
                  data = train_data1,
                  method = "nnet",
                  metric = "Accuracy",
@@ -82,6 +66,92 @@ nnetFit <- train(premier_league_results$full_time_results ~ .,
 plot(nnetFit)
 ```
 
-## Supervised Learning Findings
+```{r}
+# We have an idea of the model, let's apply it. Regarding the graph above, choose decay of 0.5 and size of 1 nodes.
 
-xxx
+nn <- nnet(full_time_results~., data=train_data1, size=1, decay=0.5)
+
+pred1 <- predict(nn, type="class")
+
+tab1 <- table(Obs=train_data1$full_time_results, Pred=pred1)
+tab1
+
+(acc1 <- sum(diag(tab1))/sum(tab1))
+
+# Accuracy of 75%, let's see with the test set
+
+pred2 <- predict(nn, test_data1, type="class")
+tab2 <- table(Obs=test_data1$full_time_results, Pred=pred2)
+tab2
+
+(acc2 <- sum(diag(tab2))/sum(tab2))
+
+# We drop by 65.7%, might be overfitting the data.
+
+# So is is because the data is unbalanced? Or do I misinterpret the graph above.
+```
+
+## Support Vector Machines
+
+```{r}
+# Tuning the hyperparameters
+trctrl <- trainControl(method = "cv", number=5)
+grid <- expand.grid(C = c(0.01, 0.1, 1, 10, 100, 1000))
+
+set.seed(143)
+svm_Linear_Grid <- train(full_time_results ~., data = train_data1, method = "svmLinear",
+                           trControl=trctrl,
+                           tuneGrid = grid)
+svm_Linear_Grid
+plot(svm_Linear_Grid)
+svm_Linear_Grid$bestTune
+```
+
+```{r}
+# Now that we know the tuning hyperparameters, let's apply it
+
+svm_tuned <- svm(full_time_results~., data = train_data1,
+                 kernel = "linear",
+                 cost = svm_Linear_Grid$bestTune$C)
+
+
+svm.tuned.pred <- predict(svm_tuned, newdata = test_data1)
+confusionMatrix(data=svm.tuned.pred, reference = test_data1$full_time_results)
+```
+
+Not so bad, let's see with the others models if we reach a better accuracy.
+
+### Naive Bayes
+
+```{r}
+naivebayesfit <- naive_bayes(full_time_results~., data = train_data1, usekernel=TRUE)
+
+naivebayespred <- predict(naivebayesfit, newdata = test_data1, type="class")
+
+confusionMatrix(data=as.factor(naivebayespred), reference = test_data1$full_time_results)
+```
+
+
+### K-NN
+```{r}
+knnfit <- knn3(full_time_results ~ ., data=train_data1, k=2)
+
+knnpred <- predict(knnfit, newdata = test_data1, type="class")
+
+confusionMatrix(data=as.factor(knnpred), reference = test_data1$full_time_results)
+```
+
+
+### Classification Tree
+```{r}
+classtreefit <- rpart(full_time_results ~ ., data=train_data1)
+
+rpart.plot(classtreefit)
+
+plotcp(classtreefit)
+classtreefit.pruned <- prune(classtreefit, cp=0.025)
+
+classtreepred <- predict(classtreefit, newdata=test_data1, type="class")
+
+confusionMatrix(data=as.factor(classtreepred), reference = test_data1$full_time_results)
+```
