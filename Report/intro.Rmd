@@ -1,9 +1,0 @@
-# Introduction
-
-```{r, echo = FALSE, message = FALSE}
-source(here::here("scripts/setup.R"))
-```
-
-Directives on things we need to address in the intro :
-
-" The re-analysis must have new elements (new models, features, outcome labels, approaches, interpretations, etc.). In any case, the data source must be given. If a previous analysis was done in the reference, this analysis must be explained, and the original aspects of the new analysis must be made clear. "
