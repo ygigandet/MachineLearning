@@ -46,6 +46,24 @@ premier_league_results$away_team = as.factor(premier_league_results$away_team)
 premier_league_results$half_time_results = as.factor(premier_league_results$half_time_results)
 ```
 
+We see that our dataset is unbalanced as there are more away and home wins than draws. We need to rebalance our training dataset.
+
+```{r}
+index.home <- train_data1$full_time_results == "H"
+index.draw <- train_data1$full_time_results == "D"
+index.away <- train_data1$full_time_results == "A"
+
+n.home <- sum(index.home)
+n.draw <- sum(index.draw)
+n.away <- sum(index.away)
+
+set.seed(1234)
+premier_league_results.rs <- rbind(train_data1[index.home], train_data1[sample(x=which(index.draw), size = n.home, replace=FALSE)], train_data1[sample(x=which(index.away), size = n.home, replace=FALSE)])
+
+
+```
+
+
 ```{r}
 # Now that our sets are ready, let's apply the neural network with caret
 set.seed(1)
