@@ -12,6 +12,7 @@ source(here::here("scripts/setup.R"))
 premier_league_results$home_team = as.factor(premier_league_results$home_team)
 premier_league_results$away_team = as.factor(premier_league_results$away_team)
 premier_league_results$half_time_results = as.factor(premier_league_results$half_time_results)
+premier_league_results$full_time_results = as.factor(premier_league_results$half_time_results)
 
 # Set the seeds to have the same samples over and over
 set.seed(234)
