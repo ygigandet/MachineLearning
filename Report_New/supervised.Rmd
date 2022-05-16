@@ -121,3 +121,37 @@ confusionMatrix(data=svm.tuned.pred, reference = test_data1$full_time_results)
 
 Not so bad, let's see with the others models if we reach a better accuracy.
 
+### Naive Bayes
+
+```{r}
+naivebayesfit <- naive_bayes(full_time_results~., data = train_data1, usekernel=TRUE)
+
+naivebayespred <- predict(naivebayesfit, newdata = test_data1, type="class")
+
+confusionMatrix(data=as.factor(naivebayespred), reference = test_data1$full_time_results)
+```
+
+
+### K-NN
+```{r}
+knnfit <- knn3(full_time_results ~ ., data=train_data1, k=2)
+
+knnpred <- predict(knnfit, newdata = test_data1, type="class")
+
+confusionMatrix(data=as.factor(knnpred), reference = test_data1$full_time_results)
+```
+
+
+### Classification Tree
+```{r}
+classtreefit <- rpart(full_time_results ~ ., data=train_data1)
+
+rpart.plot(classtreefit)
+
+plotcp(classtreefit)
+classtreefit.pruned <- prune(classtreefit, cp=0.025)
+
+classtreepred <- predict(classtreefit, newdata=test_data1, type="class")
+
+confusionMatrix(data=as.factor(classtreepred), reference = test_data1$full_time_results)
+```
