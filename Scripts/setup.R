@@ -11,6 +11,7 @@ packages <- c(
   "plotly", "GGally", "corrplot", "ggplot2", "ggridges", "ggcorrplot", #for plotting
   "lattice", "FactoMineR", "factoextra", "gridExtra",
   "nnet", "neuralnet", "caret", #Neural networks
+  "e1071", #Support Vector Machines
   "naivebayes", #Naive Bayes
   "rpart", "rpart.plot" #Classification Tree
 )
