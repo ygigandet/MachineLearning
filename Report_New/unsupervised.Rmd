@@ -69,50 +69,50 @@ ggplot(data = PLR_melt, aes(x=Var1, y=Var2, fill=value)) +
 PLR_Home_hc <- hclust(PLR_Home_Mdistance, method = "complete")
 plot(PLR_Home_hc, hang=-1)
 
-# PLR_Home_hc %>% set("labels", c("1C31", "2A31", "1B31", "4C31", "2C31", "4A31", "2B31", "1A31", "3B31", "3C31", "3A31", "4B31")) %>% plot(main="Dendrogram day 42")
+ # PLR_Home_hc %>% set("labels", c("Burnley", "West Ham", "1B31", "4C31", "2C31", "4A31", "2B31", "1A31", "3B31", "3C31", "3A31", "4B31")) %>% plot(main="Dendrogram day 42")
 ```
 
 ```{r, echo=FALSE}
 #We cut the tree to 4 clusters, and represent the result.
 #We also extract the cluster assignment of each wine.
 
-plot(PLR.hc, hang=-1)
-rect.hclust(PLR.hc, k=4)
-PLR.clust <- cutree(PLR.hc, k=4)
-PLR.clust
+plot(PLR_Home_hc, hang=-1)
+rect.hclust(PLR_Home_hc, k=4)
+PLR_Home_clust <- cutree(PLR_Home_hc, k=4)
+PLR_Home_clust
 
 
-fviz_nbclust(PLR.numeric.scale,
+fviz_nbclust(PLR_Home_Scale,
              hcut, hc_method="complete",
              hc_metric="manhattan",
              method = "wss", 
              k.max = 25, verbose = FALSE)
-fviz_nbclust(PLR.numeric.scale,
+fviz_nbclust(PLR_Home_Scale,
              hcut, hc_method="complete",
              hc_metric="manhattan",
              method = "silhouette", 
              k.max = 25, verbose = FALSE)
-fviz_nbclust(PLR.numeric.scale,
+fviz_nbclust(PLR_Home_Scale,
              hcut, hc_method="complete",
              hc_metric="manhattan",
              method = "gap", 
              k.max = 25, verbose = FALSE)
 #K-means
-fviz_nbclust(PLR.numeric.scale,
+fviz_nbclust(PLR_Home_Scale,
              kmeans,
              method = "wss", 
              k.max = 25, verbose = FALSE)
-fviz_nbclust(PLR.numeric.scale,
+fviz_nbclust(PLR_Home_Scale,
              kmeans, 
              method = "silhouette", 
              k.max = 25, verbose = FALSE)
-fviz_nbclust(PLR.numeric.scale,
+fviz_nbclust(PLR_Home_Scale,
              kmeans,
              method = "gap", 
              k.max = 25, verbose = FALSE)
 
-PLR.km <- kmeans(PLR.numeric.scale, centers=2)
-PLR.km$cluster
+PLR_kmeans <- kmeans(PLR_Home_Scale, centers=2)
+PLR.kmeans$cluster
 ```
 
 
