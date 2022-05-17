@@ -16,3 +16,12 @@ plotly
 GGally
 corrplot
 summarytools
+base
+lubridate
+ggridges
+ggcorrplot
+lattice
+caret
+FactoMineR
+factoextra
+gridExtra
