@@ -28,6 +28,17 @@ PLR_Home <- PLR_Home %>% group_by(home_team) %>%
 ```
 
 
+```{r}
+PLR_Away <- PLR_Away %>% group_by(away_team) %>% 
+  summarise(mean_full_time_away_goals = mean(full_time_away_goals), 
+            mean_half_time_away_goals = mean(half_time_away_goals), 
+            mean_away_shots = mean(away_shots),
+            mean_away_shots_ontarget = mean(away_shots_ontarget),
+            mean_away_fouls = mean(away_fouls),
+            mean_away_corners = mean(away_corners),
+            mean_away_yellow_cards = mean(away_yellow_cards),
+            mean_away_red_cards = mean(away_red_cards), .groups = 'drop')
+```
 
 
 ## Clustering
@@ -42,6 +53,9 @@ PLR_Away_Scale <- scale(PLR_Away[,-1])
 PLR_Home_Scale <- PLR_Home_Scale %>% 
   mutate(home_team = PLR_Home$home_team, .before = mean_full_time_home_goals )
 
+PLR_Away_Scale <- PLR_Away_Scale %>% 
+  mutate(away_team = PLR_Away$away_team, .before = mean_full_time_away_goals )
+
 ```
 
 
@@ -49,7 +63,9 @@ PLR_Home_Scale <- PLR_Home_Scale %>%
 ```{r, echo=FALSE}
 
 # matrix of Manhattan distances 
-PLR_Home_Mdistance <- dist(PLR_Home_Scale[,], method = "manhattan") 
+PLR_Home_Mdistance <- dist(PLR_Home_Scale[,], method = "manhattan")
+
+PLR_Away_Mdistance <- dist(PLR_Away_Scale[,], method = "manhattan")
 
 
 #MIGHT DELETE THIS
@@ -66,8 +82,11 @@ ggplot(data = PLR_melt, aes(x=Var1, y=Var2, fill=value)) +
 ```{r, echo=FALSE}
 #dendrogram using a complete linkage
 
-PLR_Home_hc <- hclust(PLR_Home_Mdistance, method = "complete")
+PLR_Home_hc <- hclust(PLR_Home_Mdistance, method = "average")
 plot(PLR_Home_hc, hang=-1)
+
+PLR_Away_hc <- hclust(PLR_Away_Mdistance, method = "average")
+plot(PLR_Away_hc, hang=-1)
 
  # PLR_Home_hc %>% set("labels", c("Burnley", "West Ham", "1B31", "4C31", "2C31", "4A31", "2B31", "1A31", "3B31", "3C31", "3A31", "4B31")) %>% plot(main="Dendrogram day 42")
 ```
