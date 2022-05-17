@@ -16,7 +16,6 @@ plotly
 GGally
 corrplot
 summarytools
-base
 lubridate
 ggridges
 ggcorrplot
@@ -25,3 +24,10 @@ caret
 FactoMineR
 factoextra
 gridExtra
+reshape2
+nnet
+neuralnet
+e1071
+naivebayes
+rpart
+rpart.plot

@@ -276,19 +276,19 @@ PLR18 <- premier_league_results %>% filter(match_date > as.Date("2018-05-13"))
 ```
 
 ```{r, echo=FALSE}
-data_frame(PLR18$full_time_home_goals, PLR18$full_time_away_goals, PLR18$full_time_results, PLR18$home_shots, PLR18$away_shots, PLR18$home_fouls, PLR18$away_fouls, PLR18$home_yellow_cards, PLR18$away_yellow_cards, PLR18$home_red_cards, PLR18$away_red_cards) %>%
-  plot_histogram(ncol = 3)
+# data_frame(PLR18$full_time_home_goals, PLR18$full_time_away_goals, PLR18$full_time_results, PLR18$home_shots, PLR18$away_shots, PLR18$home_fouls, PLR18$away_fouls, PLR18$home_yellow_cards, PLR18$away_yellow_cards, PLR18$home_red_cards, PLR18$away_red_cards) %>%
+#   plot_histogram(ncol = 3)
 ```
 
 
 ```{r, echo=FALSE}
-data_frame(PLR18$full_time_home_goals, PLR18$full_time_away_goals, PLR18$full_time_results, PLR18$home_shots, PLR18$away_shots, PLR18$home_fouls, PLR18$away_fouls, PLR18$home_yellow_cards, PLR18$away_yellow_cards, PLR18$home_red_cards, PLR18$away_red_cards) %>%
-  plot_density(ncol = 3)
+# data_frame(PLR18$full_time_home_goals, PLR18$full_time_away_goals, PLR18$full_time_results, PLR18$home_shots, PLR18$away_shots, PLR18$home_fouls, PLR18$away_fouls, PLR18$home_yellow_cards, PLR18$away_yellow_cards, PLR18$home_red_cards, PLR18$away_red_cards) %>%
+#   plot_density(ncol = 3)
 ```
 
 ```{r, echo=FALSE}
-data_frame(PLR18$full_time_home_goals, PLR18$full_time_away_goals, PLR18$full_time_results, PLR18$home_shots, PLR18$away_shots, PLR18$home_fouls, PLR18$away_fouls, PLR18$home_yellow_cards, PLR18$away_yellow_cards, PLR18$home_red_cards, PLR18$away_red_cards) %>%
-  plot_correlation()
+# data_frame(PLR18$full_time_home_goals, PLR18$full_time_away_goals, PLR18$full_time_results, PLR18$home_shots, PLR18$away_shots, PLR18$home_fouls, PLR18$away_fouls, PLR18$home_yellow_cards, PLR18$away_yellow_cards, PLR18$home_red_cards, PLR18$away_red_cards) %>%
+#   plot_correlation()
 ```
 
 

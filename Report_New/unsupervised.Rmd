@@ -4,46 +4,75 @@
 source(here::here("scripts/setup.R"))
 ```
 
+## Splitting of Dataset
+
+```{r, echo=FALSE}
+setwd(here::here("Data_New/"))
+premier_league_results <- read_csv("premier_league_results_clean.csv")
+
+PLR_Home <- premier_league_results %>% select(home_team, full_time_home_goals, half_time_home_goals, home_shots, home_shots_ontarget, home_fouls, home_corners, home_yellow_cards, home_red_cards)
+
+PLR_Away <- premier_league_results %>% select (away_team, full_time_away_goals, half_time_away_goals, away_shots, away_shots_ontarget, away_fouls, away_corners, away_yellow_cards, away_red_cards)
+```
+
+```{r}
+PLR_Home <- PLR_Home %>% group_by(home_team) %>% 
+  summarise(mean_full_time_home_goals = mean(full_time_home_goals), 
+            mean_half_time_home_goals = mean(half_time_home_goals), 
+            mean_home_shots = mean(home_shots),
+            mean_home_shots_ontarget = mean(home_shots_ontarget),
+            mean_home_fouls = mean(home_fouls),
+            mean_home_corners = mean(home_corners),
+            mean_home_yellow_cards = mean(home_yellow_cards),
+            mean_home_red_cards = mean(home_red_cards), .groups = 'drop')
+```
+
+
+
+
 ## Clustering
 
 ```{r, echo=FALSE}
-library(gridExtra)
-library(readr)
-library(dplyr)
-library(FactoMineR)
-library(factoextra)
-library(ggplot2)
-library(reshape2)
 
-setwd(here::here("Data_New/"))
+## scale features for home and away
+PLR_Home_Scale <- scale(PLR_Home[,-1]) %>% as.tibble()
+PLR_Away_Scale <- scale(PLR_Away[,-1]) 
 
-premier_league_results <- read_csv("premier_league_results_clean.csv")
 
-head(premier_league_results)
-summary(premier_league_results)
+PLR_Home_Scale <- PLR_Home_Scale %>% 
+  mutate(home_team = PLR_Home$home_team, .before = mean_full_time_home_goals )
 
-#select the numeric variables
-PLR.numeric <- premier_league_results %>% dplyr::select(where(is.numeric))
+```
 
-## scale all the features
-PLR.numeric.scale <- scale(PLR.numeric[,]) 
+
+
+```{r, echo=FALSE}
 
 # matrix of Manhattan distances 
-PLR.d <- dist(PLR.numeric.scale[,], method = "manhattan") 
+PLR_Home_Mdistance <- dist(PLR_Home_Scale[,], method = "manhattan") 
 
-# create a data frame of the distances in long format
-PLR.melt <- melt(as.matrix(PLR.d))
 
-head(PLR.melt)
+#MIGHT DELETE THIS
 
-ggplot(data = PLR.melt, aes(x=Var1, y=Var2, fill=value)) + 
+# create a data frame of the distances in long format 
+PLR_melt <- melt(as.matrix(PLR_Home_Mdistance))
+
+head(PLR_melt)
+
+ggplot(data = PLR_melt, aes(x=Var1, y=Var2, fill=value)) + 
   geom_tile()
+```
 
+```{r, echo=FALSE}
 #dendrogram using a complete linkage
 
-PLR.hc <- hclust(PLR.d, method = "complete")
-plot(PLR.hc, hang=-1)
+PLR_Home_hc <- hclust(PLR_Home_Mdistance, method = "complete")
+plot(PLR_Home_hc, hang=-1)
 
+# PLR_Home_hc %>% set("labels", c("1C31", "2A31", "1B31", "4C31", "2C31", "4A31", "2B31", "1A31", "3B31", "3C31", "3A31", "4B31")) %>% plot(main="Dendrogram day 42")
+```
+
+```{r, echo=FALSE}
 #We cut the tree to 4 clusters, and represent the result.
 #We also extract the cluster assignment of each wine.
 
