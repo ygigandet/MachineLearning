@@ -9,6 +9,10 @@ source(here::here("scripts/setup.R"))
 ```{r, echo=FALSE}
 setwd(here::here("Data_New/"))
 premier_league_results <- read_csv("premier_league_results_clean.csv")
+```
+
+```{r, echo=FALSE}
+# Divide the dataset into Home and Away
 
 PLR_Home <- premier_league_results %>% select(home_team, full_time_home_goals, half_time_home_goals, home_shots, home_shots_ontarget, home_fouls, home_corners, home_yellow_cards, home_red_cards)
 
@@ -16,6 +20,8 @@ PLR_Away <- premier_league_results %>% select (away_team, full_time_away_goals, 
 ```
 
 ```{r}
+# Group by teams
+
 PLR_Home <- PLR_Home %>% group_by(home_team) %>% 
   summarise(mean_full_time_home_goals = mean(full_time_home_goals), 
             mean_half_time_home_goals = mean(half_time_home_goals), 
@@ -25,10 +31,8 @@ PLR_Home <- PLR_Home %>% group_by(home_team) %>%
             mean_home_corners = mean(home_corners),
             mean_home_yellow_cards = mean(home_yellow_cards),
             mean_home_red_cards = mean(home_red_cards), .groups = 'drop')
-```
 
 
-```{r}
 PLR_Away <- PLR_Away %>% group_by(away_team) %>% 
   summarise(mean_full_time_away_goals = mean(full_time_away_goals), 
             mean_half_time_away_goals = mean(half_time_away_goals), 
@@ -45,9 +49,10 @@ PLR_Away <- PLR_Away %>% group_by(away_team) %>%
 
 ```{r, echo=FALSE}
 
-## scale features for home and away
-PLR_Home_Scale <- scale(PLR_Home[,-1]) %>% as.tibble()
-PLR_Away_Scale <- scale(PLR_Away[,-1]) 
+# Scale features for home and away
+
+PLR_Home_Scale <- scale(PLR_Home[,-1]) %>% as_tibble()
+PLR_Away_Scale <- scale(PLR_Away[,-1]) %>% as_tibble()
 
 
 PLR_Home_Scale <- PLR_Home_Scale %>% 
@@ -71,21 +76,25 @@ PLR_Away_Mdistance <- dist(PLR_Away_Scale[,], method = "manhattan")
 #MIGHT DELETE THIS
 
 # create a data frame of the distances in long format 
-PLR_melt <- melt(as.matrix(PLR_Home_Mdistance))
+PLR_Home_melt <- melt(as.matrix(PLR_Home_Mdistance))
+PLR_Away_melt <- melt(as.matrix(PLR_Away_Mdistance))
 
-head(PLR_melt)
+head(PLR_Home_melt)
+head(PLR_Away_melt)
 
-ggplot(data = PLR_melt, aes(x=Var1, y=Var2, fill=value)) + 
+ggplot(data = PLR_Home_melt, aes(x=Var1, y=Var2, fill=value)) + 
+  geom_tile()
+ggplot(data = PLR_Away_melt, aes(x=Var1, y=Var2, fill=value)) + 
   geom_tile()
 ```
 
 ```{r, echo=FALSE}
-#dendrogram using a complete linkage
+#dendrogram using a complete linkage for home and away
 
-PLR_Home_hc <- hclust(PLR_Home_Mdistance, method = "average")
+PLR_Home_hc <- hclust(PLR_Home_Mdistance, method = "complete")
 plot(PLR_Home_hc, hang=-1)
 
-PLR_Away_hc <- hclust(PLR_Away_Mdistance, method = "average")
+PLR_Away_hc <- hclust(PLR_Away_Mdistance, method = "complete")
 plot(PLR_Away_hc, hang=-1)
 
  # PLR_Home_hc %>% set("labels", c("Burnley", "West Ham", "1B31", "4C31", "2C31", "4A31", "2B31", "1A31", "3B31", "3C31", "3A31", "4B31")) %>% plot(main="Dendrogram day 42")
@@ -94,90 +103,115 @@ plot(PLR_Away_hc, hang=-1)
 ```{r, echo=FALSE}
 #We cut the tree to 4 clusters, and represent the result.
 #We also extract the cluster assignment of each wine.
-
-plot(PLR_Home_hc, hang=-1)
-rect.hclust(PLR_Home_hc, k=4)
-PLR_Home_clust <- cutree(PLR_Home_hc, k=4)
-PLR_Home_clust
-
-
-fviz_nbclust(PLR_Home_Scale,
-             hcut, hc_method="complete",
-             hc_metric="manhattan",
-             method = "wss", 
-             k.max = 25, verbose = FALSE)
-fviz_nbclust(PLR_Home_Scale,
-             hcut, hc_method="complete",
-             hc_metric="manhattan",
-             method = "silhouette", 
-             k.max = 25, verbose = FALSE)
-fviz_nbclust(PLR_Home_Scale,
-             hcut, hc_method="complete",
-             hc_metric="manhattan",
-             method = "gap", 
-             k.max = 25, verbose = FALSE)
-#K-means
-fviz_nbclust(PLR_Home_Scale,
-             kmeans,
-             method = "wss", 
-             k.max = 25, verbose = FALSE)
-fviz_nbclust(PLR_Home_Scale,
-             kmeans, 
-             method = "silhouette", 
-             k.max = 25, verbose = FALSE)
-fviz_nbclust(PLR_Home_Scale,
-             kmeans,
-             method = "gap", 
-             k.max = 25, verbose = FALSE)
-
-PLR_kmeans <- kmeans(PLR_Home_Scale, centers=2)
-PLR.kmeans$cluster
+#
+# plot(PLR_Home_hc, hang=-1)
+# rect.hclust(PLR_Home_hc, k=4)
+# PLR_Home_clust <- cutree(PLR_Home_hc, k=4)
+# PLR_Home_clust
+# 
+# 
+# fviz_nbclust(PLR_Home_Scale,
+#              hcut, hc_method="complete",
+#              hc_metric="manhattan",
+#              method = "wss", 
+#              k.max = 25, verbose = FALSE)
+# fviz_nbclust(PLR_Home_Scale,
+#              hcut, hc_method="complete",
+#              hc_metric="manhattan",
+#              method = "silhouette", 
+#              k.max = 25, verbose = FALSE)
+# fviz_nbclust(PLR_Home_Scale,
+#              hcut, hc_method="complete",
+#              hc_metric="manhattan",
+#              method = "gap", 
+#              k.max = 25, verbose = FALSE)
+# #K-means
+# fviz_nbclust(PLR_Home_Scale,
+#              kmeans,
+#              method = "wss", 
+#              k.max = 25, verbose = FALSE)
+# fviz_nbclust(PLR_Home_Scale,
+#              kmeans, 
+#              method = "silhouette", 
+#              k.max = 25, verbose = FALSE)
+# fviz_nbclust(PLR_Home_Scale,
+#              kmeans,
+#              method = "gap", 
+#              k.max = 25, verbose = FALSE)
+# 
+# PLR_kmeans <- kmeans(PLR_Home_Scale, centers=2)
+# PLR.kmeans$cluster
 ```
 
 
 ## PCA
 
 ```{r, echo=FALSE}
-PLR.numeric <- premier_league_results %>% dplyr::select(where(is.numeric))
-PLR.pca <- PCA(PLR.numeric, ncp = 11, graph = FALSE)
+# PLR.numeric <- premier_league_results %>% dplyr::select(where(is.numeric))
+# PLR.pca <- PCA(PLR.numeric, ncp = 11, graph = FALSE)
+# 
+# PLR.pca
 
-PLR.pca
+PLR_Home_numeric <- PLR_Home %>% dplyr::select(where(is.numeric)) 
+PLR_Away_numeric <- PLR_Away %>% dplyr::select(where(is.numeric)) 
+
+PLR_Home_pca <- PCA(PLR_Home_numeric, ncp = 11, graph = FALSE)
+PLR_Away_pca <- PCA(PLR_Away_numeric, ncp = 11, graph = FALSE)
+
+PLR_Home_pca
+PLR_Away_pca
 ```
 
 ```{r, echo=FALSE}
-fviz_pca_var(PLR.pca)
+fviz_pca_var(PLR_Home_pca)
+fviz_pca_var(PLR_Away_pca)
 ```
 
 
 ```{r, echo=FALSE}
 # Extract the contributions of each features in the dimension.
-fviz_contrib(PLR.pca, choice = "var", axes = 1) #aes determines which dimension
+fviz_contrib(PLR_Home_pca, choice = "var", axes = 1) #aes determines which dimension
+fviz_contrib(PLR_Away_pca, choice = "var", axes = 1)
 ```
 
 ```{r, echo=FALSE}
-fviz_pca_ind(PLR.pca) ## only the individuals
-fviz_pca_biplot(PLR.pca) ## biplot
+fviz_pca_ind(PLR_Home_pca) ## only the individuals
+fviz_pca_ind(PLR_Away_pca)
+
+fviz_pca_biplot(PLR_Home_pca) ## biplot
+fviz_pca_biplot(PLR_Away_pca)
 ```
 
 
 ```{r, echo=FALSE}
-fviz_eig(PLR.pca, addlabels = TRUE, ncp=11)
+fviz_eig(PLR_Home_pca, addlabels = TRUE, ncp=11)
+fviz_eig(PLR_Away_pca, addlabels = TRUE, ncp=11)
 ```
 
 
 ```{r, echo=FALSE}
-p1 <- fviz_pca_biplot(PLR.pca, axes = 1:2) 
-p2 <- fviz_pca_biplot(PLR.pca, axes = 3:4) 
-p3 <- fviz_pca_biplot(PLR.pca, axes = 5:6) 
+p1 <- fviz_pca_biplot(PLR_Home_pca, axes = 1:2) 
+p2 <- fviz_pca_biplot(PLR_Home_pca, axes = 3:4) 
+p3 <- fviz_pca_biplot(PLR_Home_pca, axes = 5:6) 
 grid.arrange(p1, p2, p3, nrow = 2, ncol=2)
+
+p4 <- fviz_pca_biplot(PLR_Away_pca, axes = 1:2) 
+p5 <- fviz_pca_biplot(PLR_Away_pca, axes = 3:4) 
+p6 <- fviz_pca_biplot(PLR_Away_pca, axes = 5:6) 
+grid.arrange(p4, p5, p6, nrow = 2, ncol=2)
 ```
 
 ```{r, echo=FALSE}
-#to be fixed
-PLR.hc <- hclust(dist(premier_league_results, method = "manhattan"))
-PLR.clust <- cutree(PLR.hc, k = 6)
-fviz_pca_biplot(PLR.pca,
-             col.ind = factor(PLR.clust))
+PLR_Home_hc2 <- hclust(dist(PLR_Home, method = "manhattan"))
+PLR_Away_hc2 <- hclust(dist(PLR_Away, method = "manhattan"))
+
+PLR_Home_clust <- cutree(PLR_Home_hc2, k = 4)
+PLR_Away_clust <- cutree(PLR_Away_hc2, k = 4)
+
+fviz_pca_biplot(PLR_Home_pca,
+             col.ind = factor(PLR_Home_clust))
+fviz_pca_biplot(PLR_Away_pca,
+             col.ind = factor(PLR_Away_clust))
 ```
 
 ## Unsupervised Learning Findings
