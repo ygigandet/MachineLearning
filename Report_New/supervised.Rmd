@@ -133,6 +133,7 @@ tab2
 
 ## Support Vector Machines
 
+The SVM models give a convenient prediction, we've an accuracy of 0.583 and a pretty low Kappa : 0.36
 ```{r}
 # Tuning the hyperparameters
 trctrl <- trainControl(method = "cv", number=5)
@@ -173,6 +174,8 @@ confusionMatrix(data=as.factor(naivebayespred), reference = test_data1$full_time
 
 
 ### K-NN
+The K-NN model give a convenient prediction, we've an accuracy of 0.491 and a low Kappa : 0.185
+
 ```{r}
 #Tuning hyperparameter
 ctrl <- trainControl(method = "cv", number=10)
@@ -191,6 +194,9 @@ confusionMatrix(data=as.factor(knnpred), reference = test_data1$full_time_result
 
 
 ### Classification Tree
+The CART model give a convenient prediction, we've an accuracy of 0.509 and a low Kappa : 0.248
+
+
 ```{r}
 classtreefit <- rpart(full_time_results ~ ., data=train_data1_res)
 
