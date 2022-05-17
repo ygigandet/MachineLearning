@@ -5,6 +5,11 @@ source(here::here("scripts/setup.R"))
 ```
 
 ## Cross validation
+Data Splitting:
+To achieve our aim we have to proceed on a data splitting. Without proper data, Machine learning models are hard to implement and can lead to completely different conclusions and interpretation. 
+
+We performed a random train and test split of our data by using cross-validation in order to use the following models: CART, KNN, Naive Bayes, SVM, Neural Network.
+
 
 # Essaie avec full_time_results comme training set
 
@@ -43,21 +48,4 @@ reasampling_method2 = trainControl(method  = "cv",number  = 10)
 
 ```
 
-# Essaie avec teams comme training set (unique home_team)
-```{r, echo = FALSE, message = FALSE}
-
-premier_league_results$home_team = as.factor(premier_league_results$home_team) #to transform our response variable to a factor in order to take into consideration the levels
-
-unique.home_team <- unique(premier_league_results$home_team) #Home teams are taken only once. 
-
-train_indexes3 = createDataPartition(unique.home_team,p=0.8,list=FALSE) # p percentage of the training set, in this case 80%
-
-train_data3 = premier_league_results[train_indexes3,]  #this is the training set
-
-test_data3 = premier_league_results[-train_indexes3,]  #the test set
-
-reasampling_method3 = trainControl(method  = "cv",number  = 10) 
-
-
-```
 --> isn't the last one like the 2nd one except the unique home teams are taken ?
