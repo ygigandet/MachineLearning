@@ -13,7 +13,8 @@ packages <- c(
   "nnet", "neuralnet", "caret", #Neural networks
   "e1071", #Support Vector Machines
   "naivebayes", #Naive Bayes
-  "rpart", "rpart.plot" #Classification Tree
+  "rpart", "rpart.plot", #Classification Tree
+  "dendextend" #for dendogram labels
 )
 
 purrr::walk(packages, library, character.only = TRUE)

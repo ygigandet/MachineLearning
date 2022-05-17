@@ -89,13 +89,36 @@ ggplot(data = PLR_Away_melt, aes(x=Var1, y=Var2, fill=value)) +
 ```
 
 ```{r, echo=FALSE}
+#code to try to change the labels
 #dendrogram using a complete linkage for home and away
 
 PLR_Home_hc <- hclust(PLR_Home_Mdistance, method = "complete")
-plot(PLR_Home_hc, hang=-1)
+plot(PLR_Home_hc, hang=-1) %>% set("labels", c("Burnley", "West Ham", "Everton", "New Castle", "Leicester", "Bournemouth", "Southampton", "Watford", "Brighton", "Huddersfield", "Arsenal", "Crystal Palace", "Man United", "Liverpool", "Man City", "Chelsea", "Tottenham")) %>% labels
+
+#dend <- PLR_Home_hc %>% dist %>% hclust("ave") %>% as.dendrogram
+
+# dend <- PLR_Home_hc %>% 
+#        select(mean_full_time_home_goals , 
+#             mean_half_time_home_goals, 
+#             mean_home_shots,
+#             mean_home_shots_ontarget,
+#             mean_home_fouls,
+#             mean_home_corners,
+#             mean_home_yellow_cards,
+#             mean_home_red_cards)%>% 
+#   dist() %>% 
+#   hclust() %>% 
+#   as.dendrogram() 
+
 
 PLR_Away_hc <- hclust(PLR_Away_Mdistance, method = "complete")
 plot(PLR_Away_hc, hang=-1)
+
+# labels(PLR_Home_hc) <- c("Burnley", "West Ham", "Everton", "New Castle", "Leicester", "Bournemouth", "Southampton", "Watford", "Brighton", "Huddersfield", "Arsenal", "Crystal Palace", "Man United", "Liverpool", "Man City", "Chelsea", "Tottenham")
+
+#labels(PLR_Home_hc)
+
+#dend <- hclust("complete") %>% as.dendrogram
 
  # PLR_Home_hc %>% set("labels", c("Burnley", "West Ham", "1B31", "4C31", "2C31", "4A31", "2B31", "1A31", "3B31", "3C31", "3A31", "4B31")) %>% plot(main="Dendrogram day 42")
 ```
