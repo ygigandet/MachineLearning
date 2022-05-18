@@ -8,7 +8,7 @@ packages <- c(
   "here", # for the project's organization
   "tidyverse", "kableExtra", "DataExplorer", "lubridate", "summarytools", #Cleaning and exploring
   "usethis", # git
-  "plotly", "GGally", "corrplot", "ggplot2", "ggridges", "ggcorrplot", #for plotting
+  "plotly", "GGally", "corrplot", "ggplot2", "ggridges", "ggcorrplot", "patchwork", #for plotting
   "lattice", "FactoMineR", "factoextra", "gridExtra",
   "nnet", "neuralnet", "caret", #Neural networks
   "e1071", #Support Vector Machines

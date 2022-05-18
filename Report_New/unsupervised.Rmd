@@ -3,10 +3,17 @@
 ```{r, echo = FALSE, message = FALSE}
 source(here::here("scripts/setup.R"))
 ```
+<br>
+<br>
 
 ## Splitting of Dataset
 
-```{r, echo=FALSE}
+<br>
+
+In order to have a clearer view on the data, we decided to split the main dataset to two datasets; one for Home teams and another for Away teams. The goal is to study the performance of each team when they are both away or home. 
+
+
+```{r, echo=FALSE, warning=FALSE}
 setwd(here::here("Data_New/"))
 premier_league_results <- read_csv("premier_league_results_clean.csv")
 ```
@@ -17,36 +24,72 @@ premier_league_results <- read_csv("premier_league_results_clean.csv")
 PLR_Home <- premier_league_results %>% select(home_team, full_time_home_goals, half_time_home_goals, home_shots, home_shots_ontarget, home_fouls, home_corners, home_yellow_cards, home_red_cards)
 
 PLR_Away <- premier_league_results %>% select (away_team, full_time_away_goals, half_time_away_goals, away_shots, away_shots_ontarget, away_fouls, away_corners, away_yellow_cards, away_red_cards)
+
+head(PLR_Home) %>% kable(caption = "**Premiere League Results for Home Teams**") %>%
+  kable_styling(bootstrap_options = c("striped","hover","condensed"),
+                fixed_thead = T) %>% kable_paper() %>%  scroll_box(width = "100%", height = "320px")
+```
+<br>
+```{r, echo=FALSE}
+head(PLR_Away) %>% kable(caption = "**Premiere League Results for Away Teams**") %>%
+  kable_styling(bootstrap_options = c("striped","hover","condensed"),
+                fixed_thead = T) %>% kable_paper() %>%  scroll_box(width = "100%", height = "270px")
 ```
 
+<br>
+
+We have also grouped by the teams in order to have an overview of the variables for each team. We calculated the meadian of each variable to obtain a robust grouping. 
 ```{r}
 # Group by teams
 
 PLR_Home <- PLR_Home %>% group_by(home_team) %>% 
-  summarise(mean_full_time_home_goals = mean(full_time_home_goals), 
-            mean_half_time_home_goals = mean(half_time_home_goals), 
-            mean_home_shots = mean(home_shots),
-            mean_home_shots_ontarget = mean(home_shots_ontarget),
-            mean_home_fouls = mean(home_fouls),
-            mean_home_corners = mean(home_corners),
-            mean_home_yellow_cards = mean(home_yellow_cards),
-            mean_home_red_cards = mean(home_red_cards), .groups = 'drop')
+  summarise(Full_time_home_goals = median(full_time_home_goals), 
+            Half_time_home_goals = median(half_time_home_goals), 
+            Home_shots = median(home_shots),
+            Home_shots_ontarget = median(home_shots_ontarget),
+            Home_fouls = median(home_fouls),
+            Home_corners = median(home_corners),
+            Home_yellow_cards = median(home_yellow_cards),
+            Home_red_cards = mean(home_red_cards), .groups = 'drop')
 
 
 PLR_Away <- PLR_Away %>% group_by(away_team) %>% 
-  summarise(mean_full_time_away_goals = mean(full_time_away_goals), 
-            mean_half_time_away_goals = mean(half_time_away_goals), 
-            mean_away_shots = mean(away_shots),
-            mean_away_shots_ontarget = mean(away_shots_ontarget),
-            mean_away_fouls = mean(away_fouls),
-            mean_away_corners = mean(away_corners),
-            mean_away_yellow_cards = mean(away_yellow_cards),
-            mean_away_red_cards = mean(away_red_cards), .groups = 'drop')
+  summarise(Full_time_away_goals = median(full_time_away_goals), 
+            Half_time_away_goals = median(half_time_away_goals), 
+            Away_shots = median(away_shots),
+            Away_shots_ontarget = median(away_shots_ontarget),
+            Away_fouls = median(away_fouls),
+            Away_corners = median(away_corners),
+            Away_yellow_cards = median(away_yellow_cards),
+            Away_red_cards = mean(away_red_cards), .groups = 'drop')
+```
+<br>
+
+After calculating the median, our dataset looks like this:
+<br>
+
+```{r, echo=FALSE}
+head(PLR_Home)%>% kable(caption = "**Median Premiere League Results for Home Teams**") %>%
+  kable_styling(bootstrap_options = c("striped","hover","condensed"),
+                fixed_thead = T) %>% kable_paper() %>%  scroll_box(width = "100%", height = "270px")
 ```
 
+<br>
 
-## Clustering
+```{r, echo=FALSE}
+head(PLR_Away)%>% kable(caption = "**Median Premiere League Results for Away Teams**") %>%
+  kable_styling(bootstrap_options = c("striped","hover","condensed"),
+                fixed_thead = T) %>% kable_paper() %>%  scroll_box(width = "100%", height = "270px")
+```
 
+<br>
+<br>
+
+## Scaling the Data
+
+<br>
+
+Our dataset contains various variables, each of which has its own scale. As we can see below, the "Home_shots" variable has a scale ranging from around 10 to 18, while "Full_time_home_goals" has a scale ranging from around 0 to 3. Therefore, we will need to scale the data in order to give the same weight for all variables. 
 ```{r, echo=FALSE}
 
 # Scale features for home and away
@@ -56,14 +99,44 @@ PLR_Away_Scale <- scale(PLR_Away[,-1]) %>% as_tibble()
 
 
 PLR_Home_Scale <- PLR_Home_Scale %>% 
-  mutate(home_team = PLR_Home$home_team, .before = mean_full_time_home_goals )
+  mutate(home_team = PLR_Home$home_team, .before = Full_time_home_goals )
 
 PLR_Away_Scale <- PLR_Away_Scale %>% 
-  mutate(away_team = PLR_Away$away_team, .before = mean_full_time_away_goals )
+  mutate(away_team = PLR_Away$away_team, .before = Full_time_away_goals )
 
 ```
+<br>
 
+The following two tables show the scaled datasets for the first 6 teams. 
 
+<br>
+
+```{r, echo=FALSE}
+head(PLR_Home_Scale)%>% kable(caption = "**Scaled Premiere League Results for Home Teams**") %>%
+  kable_styling(bootstrap_options = c("striped","hover","condensed"),
+                fixed_thead = T) %>% kable_paper() %>%  scroll_box(width = "100%", height = "270px")
+```
+
+<br>
+
+```{r, echo=FALSE}
+head(PLR_Away_Scale)%>% kable(caption = "**Scaled Premiere League Results for Away Teams**") %>%
+  kable_styling(bootstrap_options = c("striped","hover","condensed"),
+                fixed_thead = T) %>% kable_paper() %>%  scroll_box(width = "100%", height = "270px")
+```
+<br>
+<br>
+
+## Clustering
+
+<br>
+<br>
+
+For the clustering method, we calculated the Manhattan distance to form clusters of the Home and Away teams. 
+
+<br>
+
+Below are the dendograms created by complete linkage. 
 
 ```{r, echo=FALSE}
 
@@ -72,28 +145,13 @@ PLR_Home_Mdistance <- dist(PLR_Home_Scale[,], method = "manhattan")
 
 PLR_Away_Mdistance <- dist(PLR_Away_Scale[,], method = "manhattan")
 
-
-#MIGHT DELETE THIS
-
-# create a data frame of the distances in long format 
-PLR_Home_melt <- melt(as.matrix(PLR_Home_Mdistance))
-PLR_Away_melt <- melt(as.matrix(PLR_Away_Mdistance))
-
-head(PLR_Home_melt)
-head(PLR_Away_melt)
-
-ggplot(data = PLR_Home_melt, aes(x=Var1, y=Var2, fill=value)) + 
-  geom_tile()
-ggplot(data = PLR_Away_melt, aes(x=Var1, y=Var2, fill=value)) + 
-  geom_tile()
 ```
 
 ```{r, echo=FALSE}
 #code to try to change the labels
-#dendrogram using a complete linkage for home and away
 
 PLR_Home_hc <- hclust(PLR_Home_Mdistance, method = "complete")
-plot(PLR_Home_hc, hang=-1) %>% set("labels", c("Burnley", "West Ham", "Everton", "New Castle", "Leicester", "Bournemouth", "Southampton", "Watford", "Brighton", "Huddersfield", "Arsenal", "Crystal Palace", "Man United", "Liverpool", "Man City", "Chelsea", "Tottenham")) %>% labels
+plot(PLR_Home_hc, hang=-1) #%>% set("labels","Burnley", "West Ham", "Everton", "New Castle", "Leicester", "Bournemouth", "Southampton", "Watford", "Brighton", "Huddersfield", "Arsenal", "Crystal Palace", "Man United", "Liverpool", "Man City", "Chelsea", "Tottenham") %>% labels
 
 #dend <- PLR_Home_hc %>% dist %>% hclust("ave") %>% as.dendrogram
 
@@ -166,28 +224,41 @@ plot(PLR_Away_hc, hang=-1)
 # PLR.kmeans$cluster
 ```
 
+<br>
+<br>
+<br>
 
-## PCA
+## Principal Component Analysis (PCA)
 
+<br>
+<br>
+
+For our unsupervised learning, we decided to work on PCA in order to see the clusters formed and study the important components of each of the Home and Away teams. 
+
+<br>
+
+The below shows the results of the PCA for the teams when Home 
 ```{r, echo=FALSE}
-# PLR.numeric <- premier_league_results %>% dplyr::select(where(is.numeric))
-# PLR.pca <- PCA(PLR.numeric, ncp = 11, graph = FALSE)
-# 
-# PLR.pca
+PLR_Home_numeric <- PLR_Home_Scale %>% select(where(is.numeric)) 
+PLR_Away_numeric <- PLR_Away_Scale %>% select(where(is.numeric)) 
 
-PLR_Home_numeric <- PLR_Home %>% dplyr::select(where(is.numeric)) 
-PLR_Away_numeric <- PLR_Away %>% dplyr::select(where(is.numeric)) 
-
-PLR_Home_pca <- PCA(PLR_Home_numeric, ncp = 11, graph = FALSE)
-PLR_Away_pca <- PCA(PLR_Away_numeric, ncp = 11, graph = FALSE)
+PLR_Home_pca <- PCA(PLR_Home_numeric, ncp = 9, graph = FALSE)
+PLR_Away_pca <- PCA(PLR_Away_numeric, ncp = 9, graph = FALSE)
 
 PLR_Home_pca
+```
+
+The below shows the results of the PCA for the teams when Away
+```{r, echo=FALSE}
 PLR_Away_pca
 ```
 
 ```{r, echo=FALSE}
-fviz_pca_var(PLR_Home_pca)
-fviz_pca_var(PLR_Away_pca)
+
+# fviz_pca_var(PLR_Home_pca, repel = TRUE, title = "Variable PCA for Home Teams")
+# fviz_pca_var(PLR_Away_pca, repel = TRUE, title = "Variable PCA for Away Teams")
+
+grid.arrange(fviz_pca_var(PLR_Home_pca, repel = TRUE, title = "Home Teams"), fviz_pca_var(PLR_Away_pca, repel = TRUE, title = "Away Teams"), ncol=2)
 ```
 
 
@@ -198,11 +269,11 @@ fviz_contrib(PLR_Away_pca, choice = "var", axes = 1)
 ```
 
 ```{r, echo=FALSE}
-fviz_pca_ind(PLR_Home_pca) ## only the individuals
-fviz_pca_ind(PLR_Away_pca)
+# fviz_pca_ind(PLR_Home_pca) ## only the individuals
+# fviz_pca_ind(PLR_Away_pca)
 
-fviz_pca_biplot(PLR_Home_pca) ## biplot
-fviz_pca_biplot(PLR_Away_pca)
+fviz_pca_biplot(PLR_Home_pca, repel = TRUE, col.var = "#2E9FDF", col.ind = "#696969", label = "all")
+fviz_pca_biplot(PLR_Away_pca, repel = TRUE, col.var = "#2E9FDF", col.ind = "#696969", label = "all")
 ```
 
 
@@ -213,15 +284,15 @@ fviz_eig(PLR_Away_pca, addlabels = TRUE, ncp=11)
 
 
 ```{r, echo=FALSE}
-p1 <- fviz_pca_biplot(PLR_Home_pca, axes = 1:2) 
-p2 <- fviz_pca_biplot(PLR_Home_pca, axes = 3:4) 
-p3 <- fviz_pca_biplot(PLR_Home_pca, axes = 5:6) 
-grid.arrange(p1, p2, p3, nrow = 2, ncol=2)
-
-p4 <- fviz_pca_biplot(PLR_Away_pca, axes = 1:2) 
-p5 <- fviz_pca_biplot(PLR_Away_pca, axes = 3:4) 
-p6 <- fviz_pca_biplot(PLR_Away_pca, axes = 5:6) 
-grid.arrange(p4, p5, p6, nrow = 2, ncol=2)
+# p1 <- fviz_pca_biplot(PLR_Home_pca, axes = 1:2) 
+# p2 <- fviz_pca_biplot(PLR_Home_pca, axes = 3:4) 
+# p3 <- fviz_pca_biplot(PLR_Home_pca, axes = 5:6) 
+# grid.arrange(p1, p2, p3, nrow = 2, ncol=2)
+# 
+# p4 <- fviz_pca_biplot(PLR_Away_pca, axes = 1:2) 
+# p5 <- fviz_pca_biplot(PLR_Away_pca, axes = 3:4) 
+# p6 <- fviz_pca_biplot(PLR_Away_pca, axes = 5:6) 
+# grid.arrange(p4, p5, p6, nrow = 2, ncol=2)
 ```
 
 ```{r, echo=FALSE}

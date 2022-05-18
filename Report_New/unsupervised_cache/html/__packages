@@ -31,3 +31,5 @@ e1071
 naivebayes
 rpart
 rpart.plot
+dendextend
+patchwork
