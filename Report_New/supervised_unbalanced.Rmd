@@ -1,0 +1,211 @@
+# Supervised Learning
+
+```{r, echo = FALSE, message = FALSE}
+source(here::here("scripts/setup.R"))
+```
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+#  Load the cleaned dataset from the data.Rmd
+setwd(here::here("Data_New/"))
+premier_league_results <- read_csv("premier_league_results_clean.csv")
+```
+
+## Method of Supervised Learning selected
+
+xxx
+
+## Supervised Learning Findings
+
+xxx
+
+## Neural Networks
+
+```{r}
+# Just removing the match data, full_time_home_goals and full_time_away_goals
+
+premier_league_results <- premier_league_results %>% 
+  select(-match_date, -full_time_home_goals, -full_time_away_goals)
+
+#### Take the data splitting from Amina ####
+premier_league_results$full_time_results = as.factor(premier_league_results$full_time_results)
+
+# Set the seeds to have the same samples over and over
+set.seed(234)
+
+train_indexes1 = createDataPartition(premier_league_results$full_time_results,p=0.8,list=FALSE)
+
+train_data1 = premier_league_results[train_indexes1,]  # this is the training set
+test_data1 = premier_league_results[-train_indexes1,]  # this is the test set
+
+### End of data splitting from Amina ####
+
+# Need to factorise some variables - namely the characters
+
+premier_league_results$home_team = as.factor(premier_league_results$home_team)
+premier_league_results$away_team = as.factor(premier_league_results$away_team)
+premier_league_results$half_time_results = as.factor(premier_league_results$half_time_results)
+```
+
+We see that our dataset is unbalanced as there are more away and home wins than draws. We need to rebalance our training dataset.
+
+```{r}
+# See the distribution of H, D and A
+table(train_data1$full_time_results)
+
+# Sub-sampling
+
+#n_draw <- min(table(train_data1$full_time_results))
+
+#train_data1_h <- filter(train_data1, full_time_results=="H") # Home
+#train_data1_a <- filter(train_data1, full_time_results=="A") # Away
+#train_data1_d <- filter(train_data1, full_time_results=="D") # Draw
+
+#index.a <- sample(size=n_draw, x=1:nrow(train_data1_a), replace=FALSE) ## sub-sample 97 instances from the "A"
+#index.h <- sample(size=n_draw, x=1:nrow(train_data1_h), replace=FALSE) ## sub-sample 97 instances from the "H"
+
+#train_data1_subs <- data.frame(rbind(train_data1_d, #train_data1_a[index.a,], train_data1_h[index.h,]))
+
+
+# Re-sampling
+
+# We know that home wins are bigger 205.
+
+n_home <- max(table(train_data1$full_time_results))
+
+train_data1_h <- filter(train_data1, full_time_results=="H") # Home
+train_data1_a <- filter(train_data1, full_time_results=="A") # Away
+train_data1_d <- filter(train_data1, full_time_results=="D") # Draw
+
+index.a <- sample(size=n_home, x=1:nrow(train_data1_a), replace=TRUE)
+index.d <- sample(size=n_home, x=1:nrow(train_data1_d), replace=TRUE)
+
+train_data1_res <- data.frame(rbind(train_data1_d[index.d,], train_data1_a[index.a,], train_data1_h))
+
+table(train_data1_res$full_time_results)
+
+```
+
+
+```{r}
+# Now that our sets are ready, let's apply the neural network with caret
+set.seed(1)
+
+fitControl <- trainControl(method = "cv", # cv stands for cross-validation 
+                           number = 10)
+
+nnetGrid <-  expand.grid(size = seq(from = 1, to = 10, by = 1),
+                        decay = seq(from = 0.1, to = 0.5, by = 0.1))
+
+nnetFit <- train(full_time_results ~ ., 
+                 data = train_data1,
+                 method = "nnet",
+                 metric = "Accuracy",
+                 tuneGrid = nnetGrid,
+                 trControl = fitControl)
+
+plot(nnetFit)
+```
+
+```{r}
+# We have an idea of the model, let's apply it. Regarding the graph above, choose decay of 0.4 and size of 9 nodes.
+
+nn <- nnet(full_time_results~., data=train_data1, size=9, decay=0.4)
+
+pred1 <- predict(nn, type="class")
+
+tab1 <- table(Obs=train_data1$full_time_results, Pred=pred1)
+tab1
+
+(acc1 <- sum(diag(tab1))/sum(tab1))
+
+# Accuracy of 75%, let's see with the test set
+
+pred2 <- predict(nn, test_data1, type="class")
+tab2 <- table(Obs=test_data1$full_time_results, Pred=pred2)
+tab2
+
+(acc2 <- sum(diag(tab2))/sum(tab2))
+
+# We drop by 65.7%, might be overfitting the data.
+
+# So is is because the data is unbalanced? Or do I misinterpret the graph above.
+```
+
+## Support Vector Machines
+
+The SVM models give a convenient prediction, we've an accuracy of 0.583 and a pretty low Kappa : 0.36
+```{r}
+# Tuning the hyperparameters
+trctrl <- trainControl(method = "cv", number=5)
+grid <- expand.grid(C = c(0.01, 0.1, 1, 10, 100, 1000))
+
+set.seed(143)
+svm_Linear_Grid <- train(full_time_results ~., data = train_data1, method = "svmLinear",
+                           trControl=trctrl,
+                           tuneGrid = grid)
+svm_Linear_Grid
+plot(svm_Linear_Grid)
+svm_Linear_Grid$bestTune
+```
+
+```{r}
+# Now that we know the tuning hyperparameters, let's apply it
+
+svm_tuned <- svm(full_time_results~., data = train_data1,
+                 kernel = "linear",
+                 cost = svm_Linear_Grid$bestTune$C)
+
+
+svm.tuned.pred <- predict(svm_tuned, newdata = test_data1)
+confusionMatrix(data=svm.tuned.pred, reference = test_data1$full_time_results)
+```
+
+Not so bad, let's see with the others models if we reach a better accuracy.
+
+### Naive Bayes
+
+```{r}
+naivebayesfit <- naive_bayes(full_time_results~., data = train_data1, usekernel=TRUE)
+
+naivebayespred <- predict(naivebayesfit, newdata = test_data1, type="class")
+
+confusionMatrix(data=as.factor(naivebayespred), reference = test_data1$full_time_results)
+```
+
+
+### K-NN
+The K-NN model give a convenient prediction, we've an accuracy of 0.491 and a low Kappa : 0.185
+
+```{r}
+#Tuning hyperparameter
+ctrl <- trainControl(method = "cv", number=10)
+knngrid <- train(full_time_results ~., data = train_data1, method = "knn", trControl=ctrl, tuneGrid = data.frame(k=c(1,2,5,10,50,100)))
+
+knngrid
+```
+
+```{r}
+knnfit <- knn3(full_time_results ~ ., data=train_data1, k=1)
+
+knnpred <- predict(knnfit, newdata = test_data1, type="class")
+
+confusionMatrix(data=as.factor(knnpred), reference = test_data1$full_time_results)
+```
+
+
+### Classification Tree
+The CART model give a convenient prediction, we've an accuracy of 0.509 and a low Kappa : 0.248
+
+
+```{r}
+classtreefit <- rpart(full_time_results ~ ., data=train_data1)
+
+rpart.plot(classtreefit)
+
+plotcp(classtreefit)
+classtreefit.pruned <- prune(classtreefit, cp=0.018)
+
+classtreepred <- predict(classtreefit, newdata=test_data1, type="class")
+
+confusionMatrix(data=as.factor(classtreepred), reference = test_data1$full_time_results)
+```
