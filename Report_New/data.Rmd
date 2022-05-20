@@ -76,38 +76,31 @@ premier_league_results %>% kable(caption = "**Table 4: Premier League results (s
                 fixed_thead = T) %>% kable_paper() %>%  scroll_box(width = "100%", height = "320px")
 ```
 
+For our analysis, we will also take out variables league_division, referee and all the variables from the betting websites. These either have the same values for all observations, don't necessarily contribute to the analysis or use past information on the variable we want to predict (match result) and therefore can bias our outcome.
 
 ```{r}
-####################################
-#        NEW PART FROM EDA
-####################################
-
-# Remove the first column - namely league_division
-
 premier_league_results <- premier_league_results %>% 
   select(-league_division)
-
-# Remove referee variable
 
 premier_league_results <- premier_league_results %>% 
   select(-referee)
 
-# Remove all the variables from betting website - because they contain information about what we want to predict
-
 premier_league_results <- premier_league_results[,1:21]
 ```
 
-Let's check if our dataset contains missing values.
+Finally, let's check if our final dataset contains missing values.
 
 ```{r}
 any(is.na(premier_league_results))
 ```
 
 Now that we have a clean dataset, let's check out our data closer with a summary.
+
 ```{r}
 dfSummary(premier_league_results, style = 'grid', plain.ascii = FALSE, tmp.img.dir = "/tmp")
 ```
 
+BLABLABLBAL
 
 ```{r}
 # Write CSV files
