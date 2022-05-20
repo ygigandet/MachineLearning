@@ -10,6 +10,10 @@ setwd(here::here("Data_New/"))
 premier_league_results <- read_csv("premier_league_results_clean.csv")
 ```
 
+Next step is fitting models to the clean data, based on our EDA outcomes. But before, to avoid overfitting, we need to split our data into a training and test set.
+
+***AMINA'S PART****
+
 ## Data Splitting
 
 ```{r}
@@ -35,7 +39,57 @@ train_data1 = premier_league_results[train_indexes1,]
 test_data1 = premier_league_results[-train_indexes1,]
 ```
 
-## Neural Networks
+## Model fitting
+
+### Naive Bayes
+
+```{r}
+naivebayesfit <- naive_bayes(full_time_results~., data = train_data1, usekernel=TRUE)
+
+naivebayespred <- predict(naivebayesfit, newdata = test_data1, type="class")
+
+confusionMatrix(data=as.factor(naivebayespred), reference = test_data1$full_time_results)
+```
+
+
+### K-NN
+The K-NN model give a convenient prediction, we've an accuracy of 0.491 and a low Kappa : 0.185
+
+```{r}
+#Tuning hyperparameter
+ctrl <- trainControl(method = "cv", number=10)
+knngrid <- train(full_time_results ~., data = train_data1, method = "knn", trControl=ctrl, tuneGrid = data.frame(k=c(1,2,5,10,50,100)))
+
+knngrid
+```
+
+```{r}
+knnfit <- knn3(full_time_results ~ ., data=train_data1, k=1)
+
+knnpred <- predict(knnfit, newdata = test_data1, type="class")
+
+confusionMatrix(data=as.factor(knnpred), reference = test_data1$full_time_results)
+```
+
+
+### Classification Tree
+The CART model give a convenient prediction, we've an accuracy of 0.509 and a low Kappa : 0.248
+
+
+```{r}
+classtreefit <- rpart(full_time_results ~ ., data=train_data1)
+
+rpart.plot(classtreefit)
+
+plotcp(classtreefit)
+classtreefit.pruned <- prune(classtreefit, cp=0.018)
+
+classtreepred <- predict(classtreefit, newdata=test_data1, type="class")
+
+confusionMatrix(data=as.factor(classtreepred), reference = test_data1$full_time_results)
+```
+
+### Neural Networks
 
 ```{r}
 # Now that our sets are ready, let's apply the neural network with caret
@@ -113,50 +167,6 @@ confusionMatrix(data=svm.tuned.pred, reference = test_data1$full_time_results)
 
 Not so bad, let's see with the others models if we reach a better accuracy.
 
-### Naive Bayes
-
-```{r}
-naivebayesfit <- naive_bayes(full_time_results~., data = train_data1, usekernel=TRUE)
-
-naivebayespred <- predict(naivebayesfit, newdata = test_data1, type="class")
-
-confusionMatrix(data=as.factor(naivebayespred), reference = test_data1$full_time_results)
-```
+## Findings
 
 
-### K-NN
-The K-NN model give a convenient prediction, we've an accuracy of 0.491 and a low Kappa : 0.185
-
-```{r}
-#Tuning hyperparameter
-ctrl <- trainControl(method = "cv", number=10)
-knngrid <- train(full_time_results ~., data = train_data1, method = "knn", trControl=ctrl, tuneGrid = data.frame(k=c(1,2,5,10,50,100)))
-
-knngrid
-```
-
-```{r}
-knnfit <- knn3(full_time_results ~ ., data=train_data1, k=1)
-
-knnpred <- predict(knnfit, newdata = test_data1, type="class")
-
-confusionMatrix(data=as.factor(knnpred), reference = test_data1$full_time_results)
-```
-
-
-### Classification Tree
-The CART model give a convenient prediction, we've an accuracy of 0.509 and a low Kappa : 0.248
-
-
-```{r}
-classtreefit <- rpart(full_time_results ~ ., data=train_data1)
-
-rpart.plot(classtreefit)
-
-plotcp(classtreefit)
-classtreefit.pruned <- prune(classtreefit, cp=0.018)
-
-classtreepred <- predict(classtreefit, newdata=test_data1, type="class")
-
-confusionMatrix(data=as.factor(classtreepred), reference = test_data1$full_time_results)
-```
