@@ -41,6 +41,8 @@ test_data1 = premier_league_results[-train_indexes1,]
 
 ## Model fitting
 
+Since we're trying to predict whether the result of a football match is either a win for the home team, a win for the away team or a draw, our models should be adapted to the case of a multiclass classification task. In this next part, we will fit multiple models and choose at the end the best 2 models, according to their score of accuracy and Cohen's Kappa metrics. This means that we are looking for models with high accuracy, meaning that the predicted variables match the observed variables as much as possible, and a high Cohen's Kappa, which is an indicator whether the model in hand is a better/different one than a random one.
+
 ### Naive Bayes
 
 ```{r}
@@ -51,30 +53,38 @@ naivebayespred <- predict(naivebayesfit, newdata = test_data1, type="class")
 confusionMatrix(data=as.factor(naivebayespred), reference = test_data1$full_time_results)
 ```
 
+For our first model, the accuracy is at 0.667 and the Kappa at 0.422. 
 
 ### K-NN
-The K-NN model give a convenient prediction, we've an accuracy of 0.491 and a low Kappa : 0.185
 
 ```{r}
 #Tuning hyperparameter
 ctrl <- trainControl(method = "cv", number=10)
-knngrid <- train(full_time_results ~., data = train_data1, method = "knn", trControl=ctrl, tuneGrid = data.frame(k=c(1,2,5,10,50,100)))
+knngrid <- train(full_time_results ~., data = train_data1, method = "knn", trControl=ctrl, tuneGrid = data.frame(k=c(1,2,5,10,50,100,125,150)))
 
 knngrid
 ```
 
 ```{r}
-knnfit <- knn3(full_time_results ~ ., data=train_data1, k=1)
+knnfit <- knn3(full_time_results ~ ., data=train_data1, k=125)
 
 knnpred <- predict(knnfit, newdata = test_data1, type="class")
 
 confusionMatrix(data=as.factor(knnpred), reference = test_data1$full_time_results)
 ```
 
+After hypertuning the k parameter, AKA the number of closest neighbors, we fitted model with the optimal parameter k=125, gives a convenient prediction. We have an accuracy of 0.574 and a low Kappa : 0.227. This result is worse than the Naive Bayes model.
+
 
 ### Classification Tree
-The CART model give a convenient prediction, we've an accuracy of 0.509 and a low Kappa : 0.248
 
+```{r}
+#Tuning hyperparameter
+ctrl <- trainControl(method = "cv", number=10)
+treegrid <- train(full_time_results ~., data = train_data1, method = "rpart", trControl=ctrl, tuneGrid = data.frame(cp=c(0.005,0.01,0.015,0.02,0.025,0.03,0.35)))
+
+treegrid
+```
 
 ```{r}
 classtreefit <- rpart(full_time_results ~ ., data=train_data1)
@@ -82,12 +92,14 @@ classtreefit <- rpart(full_time_results ~ ., data=train_data1)
 rpart.plot(classtreefit)
 
 plotcp(classtreefit)
-classtreefit.pruned <- prune(classtreefit, cp=0.018)
+classtreefit.pruned <- prune(classtreefit, cp=0.015)
 
-classtreepred <- predict(classtreefit, newdata=test_data1, type="class")
+classtreepred <- predict(classtreefit.pruned, newdata=test_data1, type="class")
 
 confusionMatrix(data=as.factor(classtreepred), reference = test_data1$full_time_results)
 ```
+
+After finding the optimal cp= 0.015 with hypertuning for pruning, the CART model gives a convenient prediction. We've got an accuracy of 0.639 and a moderate Kappa : 0.413. The performance of this model is actually closer to the Naive Bayes !
 
 ### Neural Networks
 
