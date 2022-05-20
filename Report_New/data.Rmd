@@ -67,8 +67,6 @@ premier_league_results <- subset(premier_league_results, HomeTeam!=teams_to_remo
 Now we rename the columns to make them more easily understandable.
 
 ```{r, echo=FALSE}
-# Show the dataset
-
 colnames(premier_league_results) <- c("league_division", "match_date", "home_team", "away_team", "full_time_home_goals", "full_time_away_goals", "full_time_results", "half_time_home_goals", "half_time_away_goals", "half_time_results", "referee", "home_shots", "away_shots", "home_shots_ontarget", "away_shots_ontarget", "home_fouls", "away_fouls", "home_corners", "away_corners", "home_yellow_cards", "away_yellow_cards", "home_red_cards", "away_red_cards", "bet365_home_win_odds", "bet365_draw_odds", "bet365_away_win_odds", "bet&win_home_win_odds", "bet&win_draw_odds", "bet&win_away_win_odds", "interwetten_home_win_odds", "interwetten_draw_odds", "interwetten_away_win_odds", "pinnacle_home_win_odds", "pinnacle_draw_odds", "pinnacle_away_win_odds", "williamhill_home_win_odds", "williamhill_draw_odds", "williamhill_away_win_odds", "vcbet_home_win_odds", "vcbet_draw_odds", "vcbet_away_win_odds", "no_betbrain_bookmarkers_odds", "betbrain_max_home_win_odds", "betbrain_avg_home_win_odds", "betbrain_max_draw_odds", "betbrain_avg_draw_win_odds", "betbrain_max_away_win_odds", "betbrain_avg_away_win_odds", "no_betbrain_bookmarkers_goals", "betbrain_max_over_2.5goals", "betbrain_avg_over_2.5goals", "betbrain_max_under_2.5goals", "betbrain_avg_under_2.5goals", "no_betbrain_bookmarkers_asianhandicap", "betbrain_size_handicap", "betbrain_max_home_asianhandicap_odds", "betbrain_avg_home_asianhandicap_odds", "betbrain_max_away_asianhandicap_odds", "betbrain_avg_away_asianhandicap_odds")
 
 premier_league_results %>% kable(caption = "**Table 4: Premier League results (seasons 2016-17, 2017-18 and 2018-2019)**") %>%
@@ -100,7 +98,7 @@ Now that we have a clean dataset, let's check out our data closer with a summary
 dfSummary(premier_league_results, style = 'grid', plain.ascii = FALSE, tmp.img.dir = "/tmp")
 ```
 
-BLABLABLBAL
+Everything seems to be ok !
 
 ```{r}
 # Write CSV files
