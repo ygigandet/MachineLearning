@@ -103,13 +103,15 @@ nnetFit <- train(full_time_results ~ .,
                  tuneGrid = nnetGrid,
                  trControl = fitControl)
 
-plot(nnetFit)
+p1 <- plot(nnetFit)
+
+p1
 ```
 
 ```{r}
 # We have an idea of the model, let's apply it. Regarding the graph above, choose decay of 0.4 and size of 9 nodes.
 
-nn <- nnet(full_time_results~., data=train_data1, size=9, decay=0.4)
+nn <- nnet(full_time_results~., data=train_data1, size=1, decay=0.4)
 
 pred1 <- predict(nn, type="class")
 

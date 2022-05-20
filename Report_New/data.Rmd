@@ -19,18 +19,18 @@ For our project, we will be providing a prediction of the Premier League ranking
 setwd(here::here(("Data_New/")))
 
 premier_league_results_1718 <- readr::read_csv("season-1718_csv.csv")
-premier_league_results_1819 <- readr::read_csv("season-1819_csv.csv")
+premier_league_results_1819 <- readr::read_csv("season-1819.csv")
 premier_league_results_1617 <- readr::read_csv("season-1617.csv")
 
 # Code the match_date
 premier_league_results_1718 <- premier_league_results_1718 %>% 
-  mutate(Date = as.Date(Date, format="%d/%m/%y"))
+  mutate(Date = as_date(Date, format="%d/%m/%y"))
 
 premier_league_results_1819 <- premier_league_results_1819 %>% 
-  mutate(Date = as.Date(Date, format="%d/%m/%Y"))
+  mutate(Date = as_date(Date, format="%d/%m/%Y"))
 
 premier_league_results_1617 <- premier_league_results_1617 %>% 
-  mutate(Date = as.Date(Date, format="%d/%m/%y"))
+  mutate(Date = as_date(Date, format="%d/%m/%y"))
 
 premier_league_results_1718 <- subset(premier_league_results_1718, select = -c(LBH,LBD,LBA))
 premier_league_results_1617 <- subset(premier_league_results_1617, select = -c(LBH,LBD,LBA))
@@ -61,7 +61,10 @@ In the remaining teams, Brighton, Huddersfield, Newcastle were not playing in th
 ```{r}
 teams_to_remove = c('Swansea', 'Stoke', 'West Brom', 'Fulham', 'Wolves', 'Cardiff', 'Brighton', 'Huddersfield', 'Newcastle', 'Hull', 'Middlesbrough', 'Sunderland')
 
-premier_league_results <- subset(premier_league_results, HomeTeam!=teams_to_remove & AwayTeam!=teams_to_remove)
+premier_league_results <- subset(premier_league_results, HomeTeam!='Swansea' & HomeTeam!='Stoke' & HomeTeam!='West Brom' & HomeTeam!='Fulham' & HomeTeam!='Wolves' & HomeTeam!='Cardiff' & HomeTeam!='Brighton' & HomeTeam!='Huddersfield' & HomeTeam!='Newcastle' & HomeTeam!='Hull' & HomeTeam!='Middlesbrough' & HomeTeam!='Sunderland')
+      
+premier_league_results <- subset(premier_league_results, AwayTeam!='Swansea' & AwayTeam!='Stoke' & AwayTeam!='West Brom' & AwayTeam!='Fulham' & AwayTeam!='Wolves' & AwayTeam!='Cardiff' & AwayTeam!='Brighton' & AwayTeam!='Huddersfield' & AwayTeam!='Newcastle' & AwayTeam!='Hull' & AwayTeam!='Middlesbrough' & AwayTeam!='Sunderland')                           
+
 ```
 
 Now we rename the columns to make them more easily understandable.
