@@ -9,6 +9,32 @@ source(here::here("scripts/setup.R"))
 setwd(here::here("Data_New/"))
 premier_league_results <- read_csv("premier_league_results_clean.csv")
 ```
+# Data splitting
+
+```{r, echo = FALSE, message = FALSE}
+source(here::here("scripts/setup.R"))
+```
+
+## Cross validation
+To achieve our aim we have to proceed on a data splitting. Without proper data, Machine learning models are hard to implement and can lead to completely different conclusions and interpretation. 
+
+We performed a random train and test split of our data by using cross-validation in order to use the following models: CART, KNN, Naive Bayes, SVM, Neural Network.
+
+```{r, echo = FALSE, message = FALSE}
+# Data splitting with full_time_results comme training set
+premier_league_results$full_time_results = as.factor(premier_league_results$full_time_results) #to transform our response variable to a factor in order to take into consideration the levels
+
+train_indexes1 = createDataPartition(premier_league_results$full_time_results,p=0.8,list=FALSE) # p percentage of the training set, in this case 80%
+
+train_data1 = premier_league_results[train_indexes1,]  #this is the training set
+
+test_data1 = premier_league_results[-train_indexes1,]  #the test set
+
+reasampling_method1 = trainControl(method  = "cv",number  = 10) 
+#cv means cross-validation and the number 10 means 10 folds
+#reasampling _method is control to use when training a model
+
+```
 
 ## Method of Supervised Learning selected
 
