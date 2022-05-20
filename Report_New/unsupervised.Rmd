@@ -27,13 +27,13 @@ PLR_Away <- premier_league_results %>% select (away_team, full_time_away_goals, 
 
 head(PLR_Home) %>% kable(caption = "**Premiere League Results for Home Teams**") %>%
   kable_styling(bootstrap_options = c("striped","hover","condensed"),
-                fixed_thead = T) %>% kable_paper() %>%  scroll_box(width = "100%", height = "320px")
+                fixed_thead = T) %>% kable_paper() %>%  scroll_box(width = "100%", height = "300px")
 ```
 <br>
 ```{r, echo=FALSE}
 head(PLR_Away) %>% kable(caption = "**Premiere League Results for Away Teams**") %>%
   kable_styling(bootstrap_options = c("striped","hover","condensed"),
-                fixed_thead = T) %>% kable_paper() %>%  scroll_box(width = "100%", height = "270px")
+                fixed_thead = T) %>% kable_paper() %>%  scroll_box(width = "100%", height = "300px")
 ```
 
 <br>
@@ -71,7 +71,7 @@ After calculating the median, our dataset looks like this:
 ```{r, echo=FALSE}
 head(PLR_Home)%>% kable(caption = "**Median Premiere League Results for Home Teams**") %>%
   kable_styling(bootstrap_options = c("striped","hover","condensed"),
-                fixed_thead = T) %>% kable_paper() %>%  scroll_box(width = "100%", height = "270px")
+                fixed_thead = T) %>% kable_paper() %>%  scroll_box(width = "100%", height = "300px")
 ```
 
 <br>
@@ -79,7 +79,7 @@ head(PLR_Home)%>% kable(caption = "**Median Premiere League Results for Home Tea
 ```{r, echo=FALSE}
 head(PLR_Away)%>% kable(caption = "**Median Premiere League Results for Away Teams**") %>%
   kable_styling(bootstrap_options = c("striped","hover","condensed"),
-                fixed_thead = T) %>% kable_paper() %>%  scroll_box(width = "100%", height = "270px")
+                fixed_thead = T) %>% kable_paper() %>%  scroll_box(width = "100%", height = "300px")
 ```
 
 <br>
@@ -94,8 +94,8 @@ Our dataset contains various variables, each of which has its own scale. As we c
 
 # Scale features for home and away
 
-PLR_Home_Scale <- scale(PLR_Home[,-1]) %>% as_tibble()
-PLR_Away_Scale <- scale(PLR_Away[,-1]) %>% as_tibble()
+PLR_Home_Scale <- data.frame(scale(PLR_Home[,-1], center=FALSE)) # %>% as_data_frame()
+PLR_Away_Scale <- data.frame(scale(PLR_Away[,-1], center=FALSE)) # %>% as_data_frame()
 
 
 PLR_Home_Scale <- PLR_Home_Scale %>% 
@@ -114,7 +114,7 @@ The following two tables show the scaled datasets for the first 6 teams.
 ```{r, echo=FALSE}
 head(PLR_Home_Scale)%>% kable(caption = "**Scaled Premiere League Results for Home Teams**") %>%
   kable_styling(bootstrap_options = c("striped","hover","condensed"),
-                fixed_thead = T) %>% kable_paper() %>%  scroll_box(width = "100%", height = "270px")
+                fixed_thead = T) %>% kable_paper() %>%  scroll_box(width = "100%", height = "300px")
 ```
 
 <br>
@@ -122,7 +122,163 @@ head(PLR_Home_Scale)%>% kable(caption = "**Scaled Premiere League Results for Ho
 ```{r, echo=FALSE}
 head(PLR_Away_Scale)%>% kable(caption = "**Scaled Premiere League Results for Away Teams**") %>%
   kable_styling(bootstrap_options = c("striped","hover","condensed"),
-                fixed_thead = T) %>% kable_paper() %>%  scroll_box(width = "100%", height = "270px")
+                fixed_thead = T) %>% kable_paper() %>%  scroll_box(width = "100%", height = "300px")
+```
+<br>
+<br>
+
+## Principal Component Analysis (PCA)
+
+### _Results of Variables_
+
+For our unsupervised learning, we decided to work on PCA in order to see the clusters formed and study the important components of each of the Home and Away teams. 
+
+<br>
+
+The below shows the results of the PCA for the teams when Home 
+
+```{r, echo=FALSE}
+#PLR_Home_numeric <- PLR_Home_Scale %>% select(where(is.numeric))
+#PLR_Away_numeric <- PLR_Away_Scale %>% select(where(is.numeric)) 
+
+PLR_Home_pca <- PCA(PLR_Home_Scale [,-1], ncp = 11, graph = FALSE)
+PLR_Away_pca <- PCA(PLR_Away_Scale [,-1], ncp = 11, graph = FALSE)
+
+
+PLR_Home_pca
+
+#PCAmix(X.quanti = NULL, X.quali = NULL, ndim = 5, rename.level = FALSE, weight.col.quanti = NULL, weight.col.quali = NULL, graph = TRUE)
+```
+
+The below shows the results of the PCA for the teams when Away
+```{r, echo=FALSE}
+PLR_Away_pca
+```
+
+
+```{r, echo=FALSE}
+rownames(PLR_Home_Scale)[1] <- "Arsenal"
+rownames(PLR_Home_Scale)[2] <- "Bournemouth"
+rownames(PLR_Home_Scale)[3] <- "Burnley"
+rownames(PLR_Home_Scale)[4] <- "Chelsea"
+rownames(PLR_Home_Scale)[5] <- "Crystal Palace"
+rownames(PLR_Home_Scale)[6] <- "Everton"
+rownames(PLR_Home_Scale)[7] <- "Leicester"
+rownames(PLR_Home_Scale)[8] <- "Liverpool"
+rownames(PLR_Home_Scale)[9] <- "Man City"
+rownames(PLR_Home_Scale)[10] <- "Man United"
+rownames(PLR_Home_Scale)[11] <- "Southampton"
+rownames(PLR_Home_Scale)[12] <- "Tottenham"
+rownames(PLR_Home_Scale)[13] <- "Watford"
+rownames(PLR_Home_Scale)[14] <- "West Ham"
+
+rownames(PLR_Away_Scale)[1] <- "Arsenal"
+rownames(PLR_Away_Scale)[2] <- "Bournemouth"
+rownames(PLR_Away_Scale)[3] <- "Burnley"
+rownames(PLR_Away_Scale)[4] <- "Chelsea"
+rownames(PLR_Away_Scale)[5] <- "Crystal Palace"
+rownames(PLR_Away_Scale)[6] <- "Everton"
+rownames(PLR_Away_Scale)[7] <- "Leicester"
+rownames(PLR_Away_Scale)[8] <- "Liverpool"
+rownames(PLR_Away_Scale)[9] <- "Man City"
+rownames(PLR_Away_Scale)[10] <- "Man United"
+rownames(PLR_Away_Scale)[11] <- "Southampton"
+rownames(PLR_Away_Scale)[12] <- "Tottenham"
+rownames(PLR_Away_Scale)[13] <- "Watford"
+rownames(PLR_Away_Scale)[14] <- "West Ham"
+```
+
+<br>
+<br>
+
+### _Graphing of Variables_
+
+The below two graphs show the same eight (8) variables and for all of the teams when they are both Home and Away. Both graphs make sense since they show that all variables related to "goals" and "shots" are correlated to Dimension 2 and variables related to "cards" are correlated with Dimension 1. Therefore, we can deduce that Dimension 1 relates to Goals and Dimension 2 related to Cards.                      
+
+```{r, echo=FALSE}
+
+# fviz_pca_var(PLR_Home_pca, repel = TRUE, title = "Variable PCA for Home Teams")
+# fviz_pca_var(PLR_Away_pca, repel = TRUE, title = "Variable PCA for Away Teams")
+
+grid.arrange(fviz_pca_var(PLR_Home_pca, repel = TRUE, title = "Home Teams", col.var = "Blue"), fviz_pca_var(PLR_Away_pca, repel = TRUE, title = "Away Teams", col.var = "#2EDFC7"), ncol=2)
+```
+### _Contribution of Variables_
+
+We can see below the graphs showing contributions of each variable to Dimension 1 in both Home and Away states. We can conclude that whether the teams are playing Home or Away, there isn't a huge change in the contribution of the variables. 
+
+```{r, echo=FALSE}
+# Extract the contributions of each features in the dimension.
+fviz_contrib(PLR_Home_pca, choice = "var", axes = 1) + fviz_contrib(PLR_Away_pca, choice = "var", axes = 1, fill = "#2EDFC7")
+```
+
+```{r, echo=FALSE}
+# fviz_pca_ind(PLR_Home_pca) ## only the individuals
+# fviz_pca_ind(PLR_Away_pca)
+
+# fviz_pca_biplot(PLR_Home_pca, repel = TRUE, col.var = "#2E9FDF", col.ind = "#696969", label = "all")
+```
+
+
+```{r, echo=FALSE}
+# fviz_pca_biplot(PLR_Away_pca, repel = TRUE, col.var = "#2EDFC7", col.ind = "#696969", label = "all")
+```
+### _Dimension Analysis_
+
+The summaries and scree plots below show details of the percentage of variance for all the Dimensions. As shown below, the first 3 dimensions explain more tha 80% of the variance. 
+
+<br>
+<br>
+Summary of Variables - Home: 
+```{r, echo=FALSE}
+Summary_Home <- summary(PLR_Home_pca)
+Summary_Home
+```
+<br>
+<br>
+Summary of Variables - Away: 
+```{r, echo=FALSE}
+Summary_Away <- summary(PLR_Away_pca)
+
+Summary_Away
+```
+
+<br>
+<br>
+
+```{r, echo=FALSE}
+ScreeHome <- fviz_eig(PLR_Home_pca, addlabels = TRUE, ncp=11, title ="Home - Scree plot" )
+ScreeAway <- fviz_eig(PLR_Away_pca, addlabels = TRUE, ncp=11, title ="Away - Scree plot" )
+
+ScreeHome + ScreeAway
+
+```
+
+<br>
+<br>
+### _Biplots_
+
+Creating the biplots below, we can see each individual and it's relationship with other individuals and variables. The biplots also show clusters that have been created. Based on the screeplots above, to decrease the "within" variance and increase the "between" variance and keeping in mind the complexity of the model, we have created three clusters. 
+
+```{r, echo=FALSE}
+PLR_Home_hc2 <- hclust(dist(PLR_Home, method = "manhattan"), method = "complete")
+PLR_Away_hc2 <- hclust(dist(PLR_Away, method = "manhattan"), method = "complete")
+
+PLR_Home_clust <- cutree(PLR_Home_hc2, k = 3)
+PLR_Away_clust <- cutree(PLR_Away_hc2, k = 3)
+
+fviz_pca_biplot(PLR_Home_pca,
+             col.ind = factor(PLR_Home_clust),  
+             #addEllipses = TRUE, 
+             #ellipse.type = "confidence",
+             legend.title = "Clusters", 
+             repel = TRUE)
+
+fviz_pca_biplot(PLR_Away_pca,
+             col.ind = factor(PLR_Away_clust),  
+             #addEllipses = TRUE, 
+             #ellipse.type = "confidence",
+             legend.title = "Clusters", 
+             repel = TRUE)
 ```
 <br>
 <br>
@@ -227,86 +383,6 @@ plot(PLR_Away_hc, hang=-1)
 <br>
 <br>
 <br>
-
-## Principal Component Analysis (PCA)
-
-<br>
-<br>
-
-For our unsupervised learning, we decided to work on PCA in order to see the clusters formed and study the important components of each of the Home and Away teams. 
-
-<br>
-
-The below shows the results of the PCA for the teams when Home 
-```{r, echo=FALSE}
-PLR_Home_numeric <- PLR_Home_Scale %>% select(where(is.numeric)) 
-PLR_Away_numeric <- PLR_Away_Scale %>% select(where(is.numeric)) 
-
-PLR_Home_pca <- PCA(PLR_Home_numeric, ncp = 9, graph = FALSE)
-PLR_Away_pca <- PCA(PLR_Away_numeric, ncp = 9, graph = FALSE)
-
-PLR_Home_pca
-```
-
-The below shows the results of the PCA for the teams when Away
-```{r, echo=FALSE}
-PLR_Away_pca
-```
-
-```{r, echo=FALSE}
-
-# fviz_pca_var(PLR_Home_pca, repel = TRUE, title = "Variable PCA for Home Teams")
-# fviz_pca_var(PLR_Away_pca, repel = TRUE, title = "Variable PCA for Away Teams")
-
-grid.arrange(fviz_pca_var(PLR_Home_pca, repel = TRUE, title = "Home Teams"), fviz_pca_var(PLR_Away_pca, repel = TRUE, title = "Away Teams"), ncol=2)
-```
-
-
-```{r, echo=FALSE}
-# Extract the contributions of each features in the dimension.
-fviz_contrib(PLR_Home_pca, choice = "var", axes = 1) #aes determines which dimension
-fviz_contrib(PLR_Away_pca, choice = "var", axes = 1)
-```
-
-```{r, echo=FALSE}
-# fviz_pca_ind(PLR_Home_pca) ## only the individuals
-# fviz_pca_ind(PLR_Away_pca)
-
-fviz_pca_biplot(PLR_Home_pca, repel = TRUE, col.var = "#2E9FDF", col.ind = "#696969", label = "all")
-fviz_pca_biplot(PLR_Away_pca, repel = TRUE, col.var = "#2E9FDF", col.ind = "#696969", label = "all")
-```
-
-
-```{r, echo=FALSE}
-fviz_eig(PLR_Home_pca, addlabels = TRUE, ncp=11)
-fviz_eig(PLR_Away_pca, addlabels = TRUE, ncp=11)
-```
-
-
-```{r, echo=FALSE}
-# p1 <- fviz_pca_biplot(PLR_Home_pca, axes = 1:2) 
-# p2 <- fviz_pca_biplot(PLR_Home_pca, axes = 3:4) 
-# p3 <- fviz_pca_biplot(PLR_Home_pca, axes = 5:6) 
-# grid.arrange(p1, p2, p3, nrow = 2, ncol=2)
-# 
-# p4 <- fviz_pca_biplot(PLR_Away_pca, axes = 1:2) 
-# p5 <- fviz_pca_biplot(PLR_Away_pca, axes = 3:4) 
-# p6 <- fviz_pca_biplot(PLR_Away_pca, axes = 5:6) 
-# grid.arrange(p4, p5, p6, nrow = 2, ncol=2)
-```
-
-```{r, echo=FALSE}
-PLR_Home_hc2 <- hclust(dist(PLR_Home, method = "manhattan"))
-PLR_Away_hc2 <- hclust(dist(PLR_Away, method = "manhattan"))
-
-PLR_Home_clust <- cutree(PLR_Home_hc2, k = 4)
-PLR_Away_clust <- cutree(PLR_Away_hc2, k = 4)
-
-fviz_pca_biplot(PLR_Home_pca,
-             col.ind = factor(PLR_Home_clust))
-fviz_pca_biplot(PLR_Away_pca,
-             col.ind = factor(PLR_Away_clust))
-```
 
 ## Unsupervised Learning Findings
 
