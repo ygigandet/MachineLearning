@@ -10,15 +10,11 @@ setwd(here::here("Data_New/"))
 premier_league_results <- read_csv("premier_league_results_clean.csv")
 ```
 
-## Method of Supervised Learning selected
+Next step is fitting models to the clean data, based on our EDA outcomes. But before, to avoid overfitting, we need to split our data into a training and test set.
 
-xxx
+***AMINA'S PART****
 
-## Supervised Learning Findings
-
-xxx
-
-## Neural Networks
+## Data Splitting
 
 ```{r}
 # Just removing the match data, full_time_home_goals and full_time_away_goals
@@ -26,65 +22,74 @@ xxx
 premier_league_results <- premier_league_results %>% 
   select(-match_date, -full_time_home_goals, -full_time_away_goals)
 
-#### Take the data splitting from Amina ####
+# Need to factorize some variables - namely the characters
 premier_league_results$full_time_results = as.factor(premier_league_results$full_time_results)
+premier_league_results$half_time_results = as.factor(premier_league_results$half_time_results)
+premier_league_results$home_team = as.factor(premier_league_results$home_team)
+premier_league_results$away_team = as.factor(premier_league_results$away_team)
 
 # Set the seeds to have the same samples over and over
+
 set.seed(234)
 
 train_indexes1 = createDataPartition(premier_league_results$full_time_results,p=0.8,list=FALSE)
 
-train_data1 = premier_league_results[train_indexes1,]  # this is the training set
-test_data1 = premier_league_results[-train_indexes1,]  # this is the test set
+train_data1 = premier_league_results[train_indexes1,]
 
-### End of data splitting from Amina ####
-
-# Need to factorise some variables - namely the characters
-
-premier_league_results$home_team = as.factor(premier_league_results$home_team)
-premier_league_results$away_team = as.factor(premier_league_results$away_team)
-premier_league_results$half_time_results = as.factor(premier_league_results$half_time_results)
+test_data1 = premier_league_results[-train_indexes1,]
 ```
 
-We see that our dataset is unbalanced as there are more away and home wins than draws. We need to rebalance our training dataset.
+## Model fitting
+
+### Naive Bayes
 
 ```{r}
-# See the distribution of H, D and A
-table(train_data1$full_time_results)
+naivebayesfit <- naive_bayes(full_time_results~., data = train_data1, usekernel=TRUE)
 
-# Sub-sampling
+naivebayespred <- predict(naivebayesfit, newdata = test_data1, type="class")
 
-#n_draw <- min(table(train_data1$full_time_results))
-
-#train_data1_h <- filter(train_data1, full_time_results=="H") # Home
-#train_data1_a <- filter(train_data1, full_time_results=="A") # Away
-#train_data1_d <- filter(train_data1, full_time_results=="D") # Draw
-
-#index.a <- sample(size=n_draw, x=1:nrow(train_data1_a), replace=FALSE) ## sub-sample 97 instances from the "A"
-#index.h <- sample(size=n_draw, x=1:nrow(train_data1_h), replace=FALSE) ## sub-sample 97 instances from the "H"
-
-#train_data1_subs <- data.frame(rbind(train_data1_d, #train_data1_a[index.a,], train_data1_h[index.h,]))
-
-
-# Re-sampling
-
-# We know that home wins are bigger 205.
-
-n_home <- max(table(train_data1$full_time_results))
-
-train_data1_h <- filter(train_data1, full_time_results=="H") # Home
-train_data1_a <- filter(train_data1, full_time_results=="A") # Away
-train_data1_d <- filter(train_data1, full_time_results=="D") # Draw
-
-index.a <- sample(size=n_home, x=1:nrow(train_data1_a), replace=TRUE)
-index.d <- sample(size=n_home, x=1:nrow(train_data1_d), replace=TRUE)
-
-train_data1_res <- data.frame(rbind(train_data1_d[index.d,], train_data1_a[index.a,], train_data1_h))
-
-table(train_data1_res$full_time_results)
-
+confusionMatrix(data=as.factor(naivebayespred), reference = test_data1$full_time_results)
 ```
 
+
+### K-NN
+The K-NN model give a convenient prediction, we've an accuracy of 0.491 and a low Kappa : 0.185
+
+```{r}
+#Tuning hyperparameter
+ctrl <- trainControl(method = "cv", number=10)
+knngrid <- train(full_time_results ~., data = train_data1, method = "knn", trControl=ctrl, tuneGrid = data.frame(k=c(1,2,5,10,50,100)))
+
+knngrid
+```
+
+```{r}
+knnfit <- knn3(full_time_results ~ ., data=train_data1, k=1)
+
+knnpred <- predict(knnfit, newdata = test_data1, type="class")
+
+confusionMatrix(data=as.factor(knnpred), reference = test_data1$full_time_results)
+```
+
+
+### Classification Tree
+The CART model give a convenient prediction, we've an accuracy of 0.509 and a low Kappa : 0.248
+
+
+```{r}
+classtreefit <- rpart(full_time_results ~ ., data=train_data1)
+
+rpart.plot(classtreefit)
+
+plotcp(classtreefit)
+classtreefit.pruned <- prune(classtreefit, cp=0.018)
+
+classtreepred <- predict(classtreefit, newdata=test_data1, type="class")
+
+confusionMatrix(data=as.factor(classtreepred), reference = test_data1$full_time_results)
+```
+
+### Neural Networks
 
 ```{r}
 # Now that our sets are ready, let's apply the neural network with caret
@@ -164,50 +169,6 @@ confusionMatrix(data=svm.tuned.pred, reference = test_data1$full_time_results)
 
 Not so bad, let's see with the others models if we reach a better accuracy.
 
-### Naive Bayes
-
-```{r}
-naivebayesfit <- naive_bayes(full_time_results~., data = train_data1, usekernel=TRUE)
-
-naivebayespred <- predict(naivebayesfit, newdata = test_data1, type="class")
-
-confusionMatrix(data=as.factor(naivebayespred), reference = test_data1$full_time_results)
-```
+## Findings
 
 
-### K-NN
-The K-NN model give a convenient prediction, we've an accuracy of 0.491 and a low Kappa : 0.185
-
-```{r}
-#Tuning hyperparameter
-ctrl <- trainControl(method = "cv", number=10)
-knngrid <- train(full_time_results ~., data = train_data1, method = "knn", trControl=ctrl, tuneGrid = data.frame(k=c(1,2,5,10,50,100)))
-
-knngrid
-```
-
-```{r}
-knnfit <- knn3(full_time_results ~ ., data=train_data1, k=1)
-
-knnpred <- predict(knnfit, newdata = test_data1, type="class")
-
-confusionMatrix(data=as.factor(knnpred), reference = test_data1$full_time_results)
-```
-
-
-### Classification Tree
-The CART model give a convenient prediction, we've an accuracy of 0.509 and a low Kappa : 0.248
-
-
-```{r}
-classtreefit <- rpart(full_time_results ~ ., data=train_data1)
-
-rpart.plot(classtreefit)
-
-plotcp(classtreefit)
-classtreefit.pruned <- prune(classtreefit, cp=0.018)
-
-classtreepred <- predict(classtreefit, newdata=test_data1, type="class")
-
-confusionMatrix(data=as.factor(classtreepred), reference = test_data1$full_time_results)
-```

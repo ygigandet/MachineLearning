@@ -4,7 +4,7 @@
 source(here::here("scripts/setup.R"))
 ```
 <div>
-For our project, we will be providing a prediction of the Premier League rankings. We will be using datasets from xxx, called xxx containing the results of Premier League games for seasons 2017-18 and 2018-19. Below are the variables in the datasets and their details:
+For our project, we will be providing a prediction of the Premier League rankings. We will be using datasets from xxx, called xxx containing the results of Premier League games for seasons 2016-17, 2017-18 and 2018-19. Below are the variables in the datasets and their details:
 </div>
  + `xxx` - ...
  + `xxx` - ...
@@ -13,6 +13,7 @@ For our project, we will be providing a prediction of the Premier League ranking
  + `xxx` - ...
  + `xxx` - ...
 
+Before applying machine learning models to our dataset, we need to clean and transform it. We start by importing our data, taking out unknown variables, transforming non numerical variables to their correct type and joining the datasets from different seasons to ensure we have enough observations.
 
 ```{r echo=FALSE, include=FALSE}
 # Importing the games_results dataset into R
@@ -32,31 +33,30 @@ premier_league_results_1819 <- premier_league_results_1819 %>%
 premier_league_results_1617 <- premier_league_results_1617 %>% 
   mutate(Date = as_date(Date, format="%d/%m/%y"))
 
-premier_league_results_1718 <- subset(premier_league_results_1718, select = -c(LBH,LBD,LBA))
-premier_league_results_1617 <- subset(premier_league_results_1617, select = -c(LBH,LBD,LBA))
+premier_league_results_1718 <- subset(premier_league_results_1718, select = -c(LBH,LBD,LBA,PSCH,PSCD,PSCA))
+premier_league_results_1819 <- subset(premier_league_results_1819, select = -c(PSCH,PSCD,PSCA))
+premier_league_results_1617 <- subset(premier_league_results_1617, select = -c(LBH,LBD,LBA,PSCH,PSCD,PSCA))
 
-premier_league_results <- full_join(premier_league_results_1718, premier_league_results_1819, by = c("Div","Date","HomeTeam","AwayTeam","FTHG","FTAG","FTR","HTHG","HTAG","HTR","Referee","HS","AS","HST","AST","HF","AF","HC","AC","HY","AY","HR","AR","B365H","B365D","B365A","BWH","BWD","BWA","IWH","IWD","IWA","PSH","PSD","PSA","WHH","WHD","WHA","VCH","VCD","VCA","Bb1X2","BbMxH","BbAvH","BbMxD","BbAvD","BbMxA","BbAvA","BbOU","BbMx>2.5","BbAv>2.5","BbMx<2.5","BbAv<2.5","BbAH","BbAHh","BbMxAHH","BbAvAHH","BbMxAHA","BbAvAHA","PSCH","PSCD","PSCA"))
+premier_league_results <- full_join(premier_league_results_1718, premier_league_results_1819, by = c("Div","Date","HomeTeam","AwayTeam","FTHG","FTAG","FTR","HTHG","HTAG","HTR","Referee","HS","AS","HST","AST","HF","AF","HC","AC","HY","AY","HR","AR","B365H","B365D","B365A","BWH","BWD","BWA","IWH","IWD","IWA","PSH","PSD","PSA","WHH","WHD","WHA","VCH","VCD","VCA","Bb1X2","BbMxH","BbAvH","BbMxD","BbAvD","BbMxA","BbAvA","BbOU","BbMx>2.5","BbAv>2.5","BbMx<2.5","BbAv<2.5","BbAH","BbAHh","BbMxAHH","BbAvAHH","BbMxAHA","BbAvAHA"))
 
-premier_league_results <- full_join(premier_league_results, premier_league_results_1617, by = c("Div","Date","HomeTeam","AwayTeam","FTHG","FTAG","FTR","HTHG","HTAG","HTR","Referee","HS","AS","HST","AST","HF","AF","HC","AC","HY","AY","HR","AR","B365H","B365D","B365A","BWH","BWD","BWA","IWH","IWD","IWA","PSH","PSD","PSA","WHH","WHD","WHA","VCH","VCD","VCA","Bb1X2","BbMxH","BbAvH","BbMxD","BbAvD","BbMxA","BbAvA","BbOU","BbMx>2.5","BbAv>2.5","BbMx<2.5","BbAv<2.5","BbAH","BbAHh","BbMxAHH","BbAvAHH","BbMxAHA","BbAvAHA","PSCH","PSCD","PSCA"))
+premier_league_results <- full_join(premier_league_results, premier_league_results_1617, by = c("Div","Date","HomeTeam","AwayTeam","FTHG","FTAG","FTR","HTHG","HTAG","HTR","Referee","HS","AS","HST","AST","HF","AF","HC","AC","HY","AY","HR","AR","B365H","B365D","B365A","BWH","BWD","BWA","IWH","IWD","IWA","PSH","PSD","PSA","WHH","WHD","WHA","VCH","VCD","VCA","Bb1X2","BbMxH","BbAvH","BbMxD","BbAvD","BbMxA","BbAvA","BbOU","BbMx>2.5","BbAv>2.5","BbMx<2.5","BbAv<2.5","BbAH","BbAHh","BbMxAHH","BbAvAHH","BbMxAHA","BbAvAHA"))
 ```
 
-We should also check if teams present in both seasons are the same.
+The next step is to check if the same teams are present in all seasons.
 
 ```{r, echo=FALSE}
 # Checking if same teams are present in both seasons
-unique(premier_league_results_1718$HomeTeam) %>% knitr::kable(caption = "**Table 2: Premier League Teams 2017-18**", col.names = "Teams") %>% kable_styling(bootstrap_options = c("striped","hover","condensed"), fixed_thead = T)
+unique(premier_league_results_1718$HomeTeam) %>% knitr::kable(caption = "**Table 1: Premier League Teams 2017-18**", col.names = "Teams") %>% kable_styling(bootstrap_options = c("striped","hover","condensed"), fixed_thead = T) %>% kable_paper() %>%  scroll_box(width = "100%", height = "320px")
 
-unique(premier_league_results_1819$HomeTeam) %>% knitr::kable(caption = "**Table 3: Premier League Teams 2018-19**", col.names = "Teams") %>% kable_styling(bootstrap_options = c("striped","hover","condensed"), fixed_thead = T)
+unique(premier_league_results_1819$HomeTeam) %>% knitr::kable(caption = "**Table 2: Premier League Teams 2018-19**", col.names = "Teams") %>% kable_styling(bootstrap_options = c("striped","hover","condensed"), fixed_thead = T) %>% kable_paper() %>%  scroll_box(width = "100%", height = "320px")
 
-unique(premier_league_results_1617$HomeTeam) %>% knitr::kable(caption = "**Table 3: Premier League Teams 2018-19**", col.names = "Teams") %>% kable_styling(bootstrap_options = c("striped","hover","condensed"), fixed_thead = T)
+unique(premier_league_results_1617$HomeTeam) %>% knitr::kable(caption = "**Table 3: Premier League Teams 2016-17**", col.names = "Teams") %>% kable_styling(bootstrap_options = c("striped","hover","condensed"), fixed_thead = T) %>% kable_paper() %>%  scroll_box(width = "100%", height = "320px")
 
 # Removing the unused datasets
 rm(premier_league_results_1718, premier_league_results_1819, premier_league_results_1617)
 ```
 
-We see that the teams Swansea, Stoke and West Brom are not playing in the 2018-19 season. Additionally, the teams Fulham, Wolves and Cardiff are not playing in the 2017-18 neither. We should take them out.
-
-In the remaining teams, Brighton, Huddersfield, Newcastle were not playing in the 2016-17 season. Additionally, the teams Hull, Middlesbrough and Sunderland were not playing in the following seasons neither. We should take them out
+We see that the teams Swansea, Stoke and West Brom are not playing in the 2018-19 season. Additionally, the teams Fulham, Wolves and Cardiff are not playing in the 2017-18 neither. We should take them out. In the remaining teams, Brighton, Huddersfield, Newcastle were not playing in the 2016-17 season. Additionally, the teams Hull, Middlesbrough and Sunderland were not playing in the following seasons neither. We should take them out.
 
 ```{r}
 teams_to_remove = c('Swansea', 'Stoke', 'West Brom', 'Fulham', 'Wolves', 'Cardiff', 'Brighton', 'Huddersfield', 'Newcastle', 'Hull', 'Middlesbrough', 'Sunderland')
@@ -70,45 +70,38 @@ premier_league_results <- subset(premier_league_results, AwayTeam!='Swansea' & A
 Now we rename the columns to make them more easily understandable.
 
 ```{r, echo=FALSE}
-# Show the dataset
+colnames(premier_league_results) <- c("league_division", "match_date", "home_team", "away_team", "full_time_home_goals", "full_time_away_goals", "full_time_results", "half_time_home_goals", "half_time_away_goals", "half_time_results", "referee", "home_shots", "away_shots", "home_shots_ontarget", "away_shots_ontarget", "home_fouls", "away_fouls", "home_corners", "away_corners", "home_yellow_cards", "away_yellow_cards", "home_red_cards", "away_red_cards", "bet365_home_win_odds", "bet365_draw_odds", "bet365_away_win_odds", "bet&win_home_win_odds", "bet&win_draw_odds", "bet&win_away_win_odds", "interwetten_home_win_odds", "interwetten_draw_odds", "interwetten_away_win_odds", "pinnacle_home_win_odds", "pinnacle_draw_odds", "pinnacle_away_win_odds", "williamhill_home_win_odds", "williamhill_draw_odds", "williamhill_away_win_odds", "vcbet_home_win_odds", "vcbet_draw_odds", "vcbet_away_win_odds", "no_betbrain_bookmarkers_odds", "betbrain_max_home_win_odds", "betbrain_avg_home_win_odds", "betbrain_max_draw_odds", "betbrain_avg_draw_win_odds", "betbrain_max_away_win_odds", "betbrain_avg_away_win_odds", "no_betbrain_bookmarkers_goals", "betbrain_max_over_2.5goals", "betbrain_avg_over_2.5goals", "betbrain_max_under_2.5goals", "betbrain_avg_under_2.5goals", "no_betbrain_bookmarkers_asianhandicap", "betbrain_size_handicap", "betbrain_max_home_asianhandicap_odds", "betbrain_avg_home_asianhandicap_odds", "betbrain_max_away_asianhandicap_odds", "betbrain_avg_away_asianhandicap_odds")
 
-colnames(premier_league_results) <- c("league_division", "match_date", "home_team", "away_team", "full_time_home_goals", "full_time_away_goals", "full_time_results", "half_time_home_goals", "half_time_away_goals", "half_time_results", "referee", "home_shots", "away_shots", "home_shots_ontarget", "away_shots_ontarget", "home_fouls", "away_fouls", "home_corners", "away_corners", "home_yellow_cards", "away_yellow_cards", "home_red_cards", "away_red_cards", "bet365_home_win_odds", "bet365_draw_odds", "bet365_away_win_odds", "bet&win_home_win_odds", "bet&win_draw_odds", "bet&win_away_win_odds", "interwetten_home_win_odds", "interwetten_draw_odds", "interwetten_away_win_odds", "pinnacle_home_win_odds", "pinnacle_draw_odds", "pinnacle_away_win_odds", "williamhill_home_win_odds", "williamhill_draw_odds", "williamhill_away_win_odds", "vcbet_home_win_odds", "vcbet_draw_odds", "vcbet_away_win_odds", "no_betbrain_bookmarkers_odds", "betbrain_max_home_win_odds", "betbrain_avg_home_win_odds", "betbrain_max_draw_odds", "betbrain_avg_draw_win_odds", "betbrain_max_away_win_odds", "betbrain_avg_away_win_odds", "no_betbrain_bookmarkers_goals", "betbrain_max_over_2.5goals", "betbrain_avg_over_2.5goals", "betbrain_max_under_2.5goals", "betbrain_avg_under_2.5goals", "no_betbrain_bookmarkers_asianhandicap", "betbrain_size_handicap", "betbrain_max_home_asianhandicap_odds", "betbrain_avg_home_asianhandicap_odds", "betbrain_max_away_asianhandicap_odds", "betbrain_avg_away_asianhandicap_odds", "PSCH", "PSCD", "PSCA")
-
-premier_league_results %>% kable(caption = "**Table 1: Premier League results (seasons 2017-18 and 2018-2019)**") %>%
+premier_league_results %>% kable(caption = "**Table 4: Premier League results (seasons 2016-17, 2017-18 and 2018-2019)**") %>%
   kable_styling(bootstrap_options = c("striped","hover","condensed"),
                 fixed_thead = T) %>% kable_paper() %>%  scroll_box(width = "100%", height = "320px")
 ```
 
-Let's check if our dataset contains missing values.
+For our analysis, we will also take out variables league_division, referee and all the variables from the betting websites. These either have the same values for all observations, don't necessarily contribute to the analysis or use past information on the variable we want to predict (match result) and therefore can bias our outcome.
+
+```{r}
+premier_league_results <- premier_league_results %>% 
+  select(-league_division)
+
+premier_league_results <- premier_league_results %>% 
+  select(-referee)
+
+premier_league_results <- premier_league_results[,1:21]
+```
+
+Finally, let's check if our final dataset contains missing values.
 
 ```{r}
 any(is.na(premier_league_results))
 ```
 
 Now that we have a clean dataset, let's check out our data closer with a summary.
+
 ```{r}
 dfSummary(premier_league_results, style = 'grid', plain.ascii = FALSE, tmp.img.dir = "/tmp")
 ```
 
-```{r}
-####################################
-#        NEW PART FROM EDA
-####################################
-
-# Remove the first column - namely league_division
-
-premier_league_results <- premier_league_results %>% 
-  select(-league_division)
-
-# Remove referee variable
-
-premier_league_results <- premier_league_results %>% 
-  select(-referee)
-
-# Remove all the variables from betting website - because they contain information about what we want to predict
-
-premier_league_results <- premier_league_results[,1:21]
-```
+Everything seems to be ok !
 
 ```{r}
 # Write CSV files
