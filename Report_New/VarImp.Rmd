@@ -1,0 +1,76 @@
+# Variable of Importance
+
+```{r, echo = FALSE, message = FALSE}
+source(here::here("scripts/setup.R"))
+```
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+#  Load the cleaned dataset from the data.Rmd
+setwd(here::here("Data_New/"))
+premier_league_results <- read_csv("premier_league_results_clean.csv")
+```
+
+Variable importance is a method that provides a measure of the importance of each feature for the model prediction quality. It helps to analyze the link between the features and the response, through the model predictions. 
+
+#As the teacher with DALEX Package (classification)
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+# Take the support-vector machine model 
+svm_tuned
+
+#Creating an explain object
+x_train <- select(train_data1, -full_time_results)
+y_train <- pull(train_data1, full_time_results)
+y_train <-as.numeric(y_train)
+
+explainer_svm <- DALEX::explain(model = svm_tuned,
+                                is_multiclass = TRUE,
+                                data = x_train,
+                                y = y_train,
+                                label = "Support Vector Machine")
+
+library(DALEXtra)
+```
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+#  Load the cleaned dataset from the data.Rmd
+setwd(here::here("Data_New/"))
+premier_league_results <- read_csv("premier_league_results_clean.csv")
+```
+
+#Another Package  DALEXtra (multiclassification)
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+# Take the support-vector machine model 
+svm_tuned
+
+#Creating an explain object
+x_train <- select(train_data1, -full_time_results)
+y_train <- pull(train_data1, full_time_results)
+y_train <-as.numeric(y_train)
+
+insta
+library(DALEXtra)
+```
+
+# Plotting the feature importance
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+calculate_importance <- function(your_model_explainer, n_permutations = 100) {
+  imp <- model_parts(explainer = your_model_explainer,
+                     B = n_permutations,
+                     type = "ratio",
+                     N = NULL)
+  return(imp)
+}
+
+importance_svm <- calculate_importance(explainer_svm)
+
+library(ggplot2)
+
+plot(importance_svm)
+
+#Si j'ai envie de mettre plusieurs model ensemble
+#plot(importance_lm, importance_rt, importance_svm) +
+ # ggtitle("Mean variable-importance ratio over 10 permutations", "")
+
+```
+
+
