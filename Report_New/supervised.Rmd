@@ -222,7 +222,6 @@ confusionMatrix(data=as.factor(knnpred), reference = test_data1$full_time_result
 ### Classification Tree
 The CART model give a convenient prediction, we've an accuracy of 0.509 and a low Kappa : 0.248
 
-
 ```{r}
 classtreefit <- rpart(full_time_results ~ ., data=train_data1_res)
 

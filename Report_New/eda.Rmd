@@ -335,9 +335,6 @@ data_frame(premier_league_results$full_time_home_goals, premier_league_results$f
 ```
 
 
-
-
-
 ```{r, echo=FALSE}
 #might remove
 data_frame(premier_league_results$full_time_home_goals, premier_league_results$full_time_away_goals, premier_league_results$full_time_results, premier_league_results$home_shots, premier_league_results$away_shots, premier_league_results$home_fouls, premier_league_results$away_fouls, premier_league_results$home_yellow_cards, premier_league_results$away_yellow_cards, premier_league_results$home_red_cards, premier_league_results$away_red_cards) %>%

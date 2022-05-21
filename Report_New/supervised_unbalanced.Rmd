@@ -15,6 +15,11 @@ Next step is fitting models to the clean data, based on our EDA outcomes. But be
 ***AMINA'S PART****
 
 ## Data Splitting
+Data splitting is when data is divided into two or more subsets. Typically, with a two-part split, one part is used to evaluate or test the data and the other to train the model. Splitting into Training and test set help to avoid overfitting also without proper data, machine learning models are hard to implement and can lead to completely different conclusions and interpretation. To achieve our aim, the strategy which we use is Cross validation (CV) data splitting method. Since we have a large amount of data, the cross validation method is best one for our dataset, indeed it might be problematic if we don’t have enough data and might choose bootstrapping. 
+
+Moreover, it is not necessary to balance the training set, because we are in a non-binary case, and the interpretation of the results will be more complex and the accuracy of the models is decreasing. For these reasons, we decided to keep original values without balancing.
+
+Finally, We performed a random train and test split of our data in order to use the following models: CART, KNN, Naive Bayes, SVM, Neural Network.
 
 ```{r}
 # Just removing the match data, full_time_home_goals and full_time_away_goals
