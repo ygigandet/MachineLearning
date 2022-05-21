@@ -125,34 +125,11 @@ nnetFit <- train(full_time_results ~ .,
                  tuneGrid = nnetGrid,
                  trControl = fitControl)
 
-p1 <- plot(nnetFit)
-
+p1 <-  plot(nnetFit)
 p1
-```
 
-```{r}
-# We have an idea of the model, let's apply it. Regarding the graph above, choose decay of 0.4 and size of 9 nodes.
-
-nn <- nnet(full_time_results~., data=train_data1, size=1, decay=0.4)
-
-pred1 <- predict(nn, type="class")
-
-tab1 <- table(Obs=train_data1$full_time_results, Pred=pred1)
-tab1
-
-(acc1 <- sum(diag(tab1))/sum(tab1))
-
-# Accuracy of 75%, let's see with the test set
-
-pred2 <- predict(nn, test_data1, type="class")
-tab2 <- table(Obs=test_data1$full_time_results, Pred=pred2)
-tab2
-
-(acc2 <- sum(diag(tab2))/sum(tab2))
-
-# We drop by 65.7%, might be overfitting the data.
-
-# So is is because the data is unbalanced? Or do I misinterpret the graph above.
+pred_neural_network <-  predict(nnetFit, newdata = test_data1)
+confusionMatrix(data=pred_neural_network, reference = test_data1$full_time_results)
 ```
 
 ## Support Vector Machines
