@@ -12,86 +12,44 @@ premier_league_results <- read_csv("premier_league_results_clean.csv")
 
 Variable importance is a method that provides a measure of the importance of each feature for the model prediction quality. It helps to analyze the link between the features and the response, through the model predictions. 
 
-#As the teacher with DALEX Package (classification)
+#As the teacher with DALEX Package
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
-# Take the support-vector machine model 
-svm_tuned
+# Take the NN machine model 
+nnetFit
+
+# Take the CART machine model 
+classtreefit.pruned
+
+# Take the NB machine model 
+naivebayesfit
 
 #Creating an explain object
 x_train <- select(train_data1, -full_time_results)
 y_train <- pull(train_data1, full_time_results)
-y_train <-as.numeric(y_train)
 
-explainer_svm <- DALEX::explain(model = svm_tuned,
+explainer_nn <- DALEX::explain(model = nnetFit,
                                 is_multiclass = TRUE,
                                 data = x_train,
                                 y = y_train,
-                                label = "Support Vector Machine")
+                                label = "NN machine model")
+  #NN fonctionne
 
+explainer_cart <- DALEX::explain(model = classtreefit.pruned,
+                                is_multiclass = TRUE,
+                                data = x_train,
+                                y = y_train,
+                                label = "CART machine model ")
+  #CART fonctionne
 
+explainer_nb <- DALEX::explain(model = naivebayesfit,
+                                is_multiclass = TRUE,
+                                data = x_train,
+                                y = as.numeric(y_train),
+                                label = "NB machine model")
+  #Problem : erreur Model info detected regression task but 'y' is a factor . (  WARNING  ), so i turn into as.numeric
+  # Another error : the predict_function returns an error when executed (  WARNING  ) 
 ```
 
-#Another Package  DALEXtra (multiclassification)
-
-```{r, echo = FALSE, message = FALSE, warning = FALSE}
-# Take the support-vector machine model 
-svm_tuned
-
-#Creating an explain object
-x_train <- select(train_data1, -full_time_results)
-y_train <- pull(train_data1, full_time_results)
-
-#install.packages("mlr3")
-library(mlr3)
-explainer_svm <- DALEX::explain(
-      mlr3::as_learner(svm_tuned),
-      data = x_train,
-      y = y_train,
-      weights = weights,
-      predict_function = NULL,
-      predict_function_target_column = NULL,
-      residual_function = residual_function,
-      label = "Support Vector Machine",
-           verbose = TRUE,
-           precalculate = TRUE,
-           colorize = !isTRUE(getOption('knitr.in.progress')),
-           model_info = NULL,
-           type = NULL)
-
-
-explain_mlr3 <- function(model,
-           data = NULL,
-           y = NULL,
-           weights = NULL,
-           predict_function = NULL,
-           predict_function_target_column = NULL,
-           residual_function = NULL,
-           ...,
-           label = "Support Vector Machine",
-           verbose = TRUE,
-           precalculate = TRUE,
-           colorize = !isTRUE(getOption('knitr.in.progress')),
-           model_info = NULL,
-           type = NULL) {
-    explain(
-      mlr3::as_learner(svm_tuned),
-      data = x_train,
-      y = y_train,
-      weights = weights,
-      predict_function = predict_function,
-      predict_function_target_column = predict_function_target_column,
-      residual_function = residual_function,
-      ...,
-      label = "Support Vector Machine",
-      verbose = verbose,
-      precalculate = precalculate,
-      colorize = colorize,
-      model_info = model_info,
-      type = type
-    )
-  }
-
-```
 
 # Plotting the feature importance
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
@@ -103,19 +61,18 @@ calculate_importance <- function(your_model_explainer, n_permutations = 10) {
   return(imp)
 }
 
-#importance_svm <- DALEX::variable_importance(explain_mlr3)
-importance_svm <- calculate_importance(explainer_svm)
-#importance_svm <- calculate_importance(explainer_svm)
+importance_nn <- calculate_importance(explainer_nn)
+importance_cart <- calculate_importance(explainer_cart)
+#importance_nb <- calculate_importance(explainer_nb)
 
-
-library(ggplot2)
-
-plot(importance_svm)
-
-#Si j'ai envie de mettre plusieurs model ensemble
-#plot(importance_lm, importance_rt, importance_svm) +
- # ggtitle("Mean variable-importance ratio over 10 permutations", "")
+plot(importance_nn, importance_cart) +
+ ggtitle("Mean variable-importance ratio over 10 permutations", "")
 
 ```
 
+# interpretation
+Once we’ve identified influential variables across all three models, next we likely want to understand how the relationship between these influential variables and the predicted response differ between the models.
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+# compute PDP for a given variable --> uses the pdp package
 
+```
