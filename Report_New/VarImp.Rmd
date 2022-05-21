@@ -28,12 +28,7 @@ explainer_svm <- DALEX::explain(model = svm_tuned,
                                 y = y_train,
                                 label = "Support Vector Machine")
 
-library(DALEXtra)
-```
-```{r, echo = FALSE, message = FALSE, warning = FALSE}
-#  Load the cleaned dataset from the data.Rmd
-setwd(here::here("Data_New/"))
-premier_league_results <- read_csv("premier_league_results_clean.csv")
+
 ```
 
 #Another Package  DALEXtra (multiclassification)
@@ -45,15 +40,62 @@ svm_tuned
 #Creating an explain object
 x_train <- select(train_data1, -full_time_results)
 y_train <- pull(train_data1, full_time_results)
-y_train <-as.numeric(y_train)
 
-insta
-library(DALEXtra)
+#install.packages("mlr3")
+library(mlr3)
+explainer_svm <- DALEX::explain(
+      mlr3::as_learner(svm_tuned),
+      data = x_train,
+      y = y_train,
+      weights = weights,
+      predict_function = NULL,
+      predict_function_target_column = NULL,
+      residual_function = residual_function,
+      label = "Support Vector Machine",
+           verbose = TRUE,
+           precalculate = TRUE,
+           colorize = !isTRUE(getOption('knitr.in.progress')),
+           model_info = NULL,
+           type = NULL)
+
+
+explain_mlr3 <- function(model,
+           data = NULL,
+           y = NULL,
+           weights = NULL,
+           predict_function = NULL,
+           predict_function_target_column = NULL,
+           residual_function = NULL,
+           ...,
+           label = "Support Vector Machine",
+           verbose = TRUE,
+           precalculate = TRUE,
+           colorize = !isTRUE(getOption('knitr.in.progress')),
+           model_info = NULL,
+           type = NULL) {
+    explain(
+      mlr3::as_learner(svm_tuned),
+      data = x_train,
+      y = y_train,
+      weights = weights,
+      predict_function = predict_function,
+      predict_function_target_column = predict_function_target_column,
+      residual_function = residual_function,
+      ...,
+      label = "Support Vector Machine",
+      verbose = verbose,
+      precalculate = precalculate,
+      colorize = colorize,
+      model_info = model_info,
+      type = type
+    )
+  }
+
 ```
 
 # Plotting the feature importance
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
-calculate_importance <- function(your_model_explainer, n_permutations = 100) {
+calculate_importance <- function(your_model_explainer, n_permutations = 10) {
   imp <- model_parts(explainer = your_model_explainer,
                      B = n_permutations,
                      type = "ratio",
@@ -61,7 +103,10 @@ calculate_importance <- function(your_model_explainer, n_permutations = 100) {
   return(imp)
 }
 
+#importance_svm <- DALEX::variable_importance(explain_mlr3)
 importance_svm <- calculate_importance(explainer_svm)
+#importance_svm <- calculate_importance(explainer_svm)
+
 
 library(ggplot2)
 

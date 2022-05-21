@@ -15,7 +15,7 @@ packages <- c(
   "naivebayes", #Naive Bayes
   "rpart", "rpart.plot", #Classification Tree
   "dendextend", #for dendogram labels
-  "DALEX" #Creating an explain object
+  "DALEX", "DALEXtra" #Creating an explain object
 )
 
 purrr::walk(packages, library, character.only = TRUE)
