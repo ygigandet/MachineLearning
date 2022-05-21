@@ -31,6 +31,5 @@ e1071
 naivebayes
 rpart
 rpart.plot
-base
 patchwork
 dendextend
