@@ -130,23 +130,28 @@ pred_neural_network <-  predict(nnetFit, newdata = test_data1)
 confusionMatrix(data=pred_neural_network, reference = test_data1$full_time_results)
 ```
 
+After tuning the hyperparameters for our neural network model (size of 1 and weight decay of 0.1), we get a pretty good model for predicting our outcomes. An accuracy of 0.685 and a moderate Cohen's Kappa of 0.457. Compared to the previous models, neural network provides the best model.
+
 ## Support Vector Machines
 
-The SVM models give a convenient prediction, we've an accuracy of 0.583 and a pretty low Kappa : 0.36
+The SVM model gives a convenient prediction, we've an accuracy of 0.648 and a pretty low Kappa: 0.373.
+
 ```{r}
 # Tuning the hyperparameters
 trctrl <- trainControl(method = "cv", number=5)
 grid <- expand.grid(C = c(0.01, 0.1, 1, 10, 100, 1000))
 
 set.seed(143)
-svm_Linear_Grid <- train(full_time_results ~., data = train_data1, method = "svmLinear",
-                           trControl=trctrl,
-                           tuneGrid = grid)
+svm_Linear_Grid <- train(full_time_results ~., 
+                         data = train_data1, 
+                         method = "svmLinear",
+                         trControl=trctrl,
+                         tuneGrid = grid)
+
 svm_Linear_Grid
 plot(svm_Linear_Grid)
 svm_Linear_Grid$bestTune
 ```
-
 ```{r}
 # Now that we know the tuning hyperparameters, let's apply it
 
@@ -158,8 +163,6 @@ svm_tuned <- svm(full_time_results~., data = train_data1,
 svm.tuned.pred <- predict(svm_tuned, newdata = test_data1)
 confusionMatrix(data=svm.tuned.pred, reference = test_data1$full_time_results)
 ```
-
-Not so bad, let's see with the others models if we reach a better accuracy.
 
 ## Findings
 
