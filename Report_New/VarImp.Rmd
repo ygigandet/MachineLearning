@@ -49,6 +49,7 @@ explainer_nb <- DALEX::explain(model = naivebayesfit,
                                 data = x_train,
                                 y = as.numeric(y_train),
                                 label = "NB machine model")
+
   #Problem : erreur Model info detected regression task but 'y' is a factor . (  WARNING  ), so i turn into as.numeric
   # Another error : the predict_function returns an error when executed (  WARNING  ) 
 ```
@@ -66,22 +67,11 @@ calculate_importance <- function(your_model_explainer, n_permutations = 10) {
 
 importance_nn <- calculate_importance(explainer_nn)
 importance_cart <- calculate_importance(explainer_cart)
-#importance_nb <- calculate_importance(explainer_nb)
+importance_nb <- calculate_importance(explainer_nb)
 
 plot(importance_nn, importance_cart) +
  ggtitle("Mean variable-importance ratio over 10 permutations", "")
 
-#NNvarImp <- varImp(nnetFit, scale = FALSE)
-#CARTvarImp <- varImp(classtreefit.pruned, scale =FALSE )
-
-#install.packages("vi")
-#library(vi)
-# First, compute a tibble of variable importance scores using any method
-#var_imp <- vi(nnetFit, method = "permute", metric = "auc", pred_wrapper = pfun,
-              #target = "diabetes", reference_class = "neg")
-
-# Next, convert to an html-based data table with sparklines
-#add_sparklines(var_imp, fit = nnetFit)
 ```
 
 We know that smaller the entropy is, better is the model. In term of cross entropy, ....
@@ -114,9 +104,6 @@ Except one outlier in red (NN predicting H) which is high in every case, and wil
 
 ```{r Example of recursive feature elimination}
 ## PROBABLEMENT A SUPPRIMER 
-subsets <- c(1:5, 10, 15, 20)
-set.seed(355)
-
 #PAR CONTRE JE NE SUIS PAS SUR RF
 rfeCtrl <- rfeControl(functions = rfFuncs,
                       method = "cv",

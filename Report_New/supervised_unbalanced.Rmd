@@ -184,3 +184,155 @@ confusionMatrix(data=svm.tuned.pred, reference = test_data1$full_time_results)
 ## Findings
 
 
+# Variable of Importance
+
+
+Variable importance is a method that provides a measure of the importance of each feature for the model prediction quality. It helps to analyze the link between the features and the response, through the model predictions. 
+Our variable importance is model-specific since the approaches that are specific to the model that is used. We have apply variable of importance on our 3 best models: NN, CART, NB. To do so, we create an explain object with DALEX :: explain function, then implement a variable importance calculation. 
+
+Studies show that a higher score means that the specific feature will have a larger effect on the model that is being used to predict a certain variable. Based on this principle, we can see that either in CART or NN, half time results is an important variable. Indeed, a change on this variable can drastically change the result of both models. Then, we have half time away goal followed by away shoot on target.
+For each feature, the difference in entropy obtained by 10 permutations is shown by the following plot. It shows graphically the average importance variable according to the cross entropy loss.
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+# Take the NN machine model 
+nnetFit
+
+# Take the CART machine model 
+classtreefit.pruned
+
+# Take the NB machine model 
+naivebayesfit
+
+#Creating an explain object
+x_train <- select(train_data1, -full_time_results)
+y_train <- pull(train_data1, full_time_results)
+
+explainer_nn <- DALEX::explain(model = nnetFit,
+                                is_multiclass = TRUE,
+                                data = x_train,
+                                y = y_train,
+                                label = "NN machine model")
+  #NN fonctionne
+
+explainer_cart <- DALEX::explain(model = classtreefit.pruned,
+                                is_multiclass = TRUE,
+                                data = x_train,
+                                y = y_train,
+                                label = "CART machine model ")
+  #CART fonctionne
+
+explainer_nb <- DALEX::explain(model = naivebayesfit,
+                                is_multiclass = TRUE,
+                                data = x_train,
+                                y = as.numeric(y_train),
+                                label = "NB machine model")
+```
+
+# Plotting the feature importance
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+calculate_importance <- function(your_model_explainer, n_permutations = 10) {
+  imp <- model_parts(explainer = your_model_explainer,
+                     B = n_permutations,
+                     type = "ratio",
+                     N = NULL)
+  return(imp)
+}
+
+importance_nn <- calculate_importance(explainer_nn)
+importance_cart <- calculate_importance(explainer_cart)
+importance_nb <- calculate_importance(explainer_nb)
+
+plot(importance_nn, importance_cart) +
+ ggtitle("Mean variable-importance ratio over 10 permutations", "")
+
+```
+We know that smaller the entropy is, better is the model. In term of cross entropy, ....
+
+## We might not keep it, depend on the space and utility
+Once we’ve identified influential variables across all three models, next we likely want to understand how the relationship between these influential variables and the average prediction response differ between the models.
+
+To do so, we can run a partial dependence profile
+
+```{r}
+#
+adp_nn <- model_profile(explainer_nn, 
+ variables = "half_time_results")
+plot(adp_nn)
+
+adp_cart <- model_profile(explainer_cart, 
+ variables = "half_time_results")
+plot(adp_cart)
+
+#PLot 
+plot(adp_nn$agr_profiles, 
+ adp_cart$agr_profiles)
+
+plot(adp_nn, adp_cart) +
+ ggtitle("Partial dependence profile", "")
+
+```
+
+#Refitting the model with the 5 most important variables
+
+```{r, echo=FALSE}
+# Naive Bayes --> 
+
+set.seed(1)
+trctrl <- trainControl(method = "cv", number=10)
+search_grid <- expand.grid(
+  usekernel = c(TRUE, FALSE),
+  laplace = c(1:5),
+  adjust = seq(0, 5, by = 1)
+)
+VarImpNBfit <- train(full_time_results ~ half_time_results + half_time_away_goals + away_shots_ontarget + half_time_home_goals,
+                 data = train_data1,
+                 method = "naive_bayes",
+                 trControl = trctrl,
+                 tuneGrid = search_grid)
+
+VarImpNBpred <- predict(VarImpNBfit, newdata = test_data1, type="class")
+```
+
+```{r, echo=FALSE}
+#Comparaison between the old cconufsion matrix and the refit confusion matrix 
+refitconfmatrixNB <- confusionMatrix(data=as.factor(VarImpNBpred), reference = test_data1$full_time_results)
+
+```
+
+```{r, echo=FALSE}
+# NN
+nnetFit <- train(full_time_results ~ half_time_results + half_time_away_goals + away_shots_ontarget + half_time_home_goals,
+                 data = train_data1,
+                 method = "nnet",
+                 metric = "Accuracy",
+                 tuneGrid = nnetGrid,
+                 trControl = fitControl)
+
+pred_neural_network <-  predict(nnetFit, newdata = test_data1)
+```
+
+```{r, echo=FALSE}
+oldconfmatrixNN <-confusionMatrix(data=pred_neural_network, reference = test_data1$full_time_results)
+
+refitconfmatrixNN <- confusionMatrix(data=pred_neural_network, reference = test_data1$full_time_results)
+
+grid.arrange(oldconfmatrixNN, refitconfmatrixNN)
+```
+
+```{r, echo=FALSE}
+# CART
+classtreefit <- rpart(full_time_results ~ half_time_results + half_time_away_goals + away_shots_ontarget + half_time_home_goals,, data=train_data1)
+
+rpart.plot(classtreefit)
+
+plotcp(classtreefit)
+classtreefit.pruned <- prune(classtreefit, cp=0.015)
+
+classtreepred <- predict(classtreefit.pruned, newdata=test_data1, type="class")
+```
+
+```{r, echo=FALSE}
+
+refitconfmatrixCart <- confusionMatrix(data=as.factor(classtreepred), reference = test_data1$full_time_results)
+
+```
