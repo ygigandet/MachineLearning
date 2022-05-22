@@ -11,8 +11,11 @@ premier_league_results <- read_csv("premier_league_results_clean.csv")
 ```
 
 Variable importance is a method that provides a measure of the importance of each feature for the model prediction quality. It helps to analyze the link between the features and the response, through the model predictions. 
+Our variable importance is model-specific since the approaches that are specific to the model that is used. We have apply variable of importance on our 3 best models: NN, CART, NB. To do so, we create an explain object with DALEX :: explain function, then implement a variable importance calculation. 
 
-#As the teacher with DALEX Package
+Studies show that a higher score means that the specific feature will have a larger effect on the model that is being used to predict a certain variable. Based on this principle, we can see that either in CART or NN, half time results is an important variable. Indeed, a change on this variable can drastically change the result of both models. Then, we have half time away goal followed by away shoot on target.
+For each feature, the difference in entropy obtained by 10 permutations is shown by the following plot. It shows graphically the average importance variable according to the cross entropy loss.
+
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
 # Take the NN machine model 
 nnetFit
@@ -68,11 +71,60 @@ importance_cart <- calculate_importance(explainer_cart)
 plot(importance_nn, importance_cart) +
  ggtitle("Mean variable-importance ratio over 10 permutations", "")
 
+#NNvarImp <- varImp(nnetFit, scale = FALSE)
+#CARTvarImp <- varImp(classtreefit.pruned, scale =FALSE )
+
+#install.packages("vi")
+#library(vi)
+# First, compute a tibble of variable importance scores using any method
+#var_imp <- vi(nnetFit, method = "permute", metric = "auc", pred_wrapper = pfun,
+              #target = "diabetes", reference_class = "neg")
+
+# Next, convert to an html-based data table with sparklines
+#add_sparklines(var_imp, fit = nnetFit)
 ```
 
-# interpretation
-Once we’ve identified influential variables across all three models, next we likely want to understand how the relationship between these influential variables and the predicted response differ between the models.
-```{r, echo = FALSE, message = FALSE, warning = FALSE}
-# compute PDP for a given variable --> uses the pdp package
+We know that smaller the entropy is, better is the model. In term of cross entropy, ....
 
+
+Once we’ve identified influential variables across all three models, next we likely want to understand how the relationship between these influential variables and the average prediction response differ between the models.
+
+To do so, we can run a partial dependence profile
+
+```{r}
+#
+adp_nn <- model_profile(explainer_nn, 
+ variables = "half_time_results")
+plot(adp_nn)
+
+adp_cart <- model_profile(explainer_cart, 
+ variables = "half_time_results")
+plot(adp_cart)
+
+#PLot 
+plot(adp_nn$agr_profiles, 
+ adp_cart$agr_profiles)
+
+plot(adp_nn, adp_cart) +
+ ggtitle("Partial dependence profile", "")
+
+```
+Except one outlier in red (NN predicting H) which is high in every case, and will predict mostly Home even if it's A, D or H. The behavior of those models is very similar, we can observe a low partial dependance of Away and Home, indeed when one is up, the other one is down. Therefore, we can say that both models have the same interactions in the data, although using the cart model is a little bit better.
+
+
+```{r Example of recursive feature elimination}
+## PROBABLEMENT A SUPPRIMER 
+subsets <- c(1:5, 10, 15, 20)
+set.seed(355)
+
+#PAR CONTRE JE NE SUIS PAS SUR RF
+rfeCtrl <- rfeControl(functions = rfFuncs,
+                      method = "cv",
+                      verbose = FALSE)
+
+rfProfile <- rfe(x = x_train, 
+                y = y_train, 
+                #sizes = subsets,
+                rfeControl = rfeCtrl)
+rfProfile
 ```
