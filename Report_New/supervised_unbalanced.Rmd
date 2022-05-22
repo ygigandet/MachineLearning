@@ -291,9 +291,11 @@ VarImpNBfit <- train(full_time_results ~ half_time_results + half_time_away_goal
                  data = train_data1,
                  method = "naive_bayes",
                  trControl = trctrl,
+                 tuneGrid = grid
+)
                  
 
-VarImpNBpred <- predict(VarImpNBfit, newdata = test_data1, type="class")
+VarImpNBpred <- predict(VarImpNBfit, newdata = test_data1)
 ```
 
 ```{r, echo=FALSE}
