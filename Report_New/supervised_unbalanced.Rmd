@@ -48,13 +48,14 @@ Since we're trying to predict whether the result of a football match is either a
 
 ### Naive Bayes
 
-```{r}
+```{r, warning = FALSE}
 set.seed(1)
 
 trctrl <- trainControl(method = "cv", number=10)
 
 search_grid <- expand.grid(
   usekernel = c(TRUE, FALSE),
+  laplace = c(1:5),
   adjust = seq(0, 5, by = 1)
 )
 
@@ -64,7 +65,7 @@ naivebayesfit <- train(full_time_results ~.,
                  trControl = trctrl,
                  tuneGrid = search_grid)
 
-naivebayespred <- predict(naivebayesfit, newdata = test_data1, type="class")
+naivebayespred <- predict(naivebayesfit, newdata = test_data1)
 
 confusionMatrix(data=as.factor(naivebayespred), reference = test_data1$full_time_results)
 ```
