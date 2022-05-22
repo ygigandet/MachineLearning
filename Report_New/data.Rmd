@@ -3,15 +3,26 @@
 ```{r, echo = FALSE, include = FALSE, message = FALSE}
 source(here::here("scripts/setup.R"))
 ```
-<div>
-For our project, we will be providing a prediction of the Premier League rankings. We will be using datasets from xxx, called xxx containing the results of Premier League games for seasons 2016-17, 2017-18 and 2018-19. Below are the variables in the datasets and their details:
-</div>
- + `xxx` - ...
- + `xxx` - ...
- + `xxx` - ...
- + `xxx` - ...
- + `xxx` - ...
- + `xxx` - ...
+
+## Data sources
+
+We will be using datasets containing the results of Premier League games for seasons 2016-17, 2017-18 and 2018-19.
+
+The sources are the following:
+
+1. https://datahub.io/sports-data/english-premier-league#resource-season-1617
+2. https://datahub.io/sports-data/english-premier-league#resource-season-1718
+3. https://datahub.io/sports-data/english-premier-league#resource-season-1819
+
+
+## Data description 
+Each of the three datasets contains 380 observations, and each of them represents one match. The dataset for the season 2018-19 contains 62 variables, while the other two datasets contain 65 variables each. The most important variables that we are going to use in this project are:
+
+- home team
+- away team
+
+
+## Data cleaning
 
 Before applying machine learning models to our dataset, we need to clean and transform it. We start by importing our data, taking out unknown variables, transforming non numerical variables to their correct type and joining the datasets from different seasons to ensure we have enough observations.
 
