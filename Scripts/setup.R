@@ -14,6 +14,7 @@ packages <- c(
   "e1071", #Support Vector Machines
   "naivebayes", #Naive Bayes
   "rpart", "rpart.plot", #Classification Tree
+  "ranger", # Random Forest
   "dendextend", #for dendogram labels
   "DALEX", "DALEXtra" #Creating an explain object
 )
