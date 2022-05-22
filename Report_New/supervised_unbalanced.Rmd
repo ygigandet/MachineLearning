@@ -157,19 +157,20 @@ The SVM model gives a convenient prediction, we've an accuracy of 0.648 and a pr
 ```{r}
 # Tuning the hyperparameters
 trctrl <- trainControl(method = "cv", number=5)
-grid <- expand.grid(C = c(0.01, 0.1, 1, 10, 100, 1000))
+search_grid <- expand.grid(C = c(0.01, 0.1, 1, 10, 100, 1000))
 
 set.seed(143)
 svm_Linear_Grid <- train(full_time_results ~., 
                          data = train_data1, 
                          method = "svmLinear",
                          trControl=trctrl,
-                         tuneGrid = grid)
+                         tuneGrid = search_grid)
 
 svm_Linear_Grid
 plot(svm_Linear_Grid)
 svm_Linear_Grid$bestTune
 ```
+
 ```{r}
 # Now that we know the tuning hyperparameters, let's apply it
 
@@ -182,8 +183,37 @@ svm.tuned.pred <- predict(svm_tuned, newdata = test_data1)
 confusionMatrix(data=svm.tuned.pred, reference = test_data1$full_time_results)
 ```
 
-## Findings
+## Random Forests
 
+```{r}
+set.seed(1)
+
+trctrl <- trainControl(method = "cv", number=5)
+search_grid <- expand.grid(.mtry=c(1:15), 
+                           .splitrule = c("gini", "extratrees"),
+                           .min.node.size = c(1:10))
+
+rf <- train(full_time_results~., 
+            data=train_data1,
+            method="ranger",
+            trControl=trctrl,
+            tuneGrid=search_grid,
+)
+
+pred_rf <-  predict(rf, newdata = test_data1)
+confusionMatrix(data=pred_rf, reference = test_data1$full_time_results)
+
+rf$bestTune$mtry
+rf$bestTune$splitrule
+rf$bestTune$min.node.size
+```
+
+For our random forest model, the hyperparameters are:
+- Randomly selected predictors (mtry): 4
+- Splitting rule: extratrees
+- Minimal node size:7
+
+After tuning our model, we got an accuracy of 0.694 and a Cohen's Kappa of 0.496.
 
 # Variable of Importance
 
