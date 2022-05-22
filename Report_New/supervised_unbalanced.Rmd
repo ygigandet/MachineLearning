@@ -49,6 +49,8 @@ Since we're trying to predict whether the result of a football match is either a
 ### Naive Bayes
 
 ```{r}
+set.seed(1)
+
 naivebayesfit <- naive_bayes(full_time_results~., data = train_data1, usekernel=TRUE)
 
 naivebayespred <- predict(naivebayesfit, newdata = test_data1, type="class")
@@ -61,6 +63,8 @@ For our first model, the accuracy is at 0.667 and the Kappa at 0.422.
 ### K-NN
 
 ```{r}
+set.seed(1)
+
 #Tuning hyperparameter
 ctrl <- trainControl(method = "cv", number=10)
 knngrid <- train(full_time_results ~., data = train_data1, method = "knn", trControl=ctrl, tuneGrid = data.frame(k=c(1,2,5,10,50,100,125,150)))
@@ -82,6 +86,8 @@ After hypertuning the k parameter, AKA the number of closest neighbors, we fitte
 ### Classification Tree
 
 ```{r}
+set.seed(1)
+
 #Tuning hyperparameter
 ctrl <- trainControl(method = "cv", number=10)
 treegrid <- train(full_time_results ~., data = train_data1, method = "rpart", trControl=ctrl, tuneGrid = data.frame(cp=c(0.005,0.01,0.015,0.02,0.025,0.03,0.35)))
