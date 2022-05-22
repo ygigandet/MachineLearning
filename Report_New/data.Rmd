@@ -16,10 +16,29 @@ The sources are the following:
 
 
 ## Data description 
-Each of the three datasets contains 380 observations, and each of them represents one match. The dataset for the season 2018-19 contains 62 variables, while the other two datasets contain 65 variables each. The most important variables that we are going to use in this project are:
+
+Each of the three datasets contains 380 observations, and each of them represents one match. The dataset for the season 2018-19 contains 62 variables, while the other two datasets contain 65 variables each. The most important variables that we are going to use in this project refer to either the home or the away team of the match:
 
 - home team
 - away team
+- full time home goals
+- full time away goals
+- half time home goals
+- half time away goals
+- full time results
+- half time results
+- home shots
+- away shots
+- home shots ontarget
+- away shots ontarget
+- home fouls
+- away fouls
+- home corners
+- away corners
+- home yellow cards
+- away yellow cards
+- home red cards
+- away red cards.
 
 
 ## Data cleaning
