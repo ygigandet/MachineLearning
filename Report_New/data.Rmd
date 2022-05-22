@@ -17,7 +17,7 @@ The sources are the following:
 
 ## Data description 
 
-Each of the three datasets contains 380 observations, and each of them represents one match. The dataset for the season 2018-19 contains 62 variables, while the other two datasets contain 65 variables each. The most important variables that we are going to use in this project refer to either the home or the away team of the match:
+Each of the three datasets contains 380 observations, and each of them represents one match. The dataset for the season 2018-19 contains 62 variables, while the other two datasets contain 65 variables each. The most important variables that we are going to use in this project are the following:
 
 - home team
 - away team
