@@ -51,7 +51,18 @@ Since we're trying to predict whether the result of a football match is either a
 ```{r}
 set.seed(1)
 
-naivebayesfit <- naive_bayes(full_time_results~., data = train_data1, usekernel=TRUE)
+trctrl <- trainControl(method = "cv", number=10)
+
+search_grid <- expand.grid(
+  usekernel = c(TRUE, FALSE),
+  adjust = seq(0, 5, by = 1)
+)
+
+naivebayesfit <- train(full_time_results ~.,
+                 data = train_data1,
+                 method = "naive_bayes",
+                 trControl = trctrl,
+                 tuneGrid = search_grid)
 
 naivebayespred <- predict(naivebayesfit, newdata = test_data1, type="class")
 
