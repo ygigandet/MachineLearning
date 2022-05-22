@@ -280,16 +280,18 @@ plot(adp_nn, adp_cart) +
 
 set.seed(1)
 trctrl <- trainControl(method = "cv", number=10)
-search_grid <- expand.grid(
-  usekernel = c(TRUE, FALSE),
-  laplace = c(1:5),
-  adjust = seq(0, 5, by = 1)
+
+grid <- expand.grid(
+  usekernel = naivebayesfit$bestTune$usekernel,
+  laplace = naivebayesfit$bestTune$laplace,
+  adjust = naivebayesfit$bestTune$adjust
 )
+
 VarImpNBfit <- train(full_time_results ~ half_time_results + half_time_away_goals + away_shots_ontarget + half_time_home_goals,
                  data = train_data1,
                  method = "naive_bayes",
                  trControl = trctrl,
-                 tuneGrid = search_grid)
+                 
 
 VarImpNBpred <- predict(VarImpNBfit, newdata = test_data1, type="class")
 ```
@@ -322,7 +324,7 @@ grid.arrange(oldconfmatrixNN, refitconfmatrixNN)
 
 ```{r, echo=FALSE}
 # CART
-classtreefit <- rpart(full_time_results ~ half_time_results + half_time_away_goals + away_shots_ontarget + half_time_home_goals,, data=train_data1)
+classtreefit <- rpart(full_time_results ~ half_time_results + half_time_away_goals + away_shots_ontarget + half_time_home_goals, data=train_data1)
 
 rpart.plot(classtreefit)
 
