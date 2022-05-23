@@ -276,6 +276,7 @@ explainer_nb <- DALEX::explain(model = naivebayesfit,
 
 # Plotting the feature importance
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
+
 calculate_importance <- function(your_model_explainer, n_permutations = 10) {
   imp <- model_parts(explainer = your_model_explainer,
                      B = n_permutations,
@@ -287,7 +288,7 @@ calculate_importance <- function(your_model_explainer, n_permutations = 10) {
 importance_nn <- calculate_importance(explainer_nn)
 importance_cart <- calculate_importance(explainer_cart)
 importance_nb <- calculate_importance(explainer_nb)
-importance_nn <- calculate_importance(explainer_RF)
+importance_rf <- calculate_importance(explainer_classif_rf)
 
 
 plot(importance_nn, importance_cart, importance_nb) +
