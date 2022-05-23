@@ -12,23 +12,45 @@ premier_league_results <- read_csv("premier_league_results_clean.csv")
 
 ## Premier League Results
 
-##Single variable Analysis
+### Single variable Analysis
 
-```{r, echo=FALSE}
-str(premier_league_results)
+Our EDA started with analysing each variable in our dataset inorder to gain an insight on what kind of data we have and what can be used in move forward with our analysis and model fitting. 
+
+
+We started with graphing the total count of matches for each season, then to ensure that all chosen teams have played the same amount of games we plotted the number of matches per team.As shown below, all teams have played the same amount of matches.   
+```{r, echo=FALSE, include=FALSE}
+#To be removed
+str(premier_league_results) 
 ```
 
 ```{r}
 # match_date
-premier_league_results %>% 
+match_date <- premier_league_results %>% 
   select(match_date) %>% 
   ggplot(aes(x = year(match_date))) +
+  geom_bar() 
+
+numb_of_gamesH <- premier_league_results %>% 
+  select(home_team) %>% 
+  ggplot(aes(x = home_team)) +
   geom_bar()
+
+
+numb_of_gamesA <- premier_league_results %>% 
+  select(away_team) %>% 
+  ggplot(aes(x = away_team)) +
+  geom_bar()
+
+
+match_date 
+numb_of_gamesH 
+numb_of_gamesA
+
 
 # Ok seems good for the repartition of the years
 ```
 
-```{r}
+```{r, include=FALSE}
 # Home team
 premier_league_results %>% 
   select(home_team) %>% 
@@ -36,9 +58,8 @@ premier_league_results %>%
   geom_bar()
 
 # All good, same numbers
-```
-```{r}
-# Home team
+
+# Away team
 premier_league_results %>% 
   select(away_team) %>% 
   ggplot(aes(x = away_team)) +
@@ -47,49 +68,61 @@ premier_league_results %>%
 # All good, same numbers
 ```
 
+<br>
+
+**_Outliers_**
+
+Below are osme boxplots to show if there exists any outliers in our data for each of `full time home goals`, `half time home goals`, `full time away goals` and `half time away goals`. Following that we studied the correlation between 
+
 ```{r}
 # Full-time home goals
-premier_league_results %>% 
+BP_FTHG <- premier_league_results %>% 
   select(full_time_home_goals) %>% 
   ggplot(aes(x = full_time_home_goals)) +
   geom_boxplot() +
   xlim(0,8)
 
 # half-time home goals
-premier_league_results %>% 
+BP_HTHG <- premier_league_results %>% 
   select(half_time_home_goals) %>% 
   ggplot(aes(x = half_time_home_goals)) +
   geom_boxplot()+
   xlim(0,5)
 
+BP_FTHG + BP_HTHG
+
 # Full-time against half-time - home team
-premier_league_results %>% 
+corr_home <- premier_league_results %>% 
   select(full_time_home_goals, half_time_home_goals) %>% 
   ggplot(aes(x = full_time_home_goals, y = half_time_home_goals)) +
   geom_point() +
   geom_abline(intercept = 0, slope = 1)
 
 # Full-time away goals
-premier_league_results %>% 
+BP_FTAG <- premier_league_results %>% 
   select(full_time_away_goals) %>% 
   ggplot(aes(x = full_time_away_goals)) +
   geom_boxplot()+
   xlim(0,8)
 
 # half-time away goals
-premier_league_results %>% 
+BP_HTAG <- premier_league_results %>% 
   select(half_time_away_goals) %>% 
   ggplot(aes(x = half_time_away_goals)) +
   geom_boxplot()+
   xlim(0,5)
 
+BP_FTAG + BP_HTAG
+
 # Full-time against half-time - away team
 
-premier_league_results %>% 
+corr_away <- premier_league_results %>% 
   select(full_time_away_goals, half_time_away_goals) %>% 
   ggplot(aes(x = full_time_away_goals, y = half_time_away_goals)) +
   geom_point() +
   geom_abline(intercept = 0, slope = 1)
+
+corr_home + corr_away
 ```
 ```{r}
 # full-time results
@@ -207,7 +240,10 @@ premier_league_results %>%
   ggplot(aes(x = away_red_cards)) +
   geom_boxplot()
 ```
-
+```{r, echo=FALSE}
+  # plot_boxplot(premier_league_results, , title = NULL, ggtheme = theme_gray(),
+  # theme_config = list(), ...)
+```
 ## Multivariate Analysis
 
 

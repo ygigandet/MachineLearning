@@ -103,6 +103,99 @@ head(PLR_Away_Scale)%>% kable(caption = "**Scaled Premiere League Results for Aw
 <br>
 <br>
 
+## Clustering
+
+
+For the clustering method, we calculated the Manhattan distance to form clusters of the Home and Away teams. To choose the optimal number of cluster, we have created dendrograms for both Home and Away. For the clustering, we also used Manhattan distance and complete linkage methods. Below are three graphs that we used to select the number of clusters: 
+
+  + `Within sum of squares` 
+  + `GAP statistics`
+  + `Sihouette graph`
+
+```{r, echo=FALSE, warning=FALSE, include=FALSE}
+# matrix of Manhattan distances 
+PLR_Home_Mdistance <- dist(PLR_Home_Scale[,], method = "manhattan")
+
+PLR_Away_Mdistance <- dist(PLR_Away_Scale[,], method = "manhattan")
+```
+
+
+```{r, echo=FALSE, warning=FALSE, include=FALSE}
+PLR_Home_Mdistance 
+```
+
+
+```{r, echo=FALSE, warning=FALSE, include=FALSE}
+PLR_Away_Mdistance 
+```
+
+
+```{r, echo=FALSE}
+fviz_nbclust(PLR_Home_Scale[,-1],
+             kmeans,
+             method = "wss", 
+             k.max = 5, verbose = FALSE)
+fviz_nbclust(PLR_Home_Scale[,-1],
+             kmeans, 
+             method = "silhouette", 
+             k.max = 5, verbose = FALSE)
+fviz_nbclust(PLR_Home_Scale[,-1],
+             kmeans,
+             method = "gap", 
+             k.max = 5, verbose = FALSE)
+
+home.km <- kmeans(PLR_Home_Scale[,-1], centers=1)
+```
+<br>
+  
+Looking at the scree plot above and following the so-called "elbow method" we believe that the optimal number of clusters should be three(3) as this decreases the _within variance_ and increases the _between variance_ keeping in mind the complexity of the model.  
+
+Below are the dendrograms that we have created. 
+
+
+```{r, echo=FALSE, warning=FALSE}
+#code to try to change the labels
+
+# PLR_Home_hc <- hclust(PLR_Home_Mdistance, method = "complete")
+# plot(PLR_Home_hc, hang=-1, labels_col(value = c("skyblue", "orange", "grey"), k=3), branches_color(value = c("skyblue", "orange", "grey"), k = 3) ) 
+# 
+# PLR_Away_hc <- hclust(PLR_Away_Mdistance, method = "complete")
+# plot(PLR_Away_hc, hang=-1)
+
+
+
+###HOME###
+
+dend_home <- PLR_Home_Scale[,] %>% 
+  dist("manhattan") %>% 
+  hclust(method = "complete") %>% 
+  as.dendrogram()
+
+#par(mar=c(1,1,1,7))
+dend_home %>%
+  set("labels_col", value = c("#5dc263", "#f86565", "#669af0"), k=3) %>%
+  set("branches_k_color", value = c("#5dc263", "#f86565", "#669af0"), k = 3) %>%
+  plot(horiz=FALSE, axes=FALSE, main ="Home Dendrogram")
+abline(v = 350, lty = 2)
+
+
+###AWAY###
+
+dend_away <- PLR_Away_Scale[,] %>% 
+  dist("manhattan") %>% 
+  hclust(method = "complete") %>% 
+  as.dendrogram() 
+
+#par(mar=c(1,1,1,7))
+dend_away %>%
+  set("labels_col", value = c("#5dc263", "#f86565", "#669af0"), k=3) %>%
+  set("branches_k_color", value = c("#5dc263", "#f86565", "#669af0"), k = 3) %>%
+  plot(horiz=FALSE, axes=FALSE, main ="Away Dendrogram")
+abline(v = 350, lty = 2)
+```
+
+<br>
+
 ## Principal Component Analysis (PCA)
 
 For our unsupervised learning model, we decided to work on PCA in order to see the clusters formed and study the important components of each of the Home and Away teams. 
@@ -285,102 +378,9 @@ The plots also show the seed of each cluster denoted by a bigger label in the mi
  
 We can conclude from the graphs above that many of the teams' performance changes depending on whether they are playing Home or Away. For example, Arsenal has scored fewer goals and getting less red cards when playing Away. However, some teams' performance has not change much such as Man City and Liverpool. 
 
-<br>
-<br>
-
-## Clustering
-
-
-For the clustering method, we calculated the Manhattan distance to form clusters of the Home and Away teams. To choose the optimal number of cluster, we have created dendrograms for both Home and Away. For the clustering, we also used Manhattan distance and complete linkage methods. Below are three graphs that we used to select the number of clusters: 
-
-  + `Within sum of squares` 
-  + `GAP statistics`
-  + `Sihouette graph`
-
-```{r, echo=FALSE, warning=FALSE, include=FALSE}
-# matrix of Manhattan distances 
-PLR_Home_Mdistance <- dist(PLR_Home_Scale[,], method = "manhattan")
-
-PLR_Away_Mdistance <- dist(PLR_Away_Scale[,], method = "manhattan")
-```
-
-
-```{r, echo=FALSE, warning=FALSE, include=FALSE}
-PLR_Home_Mdistance 
-```
-
-
-```{r, echo=FALSE, warning=FALSE, include=FALSE}
-PLR_Away_Mdistance 
-```
-
-
-```{r, echo=FALSE}
-fviz_nbclust(PLR_Home_Scale[,-1],
-             kmeans,
-             method = "wss", 
-             k.max = 5, verbose = FALSE)
-fviz_nbclust(PLR_Home_Scale[,-1],
-             kmeans, 
-             method = "silhouette", 
-             k.max = 5, verbose = FALSE)
-fviz_nbclust(PLR_Home_Scale[,-1],
-             kmeans,
-             method = "gap", 
-             k.max = 5, verbose = FALSE)
-
-home.km <- kmeans(PLR_Home_Scale[,-1], centers=1)
-```
-<br>
-  
-Looking at the scree plot above and following the so-called "elbow method" we believe that the optimal number of clusters should be three(3) as this decreases the _within variance_ and increases the _between variance_ keeping in mind the complexity of the model.  
-
-Below are the dendrograms that we have created. 
-
-
-```{r, echo=FALSE, warning=FALSE}
-#code to try to change the labels
-
-# PLR_Home_hc <- hclust(PLR_Home_Mdistance, method = "complete")
-# plot(PLR_Home_hc, hang=-1, labels_col(value = c("skyblue", "orange", "grey"), k=3), branches_color(value = c("skyblue", "orange", "grey"), k = 3) ) 
-# 
-# PLR_Away_hc <- hclust(PLR_Away_Mdistance, method = "complete")
-# plot(PLR_Away_hc, hang=-1)
-
-
-
-###HOME###
-
-dend_home <- PLR_Home_Scale[,] %>% 
-  dist("manhattan") %>% 
-  hclust(method = "complete") %>% 
-  as.dendrogram()
-
-#par(mar=c(1,1,1,7))
-dend_home %>%
-  set("labels_col", value = c("#5dc263", "#f86565", "#669af0"), k=3) %>%
-  set("branches_k_color", value = c("#5dc263", "#f86565", "#669af0"), k = 3) %>%
-  plot(horiz=FALSE, axes=FALSE, main ="Home Dendrogram")
-abline(v = 350, lty = 2)
-
-
-###AWAY###
-
-dend_away <- PLR_Away_Scale[,] %>% 
-  dist("manhattan") %>% 
-  hclust(method = "complete") %>% 
-  as.dendrogram() 
-
-#par(mar=c(1,1,1,7))
-dend_away %>%
-  set("labels_col", value = c("#5dc263", "#f86565", "#669af0"), k=3) %>%
-  set("branches_k_color", value = c("#5dc263", "#f86565", "#669af0"), k = 3) %>%
-  plot(horiz=FALSE, axes=FALSE, main ="Away Dendrogram")
-abline(v = 350, lty = 2)
-```
-
 
 <br>
+
 ## Final Comments
 
 Both models provide us with the same clusters. Using PCA, now we know that the the first 2 Dimensions explain more than 72% of the variance for both Home and Away which is provides a good model. From clustering we now know that the optimal number of clusters is three(3) which we have used to add to our biplots in our PCA model to better understand the performance of each team.  
