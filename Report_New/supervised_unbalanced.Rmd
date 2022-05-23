@@ -353,8 +353,6 @@ VarImpNNpred <-  predict(VarImpNNfit, newdata = test_data1)
 ```{r, echo=FALSE}
 oldconfmatrixNN <-confusionMatrix(data=pred_neural_network, reference = test_data1$full_time_results)
 refitconfmatrixNN <- confusionMatrix(data=VarImpNNpred, reference = test_data1$full_time_results)
-
-grid.arrange(oldconfmatrixNN, refitconfmatrixNN)
 ```
 
 ```{r, echo=FALSE}
