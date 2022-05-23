@@ -13,11 +13,11 @@ premier_league_results <- read_csv("premier_league_results_clean.csv")
 Next step is fitting models to the clean data, based on our EDA outcomes. But before, to avoid overfitting, we need to split our data into a training and test set.
 
 ## Data Splitting
-Data splitting is when data is divided into two or more subsets. Typically, with a two-part split, one part is used to evaluate or test the data and the other to train the model. Splitting into Training and test set help to avoid overfitting also without proper data, machine learning models are hard to implement and can lead to completely different conclusions and interpretation. To achieve our aim, the strategy which we use is Cross validation (CV) data splitting method. Since we have a large amount of data, the cross validation method is best one for our dataset, indeed it might be problematic if we don’t have enough data and might choose bootstrapping. 
+Data splitting is when data is divided into two or more subsets. Typically, we take 80% for our training set and 20% for our test set. Splitting into Training and test set help to avoid overfitting and prepare our data to use machine learning models. To achieve our aim, the strategy which we use is Cross validation (CV) data splitting method. Since we have a large amount of data, the cross validation method seems the best one for our dataset.
 
 Moreover, it is not necessary to balance the training set, because we are in a non-binary case, and the interpretation of the results will be more complex and the accuracy of the models is decreasing. For these reasons, we decided to keep original values without balancing.
 
-Finally, We performed a random train and test split of our data in order to use the following models: CART, KNN, Naive Bayes, SVM, Neural Network.
+Finally, We performed a random train and test split of our data in order to use our models.
 
 ```{r}
 # Just removing the match data, full_time_home_goals and full_time_away_goals
@@ -225,6 +225,9 @@ Studies show that a higher score means that the specific feature will have a lar
 For each feature, the difference in entropy obtained by 10 permutations is shown by the following plot. It shows graphically the average importance variable according to the cross entropy loss.
 
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
+# Take the RF machine model 
+rf
+
 # Take the NN machine model 
 nnetFit
 
@@ -238,25 +241,37 @@ naivebayesfit
 x_train <- select(train_data1, -full_time_results)
 y_train <- pull(train_data1, full_time_results)
 
+y_validtraiforRF <- as.vector(as.numeric(y_train))
+
+explainer_RF <- DALEX::explain(model = rf,
+                                is_multiclass = TRUE,
+                                data = x_train,
+                                y = y_validtraiforRF,
+                                label = "Random Forestmodel")
+
+  #RF DOESNT WORK -->  Model info detected classification task but 'y' has more than two different values  (  WARNING  )
+
 explainer_nn <- DALEX::explain(model = nnetFit,
                                 is_multiclass = TRUE,
                                 data = x_train,
                                 y = y_train,
-                                label = "NN machine model")
+                                label = "NN model")
   #NN fonctionne
 
 explainer_cart <- DALEX::explain(model = classtreefit.pruned,
                                 is_multiclass = TRUE,
                                 data = x_train,
                                 y = y_train,
-                                label = "CART machine model ")
+                                label = "CART model ")
   #CART fonctionne
 
 explainer_nb <- DALEX::explain(model = naivebayesfit,
                                 is_multiclass = TRUE,
                                 data = x_train,
                                 y = as.numeric(y_train),
-                                label = "NB machine model")
+                                label = "NB model")
+
+  #NB WORK -->  model info detected multiclass task but 'y' is a numeric .  (  WARNING  )
 ```
 
 # Plotting the feature importance
@@ -272,8 +287,10 @@ calculate_importance <- function(your_model_explainer, n_permutations = 10) {
 importance_nn <- calculate_importance(explainer_nn)
 importance_cart <- calculate_importance(explainer_cart)
 importance_nb <- calculate_importance(explainer_nb)
+importance_nn <- calculate_importance(explainer_RF)
 
-plot(importance_nn, importance_cart) +
+
+plot(importance_nn, importance_cart, importance_nb) +
  ggtitle("Mean variable-importance ratio over 10 permutations", "")
 
 ```
@@ -324,50 +341,85 @@ VarImpNBfit <- train(full_time_results ~ half_time_results + half_time_away_goal
                  tuneGrid = grid
 )
                  
-
 VarImpNBpred <- predict(VarImpNBfit, newdata = test_data1)
 ```
 
 ```{r, echo=FALSE}
 #Comparaison between the old cconufsion matrix and the refit confusion matrix 
+oldconfmatrixNB <- confusionMatrix(data=as.factor(naivebayespred), reference = test_data1$full_time_results)
 refitconfmatrixNB <- confusionMatrix(data=as.factor(VarImpNBpred), reference = test_data1$full_time_results)
 
 ```
 
 ```{r, echo=FALSE}
 # NN
-nnetFit <- train(full_time_results ~ half_time_results + half_time_away_goals + away_shots_ontarget + half_time_home_goals,
+set.seed(1)
+
+fitControl <- trainControl(method = "cv", # cv stands for cross-validation 
+                           number = 10)
+
+nnetGrid <-  expand.grid(size = seq(from = 1, to = 10, by = 1),
+                        decay = seq(from = 0.1, to = 0.5, by = 0.1))
+
+VarImpNNfit <- train(full_time_results ~ half_time_results + half_time_away_goals + away_shots_ontarget + half_time_home_goals,
                  data = train_data1,
                  method = "nnet",
                  metric = "Accuracy",
                  tuneGrid = nnetGrid,
                  trControl = fitControl)
 
-pred_neural_network <-  predict(nnetFit, newdata = test_data1)
+VarImpNNpred <-  predict(VarImpNNfit, newdata = test_data1)
 ```
 
 ```{r, echo=FALSE}
 oldconfmatrixNN <-confusionMatrix(data=pred_neural_network, reference = test_data1$full_time_results)
-
-refitconfmatrixNN <- confusionMatrix(data=pred_neural_network, reference = test_data1$full_time_results)
+refitconfmatrixNN <- confusionMatrix(data=VarImpNNpred, reference = test_data1$full_time_results)
 
 grid.arrange(oldconfmatrixNN, refitconfmatrixNN)
 ```
 
 ```{r, echo=FALSE}
 # CART
-classtreefit <- rpart(full_time_results ~ half_time_results + half_time_away_goals + away_shots_ontarget + half_time_home_goals, data=train_data1)
+VarImpCARTfit <- rpart(full_time_results ~ half_time_results + half_time_away_goals + away_shots_ontarget + half_time_home_goals, data=train_data1)
 
-rpart.plot(classtreefit)
+rpart.plot(VarImpCARTfit)
 
-plotcp(classtreefit)
-classtreefit.pruned <- prune(classtreefit, cp=0.015)
+plotcp(VarImpCARTfit)
+VarImpCARTfit.pruned <- prune(VarImpCARTfit, cp=0.015)
 
-classtreepred <- predict(classtreefit.pruned, newdata=test_data1, type="class")
+VarImpCARTpred <- predict(classtreefit.pruned, newdata=test_data1, type="class")
 ```
 
 ```{r, echo=FALSE}
-
+oldconfmatrixCART <- confusionMatrix(data=as.factor(classtreepred), reference = test_data1$full_time_results)
 refitconfmatrixCart <- confusionMatrix(data=as.factor(classtreepred), reference = test_data1$full_time_results)
+
+```
+
+```{r, echo=FALSE}
+# Random Forest (RF)
+
+set.seed(1)
+trctrl <- trainControl(method = "cv", number=5)
+
+search_grid <- expand.grid(.mtry=c(1:15), 
+                           .splitrule = c("gini", "extratrees"),
+                           .min.node.size = c(1:10))
+
+VarImpRFfit<- train(full_time_results~ half_time_results + half_time_away_goals + away_shots_ontarget + half_time_home_goals,
+            data=train_data1,
+            method="ranger",
+            trControl=trctrl,
+            tuneGrid=search_grid,
+)
+
+VarImpRFpred <-  predict(VarImpRFfit, newdata = test_data1)
+refitconfmatrixFR <- confusionMatrix(data=VarImpRFpred, reference = test_data1$full_time_results)
+
+```
+
+```{r, echo=FALSE}
+oldconfmatrixRF <- confusionMatrix(data=pred_rf, reference = test_data1$full_time_results)
+refitconfmatrixFR <- confusionMatrix(data=VarImpRFpred, reference = test_data1$full_time_results)
 
 ```
