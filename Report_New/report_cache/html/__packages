@@ -1,3 +1,4 @@
+base
 knitr
 readr
 dplyr
@@ -20,6 +21,7 @@ GGally
 corrplot
 ggridges
 ggcorrplot
+patchwork
 lattice
 FactoMineR
 factoextra
@@ -31,9 +33,9 @@ e1071
 naivebayes
 rpart
 rpart.plot
-patchwork
+ranger
+randomForest
 dendextend
+ggdendro
 DALEX
 DALEXtra
-ranger
-ggdendro
