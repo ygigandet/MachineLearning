@@ -13,11 +13,10 @@ premier_league_results <- read_csv("premier_league_results_clean.csv")
 Next step is fitting models to the clean data, based on our EDA outcomes. But before, to avoid overfitting, we need to split our data into a training and test set.
 
 ## Data Splitting
-Data splitting is when data is divided into two or more subsets. Typically, we take 80% for our training set and 20% for our test set. Splitting into Training and test set help to avoid overfitting and prepare our data to use machine learning models. To achieve our aim, the strategy which we use is Cross validation (CV) data splitting method. Since we have a large amount of data, the cross validation method seems the best one for our dataset.
+
+For our data split, we took 80% of the original data for our training set and the remaining 20% for our test set. As we have a large amount of data, we then went on further with a cross validation (CV) strategy on our training sets before fitting our models.
 
 Moreover, it is not necessary to balance the training set, because we are in a non-binary case, and the interpretation of the results will be more complex and the accuracy of the models is decreasing. For these reasons, we decided to keep original values without balancing.
-
-Finally, We performed a random train and test split of our data in order to use our models.
 
 ```{r}
 # Just removing the match data, full_time_home_goals and full_time_away_goals
@@ -217,12 +216,11 @@ After tuning our model, we got an accuracy of 0.694 and a Cohen's Kappa of 0.496
 
 # Variable of Importance
 
+Now that we found that our best models are Neural Networks and Random Forest models, we need to see if we can improve their prediction quality, so accuracy, by getting rid of the variables that do not contribute to the prediction. We use model-specific variable importance methods since the approaches are specific to the model that we decided to use. 
 
-Variable importance is a method that provides a measure of the importance of each feature for the model prediction quality. It helps to analyze the link between the features and the response, through the model predictions. 
-Our variable importance is model-specific since the approaches that are specific to the model that is used. We have apply variable of importance on our 3 best models: NN, CART, NB. To do so, we create an explain object with DALEX :: explain function, then implement a variable importance calculation. 
+After applying these methods, we see that ... Indeed, a change on this variable can drastically change the result of both models. Then, we have ... followed by ... and finally ...
 
-Studies show that a higher score means that the specific feature will have a larger effect on the model that is being used to predict a certain variable. Based on this principle, we can see that either in CART or NN, half time results is an important variable. Indeed, a change on this variable can drastically change the result of both models. Then, we have half time away goal followed by away shoot on target.
-For each feature, the difference in entropy obtained by 10 permutations is shown by the following plot. It shows graphically the average importance variable according to the cross entropy loss.
+For each feature, the difference in entropy obtained by 10 permutations is shown by the following plot. It shows graphically the average importance of a variable according to the cross entropy loss.
 
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
 # Take the RF machine model 
@@ -275,10 +273,10 @@ plot(importance_nn, importance_cart, importance_nb) +
 We know that smaller the entropy is, better is the model. In term of cross entropy, ....
 
 ## We might not keep it, depend on the space and utility
-Once we’ve identified influential variables across all three models, next we likely want to understand how the relationship between these influential variables and the average prediction response differ between the models.
+Once we’ve identified influential variables across the 2 models, next we likely want to understand how the relationship between these influential variables and the average prediction response differ between the models.
 
 
-#Refitting the model with the 5 most important variables
+#Refitting the model with the 4 most important variables
 
 ```{r, echo=FALSE}
 # NN
