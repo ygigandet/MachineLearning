@@ -241,15 +241,13 @@ naivebayesfit
 x_train <- select(train_data1, -full_time_results)
 y_train <- pull(train_data1, full_time_results)
 
-y_validtraiforRF <- as.vector(as.numeric(y_train))
+p_fun <- function(object, newdata){predict(object, newdata=newdata, type="prob")[,2]}
 
-varImp(rf)
-varImp(rf$finalModel)
-explainer_RF <- DALEX::explain(model = rf$finalModel,
-                                #is_multiclass = TRUE,
-                                data = x_train,
-                                y = y_validtraiforRF,
-                                label = "Random Forestmodel")
+explainer_classif_rf <- DALEX::explain(rf, label = "rf",
+                                       data = train_data1, 
+                                       y = as.vector(as.numeric(train_data1$full_time_results)),
+                                       predict_function = p_fun, 
+                                       verbose = FALSE)
 
   #RF DOESNT WORK -->  Model info detected classification task but 'y' has more than two different values  (  WARNING  )
 
@@ -301,26 +299,6 @@ We know that smaller the entropy is, better is the model. In term of cross entro
 ## We might not keep it, depend on the space and utility
 Once we’ve identified influential variables across all three models, next we likely want to understand how the relationship between these influential variables and the average prediction response differ between the models.
 
-To do so, we can run a partial dependence profile
-
-```{r}
-#
-adp_nn <- model_profile(explainer_nn, 
- variables = "half_time_results")
-plot(adp_nn)
-
-adp_cart <- model_profile(explainer_cart, 
- variables = "half_time_results")
-plot(adp_cart)
-
-#PLot 
-plot(adp_nn$agr_profiles, 
- adp_cart$agr_profiles)
-
-plot(adp_nn, adp_cart) +
- ggtitle("Partial dependence profile", "")
-
-```
 
 #Refitting the model with the 5 most important variables
 
@@ -409,16 +387,14 @@ refitconfmatrixCart <- confusionMatrix(data=as.factor(classtreepred), reference 
 
 set.seed(1)
 trctrl <- trainControl(method = "cv", number=5)
+search_grid <- expand.grid(.mtry=rf$bestTune$mtry)
+                           
 
-search_grid <- expand.grid(.mtry=rf$bestTune$mtry, 
-                           .splitrule = rf$bestTune$splitrule,
-                           .min.node.size = rf$bestTune$min.node.size)
-
-VarImpRFfit<- train(full_time_results~ half_time_results + half_time_away_goals + away_shots_ontarget + half_time_home_goals,
+VarImpRFfit <- train(full_time_results~ half_time_results + half_time_away_goals + away_shots_ontarget + half_time_home_goals, 
             data=train_data1,
-            method="ranger",
+            method="rf",
             trControl=trctrl,
-            tuneGrid=search_grid,
+            tuneGrid=search_grid
 )
 
 VarImpRFpred <-  predict(VarImpRFfit, newdata = test_data1)
