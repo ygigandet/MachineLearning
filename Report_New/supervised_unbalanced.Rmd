@@ -231,12 +231,6 @@ rf
 # Take the NN machine model 
 nnetFit
 
-# Take the CART machine model 
-classtreefit.pruned
-
-# Take the NB machine model 
-naivebayesfit
-
 #Creating an explain object
 x_train <- select(train_data1, -full_time_results)
 y_train <- pull(train_data1, full_time_results)
@@ -249,7 +243,7 @@ explainer_classif_rf <- DALEX::explain(rf, label = "rf",
                                        predict_function = p_fun, 
                                        verbose = FALSE)
 
-  #RF DOESNT WORK -->  Model info detected classification task but 'y' has more than two different values  (  WARNING  )
+  #RF fonctionne
 
 explainer_nn <- DALEX::explain(model = nnetFit,
                                 is_multiclass = TRUE,
@@ -257,21 +251,6 @@ explainer_nn <- DALEX::explain(model = nnetFit,
                                 y = y_train,
                                 label = "NN model")
   #NN fonctionne
-
-explainer_cart <- DALEX::explain(model = classtreefit.pruned,
-                                is_multiclass = TRUE,
-                                data = x_train,
-                                y = y_train,
-                                label = "CART model ")
-  #CART fonctionne
-
-explainer_nb <- DALEX::explain(model = naivebayesfit,
-                                is_multiclass = TRUE,
-                                data = x_train,
-                                y = as.numeric(y_train),
-                                label = "NB model")
-
-  #NB WORK -->  model info detected multiclass task but 'y' is a numeric .  (  WARNING  )
 ```
 
 # Plotting the feature importance
@@ -286,8 +265,6 @@ calculate_importance <- function(your_model_explainer, n_permutations = 10) {
 }
 
 importance_nn <- calculate_importance(explainer_nn)
-importance_cart <- calculate_importance(explainer_cart)
-importance_nb <- calculate_importance(explainer_nb)
 importance_rf <- calculate_importance(explainer_classif_rf)
 
 
@@ -302,34 +279,6 @@ Once we’ve identified influential variables across all three models, next we l
 
 
 #Refitting the model with the 5 most important variables
-
-```{r, echo=FALSE}
-# Naive Bayes --> 
-set.seed(1)
-trctrl <- trainControl(method = "cv", number=10)
-
-varImpgrid <- expand.grid(
-  usekernel = naivebayesfit$bestTune$usekernel,
-  laplace = naivebayesfit$bestTune$laplace,
-  adjust = naivebayesfit$bestTune$adjust
-)
-
-VarImpNBfit <- train(full_time_results ~ half_time_results + half_time_away_goals + away_shots_ontarget + half_time_home_goals,
-                 data = train_data1,
-                 method = "naive_bayes",
-                 trControl = trctrl,
-                 tuneGrid = varImpgrid
-)
-                 
-VarImpNBpred <- predict(VarImpNBfit, newdata = test_data1)
-```
-
-```{r, echo=FALSE}
-#Comparaison between the old cconufsion matrix and the refit confusion matrix 
-oldconfmatrixNB <- confusionMatrix(data=as.factor(naivebayespred), reference = test_data1$full_time_results)
-refitconfmatrixNB <- confusionMatrix(data=as.factor(VarImpNBpred), reference = test_data1$full_time_results)
-
-```
 
 ```{r, echo=FALSE}
 # NN
@@ -355,31 +304,6 @@ oldconfmatrixNN <-confusionMatrix(data=pred_neural_network, reference = test_dat
 refitconfmatrixNN <- confusionMatrix(data=VarImpNNpred, reference = test_data1$full_time_results)
 ```
 
-```{r, echo=FALSE}
-# CART
-ctrl <- trainControl(method = "cv", number=10)
-
-#VarImptreegrid <- train(full_time_results ~half_time_results + half_time_away_goals + away_shots_ontarget + half_time_home_goals,
-                       # data = train_data1, 
-                       # method = "rpart", 
-                       # trControl=ctrl, 
-                       # tuneGrid = treegrid$bestTune$cp)
-
-VarImpCARTfit <- rpart(full_time_results ~ half_time_results + half_time_away_goals + away_shots_ontarget + half_time_home_goals, data=train_data1)
-
-rpart.plot(VarImpCARTfit)
-
-plotcp(VarImpCARTfit)
-VarImpCARTfit.pruned <- prune(VarImpCARTfit, cp=0.015)
-
-VarImpCARTpred <- predict(classtreefit.pruned, newdata=test_data1, type="class")
-```
-
-```{r, echo=FALSE}
-oldconfmatrixCART <- confusionMatrix(data=as.factor(classtreepred), reference = test_data1$full_time_results)
-refitconfmatrixCart <- confusionMatrix(data=as.factor(classtreepred), reference = test_data1$full_time_results)
-
-```
 
 ```{r, echo=FALSE}
 # Random Forest (RF)
@@ -397,7 +321,6 @@ VarImpRFfit <- train(full_time_results~ half_time_results + half_time_away_goals
 )
 
 VarImpRFpred <-  predict(VarImpRFfit, newdata = test_data1)
-refitconfmatrixFR <- confusionMatrix(data=VarImpRFpred, reference = test_data1$full_time_results)
 
 ```
 
