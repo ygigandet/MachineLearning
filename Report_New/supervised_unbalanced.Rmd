@@ -47,10 +47,10 @@ Since we are trying to predict whether the result of a football match is either 
 
 ### Naive Bayes
 
-```{r, warning = FALSE, results = 'hide'}
+```{r, echo = TRUE, warning = FALSE, results = 'hide'}
 set.seed(1)
 
-trctrl <- trainControl(method = "cv", number=10)
+trctrl <- trainControl(method = "cv", number=10) 
 
 search_grid <- expand.grid(
   usekernel = c(TRUE, FALSE),
@@ -63,7 +63,9 @@ naivebayesfit <- train(full_time_results ~.,
                  method = "naive_bayes",
                  trControl = trctrl,
                  tuneGrid = search_grid)
+```
 
+```{r}
 naivebayespred <- predict(naivebayesfit, newdata = test_data1)
 
 cm <- confusionMatrix(data=as.factor(naivebayespred), reference = test_data1$full_time_results)
@@ -411,7 +413,7 @@ rpart.plot(VarImpCARTfit)
 plotcp(VarImpCARTfit)
 VarImpCARTfit.pruned <- prune(VarImpCARTfit, cp=0.015)
 
-VarImpCARTpred <- predict(tree, newdata=test_data1, type="class")
+VarImpCARTpred <- predict(tree, newdata=test_data1)
 ```
 
 ```{r, echo=FALSE}
