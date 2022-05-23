@@ -1,4 +1,3 @@
-base
 knitr
 readr
 dplyr
@@ -37,3 +36,5 @@ ranger
 dendextend
 DALEX
 DALEXtra
+randomForest
+ggdendro

@@ -177,7 +177,7 @@ After tuning the hyperparameters for our neural network model (size of `r nnetFi
 trctrl <- trainControl(method = "cv", number=5)
 search_grid <- expand.grid(C = c(0.01, 0.1, 1, 10, 100, 1000))
 
-set.seed(143)
+set.seed(1)
 svm_Linear_Grid <- train(full_time_results ~., 
                          data = train_data1, 
                          method = "svmLinear",
@@ -271,7 +271,7 @@ rf
 nnetFit
 
 # Take the CART machine model 
-classtreefit.pruned
+tree
 
 # Take the NB machine model 
 naivebayesfit
@@ -297,7 +297,7 @@ explainer_nn <- DALEX::explain(model = nnetFit,
                                 label = "NN model")
   #NN fonctionne
 
-explainer_cart <- DALEX::explain(model = classtreefit.pruned,
+explainer_cart <- DALEX::explain(model = tree,
                                 is_multiclass = TRUE,
                                 data = x_train,
                                 y = y_train,
@@ -411,7 +411,7 @@ rpart.plot(VarImpCARTfit)
 plotcp(VarImpCARTfit)
 VarImpCARTfit.pruned <- prune(VarImpCARTfit, cp=0.015)
 
-VarImpCARTpred <- predict(classtreefit.pruned, newdata=test_data1, type="class")
+VarImpCARTpred <- predict(tree, newdata=test_data1, type="class")
 ```
 
 ```{r, echo=FALSE}
