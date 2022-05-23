@@ -241,14 +241,11 @@ explainer_classif_rf <- DALEX::explain(rf, label = "rf",
                                        predict_function = p_fun, 
                                        verbose = FALSE)
 
-  #RF fonctionne
-
 explainer_nn <- DALEX::explain(model = nnetFit,
                                 is_multiclass = TRUE,
                                 data = x_train,
                                 y = y_train,
                                 label = "NN model")
-  #NN fonctionne
 ```
 
 # Plotting the feature importance
