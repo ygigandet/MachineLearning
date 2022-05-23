@@ -102,6 +102,7 @@ set.seed(1)
 
 #Tuning hyperparameter
 ctrl <- trainControl(method = "cv", number=10)
+
 treegrid <- train(full_time_results ~., data = train_data1, method = "rpart", trControl=ctrl, tuneGrid = data.frame(cp=c(0.005,0.01,0.015,0.02,0.025,0.03,0.35)))
 
 treegrid
@@ -189,15 +190,14 @@ confusionMatrix(data=svm.tuned.pred, reference = test_data1$full_time_results)
 set.seed(1)
 
 trctrl <- trainControl(method = "cv", number=5)
-search_grid <- expand.grid(.mtry=c(1:15), 
-                           .splitrule = c("gini", "extratrees"),
-                           .min.node.size = c(1:10))
+search_grid <- expand.grid(.mtry=c(1:15)
+                           )
 
 rf <- train(full_time_results~., 
             data=train_data1,
-            method="ranger",
+            method="rf",
             trControl=trctrl,
-            tuneGrid=search_grid,
+            tuneGrid=search_grid
 )
 
 pred_rf <-  predict(rf, newdata = test_data1)
@@ -243,8 +243,10 @@ y_train <- pull(train_data1, full_time_results)
 
 y_validtraiforRF <- as.vector(as.numeric(y_train))
 
-explainer_RF <- DALEX::explain(model = rf,
-                                is_multiclass = TRUE,
+varImp(rf)
+varImp(rf$finalModel)
+explainer_RF <- DALEX::explain(model = rf$finalModel,
+                                #is_multiclass = TRUE,
                                 data = x_train,
                                 y = y_validtraiforRF,
                                 label = "Random Forestmodel")
@@ -324,11 +326,10 @@ plot(adp_nn, adp_cart) +
 
 ```{r, echo=FALSE}
 # Naive Bayes --> 
-
 set.seed(1)
 trctrl <- trainControl(method = "cv", number=10)
 
-grid <- expand.grid(
+varImpgrid <- expand.grid(
   usekernel = naivebayesfit$bestTune$usekernel,
   laplace = naivebayesfit$bestTune$laplace,
   adjust = naivebayesfit$bestTune$adjust
@@ -338,7 +339,7 @@ VarImpNBfit <- train(full_time_results ~ half_time_results + half_time_away_goal
                  data = train_data1,
                  method = "naive_bayes",
                  trControl = trctrl,
-                 tuneGrid = grid
+                 tuneGrid = varImpgrid
 )
                  
 VarImpNBpred <- predict(VarImpNBfit, newdata = test_data1)
@@ -358,19 +359,18 @@ set.seed(1)
 fitControl <- trainControl(method = "cv", # cv stands for cross-validation 
                            number = 10)
 
-nnetGrid <-  expand.grid(size = seq(from = 1, to = 10, by = 1),
-                        decay = seq(from = 0.1, to = 0.5, by = 0.1))
+VarImpGrid <-  expand.grid(size = nnetFit$bestTune$size,
+                        decay = nnetFit$bestTune$decay)
 
 VarImpNNfit <- train(full_time_results ~ half_time_results + half_time_away_goals + away_shots_ontarget + half_time_home_goals,
                  data = train_data1,
                  method = "nnet",
                  metric = "Accuracy",
-                 tuneGrid = nnetGrid,
+                 tuneGrid = VarImpGrid,
                  trControl = fitControl)
 
 VarImpNNpred <-  predict(VarImpNNfit, newdata = test_data1)
 ```
-
 ```{r, echo=FALSE}
 oldconfmatrixNN <-confusionMatrix(data=pred_neural_network, reference = test_data1$full_time_results)
 refitconfmatrixNN <- confusionMatrix(data=VarImpNNpred, reference = test_data1$full_time_results)
@@ -380,6 +380,14 @@ grid.arrange(oldconfmatrixNN, refitconfmatrixNN)
 
 ```{r, echo=FALSE}
 # CART
+ctrl <- trainControl(method = "cv", number=10)
+
+#VarImptreegrid <- train(full_time_results ~half_time_results + half_time_away_goals + away_shots_ontarget + half_time_home_goals,
+                       # data = train_data1, 
+                       # method = "rpart", 
+                       # trControl=ctrl, 
+                       # tuneGrid = treegrid$bestTune$cp)
+
 VarImpCARTfit <- rpart(full_time_results ~ half_time_results + half_time_away_goals + away_shots_ontarget + half_time_home_goals, data=train_data1)
 
 rpart.plot(VarImpCARTfit)
@@ -402,9 +410,9 @@ refitconfmatrixCart <- confusionMatrix(data=as.factor(classtreepred), reference 
 set.seed(1)
 trctrl <- trainControl(method = "cv", number=5)
 
-search_grid <- expand.grid(.mtry=c(1:15), 
-                           .splitrule = c("gini", "extratrees"),
-                           .min.node.size = c(1:10))
+search_grid <- expand.grid(.mtry=rf$bestTune$mtry, 
+                           .splitrule = rf$bestTune$splitrule,
+                           .min.node.size = rf$bestTune$min.node.size)
 
 VarImpRFfit<- train(full_time_results~ half_time_results + half_time_away_goals + away_shots_ontarget + half_time_home_goals,
             data=train_data1,
