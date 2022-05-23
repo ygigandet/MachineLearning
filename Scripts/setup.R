@@ -15,7 +15,7 @@ packages <- c(
   "naivebayes", #Naive Bayes
   "rpart", "rpart.plot", #Classification Tree
   "ranger", # Random Forest
-  "dendextend", #for dendogram labels
+  "dendextend", "ggdendro", #for dendogram labels
   "DALEX", "DALEXtra" #Creating an explain object
 )
 
