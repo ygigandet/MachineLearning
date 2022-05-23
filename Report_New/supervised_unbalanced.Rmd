@@ -10,13 +10,13 @@ setwd(here::here("Data_New/"))
 premier_league_results <- read_csv("premier_league_results_clean.csv")
 ```
 
-Next step is fitting models to the clean data, based on our EDA outcomes. But before, to avoid overfitting, we need to split our data into a training and test set.
+Next step is fitting models to the clean data, based on our EDA outcomes. But before, to avoid overfitting, we need to split our data into a training and a test sets.
 
 ## Data Splitting
 
-For our data split, we took 80% of the original data for our training set and the remaining 20% for our test set. As we have a large amount of data, we then went on further with a cross validation (CV) strategy on our training sets before fitting our models.
+For our splitting strategy, we took 80% of the original data for our training set and the remaining 20% for our test set. As we have a large amount of data, we then went on further with a cross validation (CV) strategy on our training set before fitting our models.
 
-Moreover, it is not necessary to balance the training set, because we are in a non-binary case, and the interpretation of the results will be more complex and the accuracy of the models is decreasing. For these reasons, we decided to keep original values without balancing.
+Moreover, it is not necessary to balance the training set, because we are in a non-binary case, and the interpretation of the results will be more complex and the accuracies of the models are decreasing. For these reasons, we decided to keep original values without balancing.
 
 ```{r}
 # Just removing the match data, full_time_home_goals and full_time_away_goals
@@ -43,11 +43,11 @@ test_data1 = premier_league_results[-train_indexes1,]
 
 ## Model fitting
 
-Since we're trying to predict whether the result of a football match is either a win for the home team, a win for the away team or a draw, our models should be adapted to the case of a multiclass classification task. In this next part, we will fit multiple models and choose at the end the best 2 models, according to their score of accuracy and Cohen's Kappa metrics. This means that we are looking for models with high accuracy, meaning that the predicted variables match the observed variables as much as possible, and a high Cohen's Kappa, which is an indicator whether the model in hand is a better/different one than a random one.
+Since we are trying to predict whether the result of a football match is either a win for the home team, a win for the away team or a draw, our models should be adapted to the case of a multiclass classification task. In this next part, we will fit multiple models and choose at the end the best 2 models, according to following metrics: accuracy and Cohen's Kappa. Therefore we are looking for models with high accuracy, meaning that the predicted variables match the observed variables as much as possible, and a high Cohen's Kappa, which is an indicator whether the model in hand is a better or different model than a random one.
 
 ### Naive Bayes
 
-```{r, warning = FALSE}
+```{r, warning = FALSE, results = 'hide'}
 set.seed(1)
 
 trctrl <- trainControl(method = "cv", number=10)
@@ -66,65 +66,82 @@ naivebayesfit <- train(full_time_results ~.,
 
 naivebayespred <- predict(naivebayesfit, newdata = test_data1)
 
-confusionMatrix(data=as.factor(naivebayespred), reference = test_data1$full_time_results)
+cm <- confusionMatrix(data=as.factor(naivebayespred), reference = test_data1$full_time_results)
+
+# Store the metrics
+accuracy_nb <- cm$overall['Accuracy']
+kappa_nb <- cm$overall['Kappa']
 ```
 
-For our first model, the accuracy is at 0.667 and the Kappa at 0.422. 
+For our first model, namely the Naive Bayes, the accuracy is at `r cm$overall['Accuracy']` and the Kappa at `r cm$overall['Kappa']`. 
 
 ### K-NN
 
-```{r}
+```{r, results = 'hide'}
 set.seed(1)
 
 #Tuning hyperparameter
 ctrl <- trainControl(method = "cv", number=10)
-knngrid <- train(full_time_results ~., data = train_data1, method = "knn", trControl=ctrl, tuneGrid = data.frame(k=c(1,2,5,10,50,100,125,150)))
+search_grid <-  expand.grid(k = seq(from = 1, to = 150, by = 1))
 
-knngrid
+knn <- train(full_time_results ~.,
+                 data = train_data1,
+                 method = "knn",
+                 trControl=ctrl, 
+                 tuneGrid = search_grid)
+
+knn
 ```
 
-```{r}
+```{r, results = 'hide'}
 knnfit <- knn3(full_time_results ~ ., data=train_data1, k=125)
 
 knnpred <- predict(knnfit, newdata = test_data1, type="class")
 
-confusionMatrix(data=as.factor(knnpred), reference = test_data1$full_time_results)
+cm <- confusionMatrix(data=as.factor(knnpred), reference = test_data1$full_time_results)
+cm
+
+# Store the metrics
+accuracy_knn <- cm$overall['Accuracy']
+kappa_knn <- cm$overall['Kappa']
 ```
 
-After hypertuning the k parameter, AKA the number of closest neighbors, we fitted model with the optimal parameter k=125, gives a convenient prediction. We have an accuracy of 0.574 and a low Kappa : 0.227. This result is worse than the Naive Bayes model.
-
+After hypertuning the k parameter, AKA the number of closest neighbors, we fitted model with the optimal parameter k=`r knn$bestTune$k`, gives a convenient prediction. We have an accuracy of `r cm$overall['Accuracy']` and a low Kappa: `r cm$overall['Kappa']`. This result is worse than the Naive Bayes model.
 
 ### Classification Tree
 
-```{r}
+```{r, results = 'hide'}
 set.seed(1)
 
 #Tuning hyperparameter
 ctrl <- trainControl(method = "cv", number=10)
+search_grid <-  expand.grid(cp = seq(from = 0.005, to = 0.35, by = 0.005))
 
-treegrid <- train(full_time_results ~., data = train_data1, method = "rpart", trControl=ctrl, tuneGrid = data.frame(cp=c(0.005,0.01,0.015,0.02,0.025,0.03,0.35)))
+tree <- train(full_time_results ~.,
+              data = train_data1,
+              method = "rpart",
+              trControl=ctrl,
+              tuneGrid = search_grid)
 
-treegrid
+tree
 ```
 
-```{r}
-classtreefit <- rpart(full_time_results ~ ., data=train_data1)
+```{r, results = 'hide'}
+classtreepred <- predict(tree, newdata=test_data1)
 
-rpart.plot(classtreefit)
+cm <- confusionMatrix(data=as.factor(classtreepred), reference = test_data1$full_time_results)
+cm
 
-plotcp(classtreefit)
-classtreefit.pruned <- prune(classtreefit, cp=0.015)
-
-classtreepred <- predict(classtreefit.pruned, newdata=test_data1, type="class")
-
-confusionMatrix(data=as.factor(classtreepred), reference = test_data1$full_time_results)
+# Store the metrics
+accuracy_tree <- cm$overall['Accuracy']
+kappa_tree <- cm$overall['Kappa']
 ```
 
-After finding the optimal cp= 0.015 with hypertuning for pruning, the CART model gives a convenient prediction. We've got an accuracy of 0.639 and a moderate Kappa : 0.413. The performance of this model is actually closer to the Naive Bayes !
+After finding the optimal cp=`r tree$bestTune$cp` with hypertuning for pruning, the CART model gives a convenient prediction. We got an accuracy of `r cm$overall['Accuracy']` and a moderate Kappa: `r cm$overall['Kappa']`. The performance of this model is actually closer to the Naive Bayes!
 
 ### Neural Networks
 
-```{r}
+```{r, results = 'hide'}
 # Now that our sets are ready, let's apply the neural network with caret
 set.seed(1)
 
@@ -142,19 +159,20 @@ nnetFit <- train(full_time_results ~ .,
                  trControl = fitControl)
 
 p1 <-  plot(nnetFit)
-p1
 
 pred_neural_network <-  predict(nnetFit, newdata = test_data1)
-confusionMatrix(data=pred_neural_network, reference = test_data1$full_time_results)
+cm <- confusionMatrix(data=pred_neural_network, reference = test_data1$full_time_results)
+
+# Store the metrics
+accuracy_nnet <- cm$overall['Accuracy']
+kappa_nnet <- cm$overall['Kappa']
 ```
 
-After tuning the hyperparameters for our neural network model (size of 1 and weight decay of 0.1), we get a pretty good model for predicting our outcomes. An accuracy of 0.685 and a moderate Cohen's Kappa of 0.457. Compared to the previous models, neural network provides the best model.
+After tuning the hyperparameters for our neural network model (size of `r nnetFit$bestTune$size` and weight decay of `r nnetFit$bestTune$decay`), we get a pretty good model for predicting our outcomes. An accuracy of `r cm$overall['Accuracy']` and a moderate Cohen's Kappa of `r cm$overall['Kappa']`. Compared to the previous models, neural network is the best model to predict our outcomes.
 
-## Support Vector Machines
+### Support Vector Machines
 
-The SVM model gives a convenient prediction, we've an accuracy of 0.648 and a pretty low Kappa: 0.373.
-
-```{r}
+```{r, results = 'hide'}
 # Tuning the hyperparameters
 trctrl <- trainControl(method = "cv", number=5)
 search_grid <- expand.grid(C = c(0.01, 0.1, 1, 10, 100, 1000))
@@ -171,7 +189,7 @@ plot(svm_Linear_Grid)
 svm_Linear_Grid$bestTune
 ```
 
-```{r}
+```{r, results = 'hide'}
 # Now that we know the tuning hyperparameters, let's apply it
 
 svm_tuned <- svm(full_time_results~., data = train_data1,
@@ -180,17 +198,22 @@ svm_tuned <- svm(full_time_results~., data = train_data1,
 
 
 svm.tuned.pred <- predict(svm_tuned, newdata = test_data1)
-confusionMatrix(data=svm.tuned.pred, reference = test_data1$full_time_results)
+cm <- confusionMatrix(data=svm.tuned.pred, reference = test_data1$full_time_results)
+
+# Store the metrics
+accuracy_svm <- cm$overall['Accuracy']
+kappa_svm <- cm$overall['Kappa']
 ```
 
-## Random Forests
+The SVM model gives a convenient prediction, we got an accuracy of `r cm$overall['Accuracy']` and a pretty good Kappa: `r cm$overall['Kappa']`.
 
-```{r}
+### Random Forests
+
+```{r, results = 'hide'}
 set.seed(1)
 
 trctrl <- trainControl(method = "cv", number=5)
-search_grid <- expand.grid(.mtry=c(1:15)
-                           )
+search_grid <- expand.grid(.mtry=c(1:15))
 
 rf <- train(full_time_results~., 
             data=train_data1,
@@ -200,19 +223,34 @@ rf <- train(full_time_results~.,
 )
 
 pred_rf <-  predict(rf, newdata = test_data1)
-confusionMatrix(data=pred_rf, reference = test_data1$full_time_results)
+cm <- confusionMatrix(data=pred_rf, reference = test_data1$full_time_results)
 
-rf$bestTune$mtry
-rf$bestTune$splitrule
-rf$bestTune$min.node.size
+# Store the metrics
+accuracy_rf <- cm$overall['Accuracy']
+kappa_rf <- cm$overall['Kappa']
 ```
 
-For our random forest model, the hyperparameters are:
-- Randomly selected predictors (mtry): 4
-- Splitting rule: extratrees
-- Minimal node size:7
+For our random forest model, the hyperparameter is `r rf$bestTune$mtry` for our randomly selected predictors (aka mtry) 
 
-After tuning our model, we got an accuracy of 0.694 and a Cohen's Kappa of 0.496.
+After hypertuning our model, we got an accuracy of `r cm$overall['Accuracy']` and a Cohen's Kappa of `r cm$overall['Kappa']`.
+
+### Summary of the models
+
+We tried to fit several models to have the best one to predict our desired outcomes. Before moving to the next step, let's compare each model with their respective metrics to choose the best:
+
+```{r}
+# Create a table to show the variables
+metrics = c(accuracy_nb, kappa_nb, accuracy_knn, kappa_knn, accuracy_tree, kappa_tree, accuracy_nnet, kappa_nnet, accuracy_svm, kappa_svm, accuracy_rf, kappa_rf)
+cnames = c("Accuracy", "Kappa")
+rnames = c("Naive Bayes", "K-nearest neighbors", "Tree", "Neural Network", "Support Vector Machines", "Random Forest")
+model_output <- matrix(metrics, ncol = 2, byrow=TRUE, dimnames=list(rnames,cnames))
+model_output <- model_output[order(model_output[,1],decreasing=TRUE),]
+
+kable(model_output, digits = 2)  %>% 
+  kable_styling(bootstrap_options = c("striped","condensed"), fixed_thead = T)
+```
+
+By having a look at the results, we see that Random Forest outperforms the other models by far, followed by Neural Network.
 
 # Variable of Importance
 
