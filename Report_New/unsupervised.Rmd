@@ -58,6 +58,8 @@ PLR_Away <- PLR_Away %>% group_by(away_team) %>%
             Away_red_cards = mean(away_red_cards), .groups = 'drop')
 ```
 
+
+
 ```{r, echo=FALSE, include=FALSE}
 head(PLR_Home)%>% kable(caption = "**Median Premiere League Results for Home Teams**") %>%
   kable_styling(bootstrap_options = c("striped","hover","condensed"),
@@ -86,6 +88,38 @@ PLR_Away_Scale <- PLR_Away_Scale %>%
   mutate(away_team = PLR_Away$away_team, .before = Full_time_away_goals )
 ```
 
+
+```{r, echo=FALSE}
+rownames(PLR_Home_Scale)[1] <- "Arsenal"
+rownames(PLR_Home_Scale)[2] <- "Bournemouth"
+rownames(PLR_Home_Scale)[3] <- "Burnley"
+rownames(PLR_Home_Scale)[4] <- "Chelsea"
+rownames(PLR_Home_Scale)[5] <- "Crystal Palace"
+rownames(PLR_Home_Scale)[6] <- "Everton"
+rownames(PLR_Home_Scale)[7] <- "Leicester"
+rownames(PLR_Home_Scale)[8] <- "Liverpool"
+rownames(PLR_Home_Scale)[9] <- "Man City"
+rownames(PLR_Home_Scale)[10] <- "Man United"
+rownames(PLR_Home_Scale)[11] <- "Southampton"
+rownames(PLR_Home_Scale)[12] <- "Tottenham"
+rownames(PLR_Home_Scale)[13] <- "Watford"
+rownames(PLR_Home_Scale)[14] <- "West Ham"
+
+rownames(PLR_Away_Scale)[1] <- "Arsenal"
+rownames(PLR_Away_Scale)[2] <- "Bournemouth"
+rownames(PLR_Away_Scale)[3] <- "Burnley"
+rownames(PLR_Away_Scale)[4] <- "Chelsea"
+rownames(PLR_Away_Scale)[5] <- "Crystal Palace"
+rownames(PLR_Away_Scale)[6] <- "Everton"
+rownames(PLR_Away_Scale)[7] <- "Leicester"
+rownames(PLR_Away_Scale)[8] <- "Liverpool"
+rownames(PLR_Away_Scale)[9] <- "Man City"
+rownames(PLR_Away_Scale)[10] <- "Man United"
+rownames(PLR_Away_Scale)[11] <- "Southampton"
+rownames(PLR_Away_Scale)[12] <- "Tottenham"
+rownames(PLR_Away_Scale)[13] <- "Watford"
+rownames(PLR_Away_Scale)[14] <- "West Ham"
+```
 The following two tables show the scaled datasets for the first 6 teams. 
 
 ```{r, echo=FALSE}
@@ -200,50 +234,12 @@ abline(v = 350, lty = 2)
 
 For our unsupervised learning model, we decided to work on PCA in order to see the clusters formed and study the important components of each of the Home and Away teams. 
 
-```{r, echo=FALSE}
-rownames(PLR_Home_Scale)[1] <- "Arsenal"
-rownames(PLR_Home_Scale)[2] <- "Bournemouth"
-rownames(PLR_Home_Scale)[3] <- "Burnley"
-rownames(PLR_Home_Scale)[4] <- "Chelsea"
-rownames(PLR_Home_Scale)[5] <- "Crystal Palace"
-rownames(PLR_Home_Scale)[6] <- "Everton"
-rownames(PLR_Home_Scale)[7] <- "Leicester"
-rownames(PLR_Home_Scale)[8] <- "Liverpool"
-rownames(PLR_Home_Scale)[9] <- "Man City"
-rownames(PLR_Home_Scale)[10] <- "Man United"
-rownames(PLR_Home_Scale)[11] <- "Southampton"
-rownames(PLR_Home_Scale)[12] <- "Tottenham"
-rownames(PLR_Home_Scale)[13] <- "Watford"
-rownames(PLR_Home_Scale)[14] <- "West Ham"
-
-rownames(PLR_Away_Scale)[1] <- "Arsenal"
-rownames(PLR_Away_Scale)[2] <- "Bournemouth"
-rownames(PLR_Away_Scale)[3] <- "Burnley"
-rownames(PLR_Away_Scale)[4] <- "Chelsea"
-rownames(PLR_Away_Scale)[5] <- "Crystal Palace"
-rownames(PLR_Away_Scale)[6] <- "Everton"
-rownames(PLR_Away_Scale)[7] <- "Leicester"
-rownames(PLR_Away_Scale)[8] <- "Liverpool"
-rownames(PLR_Away_Scale)[9] <- "Man City"
-rownames(PLR_Away_Scale)[10] <- "Man United"
-rownames(PLR_Away_Scale)[11] <- "Southampton"
-rownames(PLR_Away_Scale)[12] <- "Tottenham"
-rownames(PLR_Away_Scale)[13] <- "Watford"
-rownames(PLR_Away_Scale)[14] <- "West Ham"
-```
-
-
 ```{r, echo=FALSE, include=FALSE}
-#PLR_Home_numeric <- PLR_Home_Scale %>% select(where(is.numeric))
-#PLR_Away_numeric <- PLR_Away_Scale %>% select(where(is.numeric)) 
 
 PLR_Home_pca <- PCA(PLR_Home_Scale [,-1], ncp = 11, graph = FALSE)
 PLR_Away_pca <- PCA(PLR_Away_Scale [,-1], ncp = 11, graph = FALSE)
 
-
 PLR_Home_pca
-
-#PCAmix(X.quanti = NULL, X.quali = NULL, ndim = 5, rename.level = FALSE, weight.col.quanti = NULL, weight.col.quali = NULL, graph = TRUE)
 ```
 
 
@@ -259,10 +255,6 @@ The below two graphs show the same eight (8) variables and for all of the teams 
 Both graphs make sense since they show that all variables related to "goals" and "shots" are correlated to Dimension 2 and variables related to "cards" are correlated with Dimension 1. Therefore, we can deduce that Dimension 1 relates to Goals and Dimension 2 related to Cards.                      
 
 ```{r, echo=FALSE}
-
-# fviz_pca_var(PLR_Home_pca, repel = TRUE, title = "Variable PCA for Home Teams")
-# fviz_pca_var(PLR_Away_pca, repel = TRUE, title = "Variable PCA for Away Teams")
-
 grid.arrange(fviz_pca_var(PLR_Home_pca, repel = TRUE, title = "Home Teams", col.var = "Blue"), fviz_pca_var(PLR_Away_pca, repel = TRUE, title = "Away Teams", col.var = "#2EDFC7"), ncol=2)
 ```
 **_Contribution of Variables_**
@@ -278,20 +270,16 @@ fviz_contrib(PLR_Home_pca, choice = "var", axes = 1, title="Variable Contributio
 fviz_contrib(PLR_Home_pca, choice = "var", axes = 2, title="Variable Contribution to Dim-2") + fviz_contrib(PLR_Away_pca, choice = "var", axes = 2, title="Variable Contribution to Dim-2", fill = "#2EDFC7")
 ```
 
-```{r, echo=FALSE}
-# fviz_pca_ind(PLR_Home_pca) ## only the individuals
-# fviz_pca_ind(PLR_Away_pca)
-
-# fviz_pca_biplot(PLR_Home_pca, repel = TRUE, col.var = "#2E9FDF", col.ind = "#696969", label = "all")
+```{r, echo=FALSE, include=FALSE}
+# Did not include the output in the report due to 30 page limit and because the biplot with variables and clusters provides the same output 
+fviz_pca_biplot(PLR_Home_pca, repel = TRUE, col.var = "#2E9FDF", col.ind = "#696969", label = "all")
+fviz_pca_biplot(PLR_Away_pca, repel = TRUE, col.var = "#2EDFC7", col.ind = "#696969", label = "all")
 ```
 
 <br>
-```{r, echo=FALSE}
-# fviz_pca_biplot(PLR_Away_pca, repel = TRUE, col.var = "#2EDFC7", col.ind = "#696969", label = "all")
-```
 **_Dimension Analysis_**
 
-The summaries below show percentage of contribution of each principle component and the total percentage explained along with various details of each component and individual. The scree plots below show an easier and graphical representation of the same percentage of variance for all the Dimensions. As shown below, the first 3 components explain more than 80% of the variance. Given that even the first two (2) components explain more than 70% of the variance is also good enough. 
+The summaries below show percentage of contribution of each principle component and the total percentage explained along with various details of each component and individual. The scree plots below show an easier and graphical representation of the same percentage of variance for all the Dimensions. As shown below, the first 3 components explain more than 80% of the variance. Considering the 80% rule-of-thumb, we can use the first three (3) components. However, if we wanted to follow the Kaiser-Guttman rule, which includes only dimensions with eigenvalues greater than 1, then we would only take the first 2 Dimensions.  Therefore, we can reduce the number of dimensions to 2 or 3 and more than 72% of the variance will be explained which is a good percentage. 
 
 <br>
 <br>

@@ -139,6 +139,7 @@ premier_league_results %>%
 Plotting the distribution of each variable pertaining to teams is a good way on getting an overview of what the dataset wants to tell us.
 We started by plotting the violin boxplots for the variable `full_time_home_goals` and `full_time_away_goals` for teams when they are playing as Home and Away.
 
+Comparing both boxplots, we can see that Liverpool and Man City are the highest scoring teams whether they were playing Home or Away. However, the performance of Arsenal decreases when it plays as Away. 
 
 ```{r, echo=FALSE, fig.dim=c(15, 6)}
 violin.goalsH <- ggplot(premier_league_results, aes(x=home_team, y=full_time_home_goals, fill=home_team)) +
@@ -165,8 +166,12 @@ violin.goalsH
 violin.goalsA
 ```
 
-Comparing both boxplots, we can see that Liverpool and Man City are the highest scoring teams whether they were playing Home or Away. However, the performance of Arsenal decreases when it plays as Away  
+
 <br>
+
+The below two graphs show the distribution of the variable red cards for both Home and Away teams. From the first graph, we can tell that when Chelsea and Man City play as Home teams, they are more prone to get red cards. The box plots related to them look shorter in the second graph where they play as Away teams.
+
+On the other hand, if we lok at Tottenham, we can see that they do not get any red cards when they play as home team comparing to getting receiving red cards when playing as Away. 
 ```{r, echo=FALSE, fig.dim=c(15, 6)}
 violin.cardsH <- ggplot(premier_league_results, aes(x=home_team, y=home_red_cards, fill=home_team)) + 
   theme(text = element_text(size = 13),
@@ -188,7 +193,7 @@ violin.cardsA
 ```
 <br>
 
-The density plots below show the distribution of the 
+The density plots below show the distribution of the two variables `home_shots` and `away_shots` with regards to the respective home teams and away teams. Looking at those density plots, we can say that some of those plots have two peaks showing bimodel distribution with a somehow right skewness for some teams. 
 ```{r, fig.dim=c(15, 6)}
 library(viridis)
 density_home_shots <- ggplot(premier_league_results , aes(x = home_shots, y = home_team, fill = stat(x))) +
@@ -199,6 +204,14 @@ density_home_shots <- ggplot(premier_league_results , aes(x = home_shots, y = ho
       panel.spacing = unit(0.1, "lines"),
       strip.text.x = element_text(size = 8))
 
+
+# ggplot(HK_WQ_Analysis, aes(x = `Dissolved Oxygen (mg/L)`, y = Year, fill = 0.5 - abs(0.5 - stat(ecdf)))) +
+#   stat_density_ridges(scale = 0.9, geom = "density_ridges_gradient", calc_ecdf = TRUE, quantile_lines = TRUE, alpha = 0.75, quantiles = 2) +
+#   scale_fill_gradient(low= "#008a89", high = "yellow", name= "Tail probability") +
+#   scale_x_continuous(expand = c(0, 0)) +
+#   scale_y_discrete(expand = expansion(mult = c(0.01, 0.25))) +
+#   theme_ridges(font_size = 13, grid = TRUE) +
+#   theme(axis.title.y = element_blank())
 
 density_away_shots <- ggplot(premier_league_results , aes(x = away_shots, y = away_team, fill = stat(x))) +
   geom_density_ridges_gradient(scale = 3, rel_min_height = 0.01, ) +
@@ -211,6 +224,10 @@ density_away_shots <- ggplot(premier_league_results , aes(x = away_shots, y = aw
 
 
 density_home_shots
+```
+<br>
+
+```{r, fig.dim=c(15, 6)}
 density_away_shots
 ```
 

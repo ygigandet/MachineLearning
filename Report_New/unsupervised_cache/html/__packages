@@ -37,3 +37,6 @@ DALEX
 DALEXtra
 ranger
 ggdendro
+randomForest
+viridisLite
+viridis
