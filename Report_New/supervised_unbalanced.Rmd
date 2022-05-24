@@ -47,25 +47,26 @@ Since we are trying to predict whether the result of a football match is either 
 
 ### Naive Bayes
 
+To fit our first model, namely Naive Bayes, we use the following code from the package `caret`:
+
 ```{r, echo = TRUE, warning = FALSE, results = 'hide'}
 set.seed(1)
 
-trctrl <- trainControl(method = "cv", number=10) 
-
-search_grid <- expand.grid(
+trctrl <- trainControl(method = "cv", number=10) # Cross-validation
+search_grid <- expand.grid( # Hypertuning parameters
   usekernel = c(TRUE, FALSE),
   laplace = c(1:5),
   adjust = seq(0, 5, by = 1)
 )
 
-naivebayesfit <- train(full_time_results ~.,
+naivebayesfit <- train(full_time_results ~., # Modelling
                  data = train_data1,
                  method = "naive_bayes",
                  trControl = trctrl,
                  tuneGrid = search_grid)
 ```
 
-```{r}
+```{r, results = 'hide'}
 naivebayespred <- predict(naivebayesfit, newdata = test_data1)
 
 cm <- confusionMatrix(data=as.factor(naivebayespred), reference = test_data1$full_time_results)
@@ -75,24 +76,23 @@ accuracy_nb <- cm$overall['Accuracy']
 kappa_nb <- cm$overall['Kappa']
 ```
 
-For our first model, namely the Naive Bayes, the accuracy is at `r cm$overall['Accuracy']` and the Kappa at `r cm$overall['Kappa']`. 
+We reach an accuracy of `r cm$overall['Accuracy']` and the Kappa of `r cm$overall['Kappa']`. 
 
 ### K-NN
 
-```{r, results = 'hide'}
+We proceed the same way for all the following models, meaning that we are always hypertuning the parameters to ensure that our models are the best possible. Here is the code for the K-Nearest Neighbors:
+
+```{r, echo = TRUE, results = 'hide'}
 set.seed(1)
 
-#Tuning hyperparameter
-ctrl <- trainControl(method = "cv", number=10)
-search_grid <-  expand.grid(k = seq(from = 1, to = 150, by = 1))
+ctrl <- trainControl(method = "cv", number=10) # Cross-validation
+search_grid <-  expand.grid(k = seq(from = 1, to = 150, by = 1)) # Hypertuning k
 
-knn <- train(full_time_results ~.,
+knn <- train(full_time_results ~., # Modelling
                  data = train_data1,
                  method = "knn",
                  trControl=ctrl, 
                  tuneGrid = search_grid)
-
-knn
 ```
 
 ```{r, results = 'hide'}
@@ -108,24 +108,24 @@ accuracy_knn <- cm$overall['Accuracy']
 kappa_knn <- cm$overall['Kappa']
 ```
 
-After hypertuning the k parameter, AKA the number of closest neighbors, we fitted model with the optimal parameter k=`r knn$bestTune$k`, gives a convenient prediction. We have an accuracy of `r cm$overall['Accuracy']` and a low Kappa: `r cm$overall['Kappa']`. This result is worse than the Naive Bayes model.
+After hypertuning the k parameter, AKA the number of closest neighbors, we fitted model with the optimal parameter k=`r knn$bestTune$k`, giving a convenient prediction. We have an accuracy of `r cm$overall['Accuracy']` and a low Kappa: `r cm$overall['Kappa']`. This result is worse than the Naive Bayes model.
 
 ### Classification Tree
 
-```{r, results = 'hide'}
+For the classification tree, we need to hypertune the cp as in the code below:
+
+```{r, echo = TRUE, results = 'hide'}
 set.seed(1)
 
-#Tuning hyperparameter
-ctrl <- trainControl(method = "cv", number=10)
+ctrl <- trainControl(method = "cv", number=10) # Cross validation
 search_grid <-  expand.grid(cp = seq(from = 0.005, to = 0.35, by = 0.005))
+# Hypertuning the parameter 
 
-tree <- train(full_time_results ~.,
+tree <- train(full_time_results ~., # Modelling
               data = train_data1,
               method = "rpart",
               trControl=ctrl,
               tuneGrid = search_grid)
-
-tree
 ```
 
 ```{r, results = 'hide'}
@@ -143,23 +143,22 @@ After finding the optimal cp=`r tree$bestTune$cp` with hypertuning for pruning, 
 
 ### Neural Networks
 
-```{r, results = 'hide'}
-# Now that our sets are ready, let's apply the neural network with caret
+```{r, echo = TRUE, results = 'hide'}
 set.seed(1)
 
-fitControl <- trainControl(method = "cv", # cv stands for cross-validation 
-                           number = 10)
-
-nnetGrid <-  expand.grid(size = seq(from = 1, to = 10, by = 1),
+fitControl <- trainControl(method = "cv", number = 10) # cross-validation 
+nnetGrid <-  expand.grid(size = seq(from = 1, to = 10, by = 1), # Hyperparameters
                         decay = seq(from = 0.1, to = 0.5, by = 0.1))
 
-nnetFit <- train(full_time_results ~ ., 
+nnetFit <- train(full_time_results ~ .,  # Modelling
                  data = train_data1,
                  method = "nnet",
                  metric = "Accuracy",
                  tuneGrid = nnetGrid,
                  trControl = fitControl)
+```
 
+```{r, results = 'hide'}
 p1 <-  plot(nnetFit)
 
 pred_neural_network <-  predict(nnetFit, newdata = test_data1)
@@ -170,35 +169,24 @@ accuracy_nnet <- cm$overall['Accuracy']
 kappa_nnet <- cm$overall['Kappa']
 ```
 
-After tuning the hyperparameters for our neural network model (size of `r nnetFit$bestTune$size` and weight decay of `r nnetFit$bestTune$decay`), we get a pretty good model for predicting our outcomes. An accuracy of `r cm$overall['Accuracy']` and a moderate Cohen's Kappa of `r cm$overall['Kappa']`. Compared to the previous models, neural network is the best model to predict our outcomes for now.
+After tuning the hyperparameters for our neural network model (size of `r nnetFit$bestTune$size` and weight decay of `r nnetFit$bestTune$decay`), we get a pretty good model for predicting our outcomes. An accuracy of `r cm$overall['Accuracy']` and a moderate Cohen's Kappa of `r cm$overall['Kappa']`. Compared to the previous models, neural network is the best model for now.
 
 ### Support Vector Machines
 
-```{r, results = 'hide'}
-# Tuning the hyperparameters
-trctrl <- trainControl(method = "cv", number=5)
-search_grid <- expand.grid(C = c(0.01, 0.1, 1, 10, 100, 1000))
-
+```{r, echo = TRUE, results = 'hide'}
 set.seed(1)
-svm_Linear_Grid <- train(full_time_results ~., 
-                         data = train_data1, 
-                         method = "svmLinear",
-                         trControl=trctrl,
-                         tuneGrid = search_grid)
 
-svm_Linear_Grid
-plot(svm_Linear_Grid)
-svm_Linear_Grid$bestTune
+trctrl <- trainControl(method = "cv", number=5) # Cross-validation
+search_grid <- expand.grid(C = c(0.01, 0.1, 1, 10, 100, 1000)) # Hyperparameters
+ 
+svm_tuned <- train(full_time_results ~.,# Modelling
+                   data = train_data1, 
+                   method = "svmLinear",
+                   trControl=trctrl,
+                   tuneGrid = search_grid)
 ```
 
 ```{r, results = 'hide'}
-# Now that we know the tuning hyperparameters, let's apply it
-
-svm_tuned <- svm(full_time_results~., data = train_data1,
-                 kernel = "linear",
-                 cost = svm_Linear_Grid$bestTune$C)
-
-
 svm.tuned.pred <- predict(svm_tuned, newdata = test_data1)
 cm <- confusionMatrix(data=svm.tuned.pred, reference = test_data1$full_time_results)
 
@@ -207,23 +195,27 @@ accuracy_svm <- cm$overall['Accuracy']
 kappa_svm <- cm$overall['Kappa']
 ```
 
-We find that the best tune for C is equal to `r svm_Linear_Grid$bestTune$C`, and when we use this metric to fit the model, we obtain an accuracy of `r cm$overall['Accuracy']` and a pretty low Kappa: `r cm$overall['Kappa']`.
+We find that the best tune for C is equal to `r svm_tuned$bestTune$C`, and when we use this metric to fit the model, we obtain an accuracy of `r cm$overall['Accuracy']` and a pretty good Kappa: `r cm$overall['Kappa']`.
 
 ### Random Forests
 
-```{r, results = 'hide'}
+Our last model is Random forests:
+
+```{r, echo = TRUE, results = 'hide'}
 set.seed(1)
 
-trctrl <- trainControl(method = "cv", number=5)
-search_grid <- expand.grid(.mtry=c(1:15))
+trctrl <- trainControl(method = "cv", number=5) # Cross-validation
+search_grid <- expand.grid(.mtry=c(1:15)) #Hyperparameters
 
-rf <- train(full_time_results~., 
+rf <- train(full_time_results~., # Modelling
             data=train_data1,
             method="rf",
             trControl=trctrl,
             tuneGrid=search_grid
 )
+```
 
+```{r}
 pred_rf <-  predict(rf, newdata = test_data1)
 cm <- confusionMatrix(data=pred_rf, reference = test_data1$full_time_results)
 
@@ -236,7 +228,7 @@ For our random forest model, the hyperparameter is `r rf$bestTune$mtry` for our 
 
 ### Summary of the models
 
-We tried to fit several models to have the best one to predict our desired outcomes. Before moving to the next step, let's compare each model with their respective metrics to choose the best:
+We tried to fit several models to have the best one to predict our desired outcomes. Before moving to the next step, we need to compare each model with their respective metrics to choose the best one:
 
 ```{r}
 # Create a table to show the variables
@@ -250,7 +242,7 @@ kable(model_output, digits = 2)  %>%
   kable_styling(bootstrap_options = c("striped","condensed"), fixed_thead = T)
 ```
 
-By having a look at the results, we see that Random Forest outperforms the other models by far, followed by Neural Network.
+By having a look at the results, we see that Random Forest outperforms the other models by far, followed by Support Vector Machines and Neural Network. Therefore, we remove ? for the following parts, variable importance.
 
 
 ## Variable Importance
