@@ -1,5 +1,13 @@
 # Introduction
 
+The amount of data available in sport's world because of technology is constantly increasing. Teams are more and more eager to use this data to their advantage and when speaking about it, we instantly think about the movie "Moneyball" in which a manager of baseball pick a team of undervalued players that should perform well regarding to their statistics. And well, they won the American League West. Nowadays, this is not an isolated case anymore. 
+
+For our project, we are looking at the Premier League, the top level of the English football league system and considered as the most powerful league in the world. It generates the most wealth and the most excitement around the world. Therefore, we would like to find out what are the key statistics that make a team successful or not.
+
+Obviously, predicting the outcomes of games is not a brand-new field, many betting websites are already doing it. However, in this project we try to assess which statistics and which characteristics make a team successful or not. Then we model them to build a powerful predicting model.
+
+# Old
+
 The goal of our Machine Learning project is to find the model that can best predict Premier League results.
 
 The Premier League, also known as the English Premier League, is the top level of the English football league system. Contested by 20 clubs, it operates on a system of promotion and relegation with the English Football League. Seasons typically run from August to May with each team playing 38 matches.
