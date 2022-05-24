@@ -318,7 +318,7 @@ rfProfile
 
 Once we’ve identified the most critical variables for prediction, we would like to verify that excluding all other variables increases the accuracy and kappa of our best 2 models, by refitting them.
 
-```{r, echo=TRUE}
+```{r, echo=FALSE, message = FALSE, warning = FALSE}
 # Random Forest (RF)
 set.seed(1)
 trctrl <- trainControl(method = "cv", number=5)
@@ -333,26 +333,27 @@ VarImpRFfit <- train(full_time_results~ half_time_results + half_time_away_goals
 )
 
 VarImpRFpred <-  predict(VarImpRFfit, newdata = test_data1)
-refitconfmatrixRF <- confusionMatrix(data=VarImpRFpred, reference = test_data1$full_time_results)
-```
 
-```{r, echo=FALSE}
+refitconfmatrixRF <- confusionMatrix(data=VarImpRFpred, reference = test_data1$full_time_results)
 oldconfmatrixRF <- confusionMatrix(data=pred_rf, reference = test_data1$full_time_results)
-refitconfmatrixRF <- confusionMatrix(data=VarImpRFpred, reference = test_data1$full_time_results)
-
-oldconfmatrixRF$overall
-refitconfmatrixRF$overall
 ```
 
+```{r, echo=FALSE,message = FALSE, warning = FALSE, out.width="100%"}
+oldconfmatrixRF$overall %>%
+  kbl(caption = "Metrics of the original model") %>%
+  kable_classic_2(full_width = F)
+refitconfmatrixRF$overall %>%
+  kbl(caption = "Metrics of the refit models")%>%
+  kable_classic_2(full_width = F)
+```
 When we refit the Random Forest model with the 4 most "important" variables, accuracy and kappa decrease, from 0.713 to 0.639 and from 0.529 to 0.424 respectively. This is change can not be ignored and might be causes by variable dependency, hence it is probably better to keep the original model in this case and observe the source of the unexpected outcomes.
 
-*Variable dependency*
-A COMPLETER CE SOIR APRES MANGER
-VOIR SI JE REMPLACE AVEC UN PARTIAL PLOT  ( JE REVIENS VEUILLEZ NE PAS TROP MODIFIER CETTE PARTIE
-ELLE N'EST PAS ENCORE FINI. I WILL BE BACK ;)
 
-The variable dependency 
-```{r, echo=FALSE, out.width="50%"}
+*Variable dependency*
+
+The correlation between 5 variables might be a reason to our unexpected results. For instance we can see a high correlation between half time result and half time home goal. Such correlation can create inter-dependency and the way we train our models has to integreate the different correlation.  
+
+```{r, echo=FALSE,message = FALSE, warning = FALSE}
 train_data1$half_time_results <- as.numeric(train_data1$half_time_results)
 train_data1$full_time_results <-as.numeric(train_data1$full_time_results)
 
@@ -364,11 +365,12 @@ corrplot(MM, method = 'number', tl.cex = 0.8)
 
 # Using randomForest's partialPlot function
 #partialPlot(VarImpRFfit, pred.data = VarImpRFpred, x.var = full_time_results)
+
 ```
 
 
 *Fitting the SVM model with its tops feature importance*
-```{r, echo=TRUE, results = 'hide'}
+```{r, echo=FALSE,message = FALSE, warning = FALSE, out.width="50%", results = 'hide'}
 # Support Vector Machine (SVM)
 set.seed(1)
 
@@ -386,11 +388,11 @@ VarImpSVM.tuned.pred <- predict(VarImpSVMfit, newdata = test_data1)
 ```
 
 ```{r, echo=FALSE}
-oldconfmatrixSVM <-confusionMatrix(data=svm.tuned.pred, reference = test_data1$full_time_results)
-refitconfmatrixSVM <- confusionMatrix(data=VarImpSVM.tuned.pred, reference = test_data1$full_time_results)
-
-oldconfmatrixSVM$overall
-refitconfmatrixSVM$overall
+# oldconfmatrixSVM <-confusionMatrix(data=svm.tuned.pred, reference = test_data1$full_time_results)
+# refitconfmatrixSVM <- confusionMatrix(data=VarImpSVM.tuned.pred, reference = test_data1$full_time_results)
+# 
+# oldconfmatrixSVM$overall
+# refitconfmatrixSVM$overall
 ```
 
 As for the Support Vector Machine model with the 4 most "important" variables, accuracy and kappa decrease again, from 0.704 to 0.648 and from 0.512 to 0.381 respectively. This is change is very marginal though, so it still encourages us to take fewer variables for our modeling as simpler is often better !

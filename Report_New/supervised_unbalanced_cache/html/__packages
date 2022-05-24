@@ -1,3 +1,4 @@
+base
 knitr
 readr
 dplyr
@@ -33,10 +34,10 @@ naivebayes
 rpart
 rpart.plot
 ranger
+randomForest
 dendextend
+ggdendro
 DALEX
 DALEXtra
-randomForest
-ggdendro
 viridisLite
 viridis
