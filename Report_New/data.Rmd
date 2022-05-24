@@ -42,7 +42,7 @@ Each of the three datasets contains 380 observations, and each of them represent
 - home red cards
 - away red cards.
 
-As it can be seen, all the variables concern the performance of either the home or the away team during a specific match.jj
+As it can be seen, all the variables concern the performance of either the home or the away team during a specific match.
 
 
 ## Data cleaning
