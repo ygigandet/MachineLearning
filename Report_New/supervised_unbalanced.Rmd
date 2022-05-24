@@ -249,7 +249,7 @@ By having a look at the results, we see that Random Forest outperforms the other
 
 Now that we found that our best models are Random Forest models and Support Vector Machines, we need to see if we can improve their prediction quality, that we judge by accuracy and kappa, by getting rid of the variables that do not contribute to the prediction. To do this, we use model-specific variable importance methods.
 
-```{r, echo = FALSE, message = FALSE, warning = FALSE}
+```{r, echo = FALSE, message = FALSE, warning = FALSE, results = 'hide'}
 #Creating an explain object
 x_train <- select(train_data1, -full_time_results)
 y_train <- pull(train_data1, full_time_results)
@@ -279,24 +279,46 @@ importance_rf <- calculate_importance(explainer_classif_rf)
 importance_svm <- calculate_importance(explainer_svm)
 ```
 
+*Feature importance for Random forest *
+
+A feature is “important” if shuffling its values increases the model error, because in this case the model relied on the feature for the prediction. In our case we measure the error increase by 1-AUC (1 minus the area under the ROC curve). Features associated with a model error increase by a factor of 1. Indeed, it means that there is no change when we’re at 1 and variables were not important for predicting full time result.
+In our case, variables which are not important are away corners and home corners. In opposite, the most important feature is half time results permuting full time result in an increase in 1-AUC by a factor of approximately 1.05.
 
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
 plot(importance_rf)
 ```
+By running a recursive feature elimination on the RF model, we can see that the top 5 variables (out of 18) are full_time_results, half_time_results, away_shots_ontarget, half_time_home_goals and half_time_away_goals . We are going to use these features in order to refit the model to see if we can improve the accuracy and Kappa.
+
+```{r, echo=FALSE, warning=FALSE, results = 'hide'}
+#Recursive feature elimination
+rfeCtrl <- rfeControl(functions = rfFuncs,
+                      method = "cv",
+                      verbose = FALSE)
+
+rfProfile <- rfe(x = train_data1, 
+                y = as.vector(as.numeric(train_data1$full_time_results)),
+                rfeControl = rfeCtrl)
+
+rfProfile
+```
+
 
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
-plot(importance_svm)
+#plot(importance_svm)
+
+# JAI RDV AVEC L'ASSISTANT A 8H30 DEMAIN :)
+
+
+# In the plot above, we have the difference in entropy obtained by 10 permutations for the SVM Model. It shows graphically the average variable importance according to the cross entropy loss. Here also, it is the same 4 important variables which are the most weight. Not including theses variables can cause a decrease of the cross-entropy for SVM models
+
 ```
-#AMINA'S PART START
-After applying these methods and plotting the "importance" of variables, we see that variables half time result,half time home goal, away shots on target and half time away goals are the ones who contribute most to the predictions of the game results. Indeed, not including theses variables can cause change either positively or negatively. Thus, in the 4 importance variables we have half time result and half time home goal which affect positively and we have away shots on target and half time away goals which affect negativly. 
 
-In the plot above, we have the difference in entropy obtained by 10 permutations for the SVM Model. It shows graphically the average variable importance according to the cross entropy loss. Here also, it is the same 4 important variables which are the most weight. Not including theses variables can cause a decrease of the cross-entropy for SVM models
 
-##AMINA'S PART END
+*Fitting the RF model with its tops feature importance*
 
 Once we’ve identified the most critical variables for prediction, we would like to verify that excluding all other variables increases the accuracy and kappa of our best 2 models, by refitting them.
 
-```{r, echo=TRUE, results = 'hide'}
+```{r, echo=TRUE}
 # Random Forest (RF)
 set.seed(1)
 trctrl <- trainControl(method = "cv", number=5)
@@ -322,10 +344,30 @@ oldconfmatrixRF$overall
 refitconfmatrixRF$overall
 ```
 
-*!* Idk how to interpret graph, so not sure if variables I took are the "right" ones, but I think it's the extreme one on top and bottom.
+When we refit the Random Forest model with the 4 most "important" variables, accuracy and kappa decrease, from 0.713 to 0.639 and from 0.529 to 0.424 respectively. This is change can not be ignored and might be causes by variable dependency, hence it is probably better to keep the original model in this case and observe the source of the unexpected outcomes.
 
-When we refit the Random Forest model with the 4 most "important" variables, accuracy and kappa decrease, from 0.713 to 0.639 and from 0.529 to 0.424 respectively. This is change can not be ignored, so it is probably better to keep the original model in this case.
+*Variable dependency*
+A COMPLETER CE SOIR APRES MANGER
+VOIR SI JE REMPLACE AVEC UN PARTIAL PLOT  ( JE REVIENS VEUILLEZ NE PAS TROP MODIFIER CETTE PARTIE
+ELLE N'EST PAS ENCORE FINI. I WILL BE BACK ;)
 
+The variable dependency 
+```{r, echo=FALSE, out.width="50%"}
+train_data1$half_time_results <- as.numeric(train_data1$half_time_results)
+train_data1$full_time_results <-as.numeric(train_data1$full_time_results)
+
+M <- train_data1 %>% dplyr::select(half_time_results, half_time_away_goals, half_time_home_goals, away_shots_ontarget, full_time_results)
+
+MM <- cor(M %>% dplyr::select(where(is.numeric)))
+
+corrplot(MM, method = 'number', tl.cex = 0.8)
+
+# Using randomForest's partialPlot function
+#partialPlot(VarImpRFfit, pred.data = VarImpRFpred, x.var = full_time_results)
+```
+
+
+*Fitting the SVM model with its tops feature importance*
 ```{r, echo=TRUE, results = 'hide'}
 # Support Vector Machine (SVM)
 set.seed(1)

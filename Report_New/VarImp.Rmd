@@ -102,16 +102,14 @@ plot(adp_nn, adp_cart) +
 Except one outlier in red (NN predicting H) which is high in every case, and will predict mostly Home even if it's A, D or H. The behavior of those models is very similar, we can observe a low partial dependance of Away and Home, indeed when one is up, the other one is down. Therefore, we can say that both models have the same interactions in the data, although using the cart model is a little bit better.
 
 
-```{r Example of recursive feature elimination}
-## PROBABLEMENT A SUPPRIMER 
-#PAR CONTRE JE NE SUIS PAS SUR RF
+```{r}
+#Recursive feature elimination
 rfeCtrl <- rfeControl(functions = rfFuncs,
                       method = "cv",
                       verbose = FALSE)
 
-rfProfile <- rfe(x = x_train, 
-                y = y_train, 
-                #sizes = subsets,
+rfProfile <- rfe(x = train_data1, 
+                y = as.vector(as.numeric(train_data1$full_time_results)),
                 rfeControl = rfeCtrl)
 rfProfile
 ```
