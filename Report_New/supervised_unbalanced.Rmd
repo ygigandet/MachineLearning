@@ -10,13 +10,13 @@ setwd(here::here("Data_New/"))
 premier_league_results <- read_csv("premier_league_results_clean.csv")
 ```
 
-Next step is fitting models to the clean data, based on our EDA outcomes. But before, to avoid overfitting, we need to split our data into a training and test set.
+Next step is fitting models to the clean data, based on our EDA outcomes. But before, to avoid overfitting, we need to split our data into a training and a test sets.
 
 ## Data Splitting
 
-For our data split, we took 80% of the original data for our training set and the remaining 20% for our test set. As we have a large amount of data, we then went on further with a cross validation (CV) strategy on our training sets before fitting our models.
+For our splitting strategy, we took 80% of the original data for our training set and the remaining 20% for our test set. As we have a large amount of data, we then went on further with a cross validation (CV) strategy on our training set before fitting our models.
 
-Moreover, it is not necessary to balance the training set, because we are in a non-binary case, and the interpretation of the results will be more complex and the accuracy of the models is decreasing. For these reasons, we decided to keep original values without balancing.
+Moreover, it is not necessary to balance the training set, because we are in a non-binary case, and the interpretation of the results will be more complex and the accuracies of the models are decreasing. For these reasons, we decided to keep original values without balancing.
 
 ```{r}
 # Just removing the match data, full_time_home_goals and full_time_away_goals
@@ -43,201 +43,213 @@ test_data1 = premier_league_results[-train_indexes1,]
 
 ## Model fitting
 
-Since we're trying to predict whether the result of a football match is either a win for the home team, a win for the away team or a draw, our models should be adapted to the case of a multiclass classification task. In this next part, we will fit multiple models and choose at the end the best 2 models, according to their score of accuracy and Cohen's Kappa metrics. This means that we are looking for models with high accuracy, meaning that the predicted variables match the observed variables as much as possible, and a high Cohen's Kappa, which is an indicator whether the model in hand is a better/different one than a random one.
+Since we are trying to predict whether the result of a football match is either a win for the home team, a win for the away team or a draw, our models should be adapted to the case of a multiclass classification task. In this next part, we will fit multiple models and choose at the end the best 2 models, according to following metrics: accuracy and Cohen's Kappa. Therefore we are looking for models with high accuracy, meaning that the predicted variables match the observed variables as much as possible, and a high Cohen's Kappa, which is an indicator whether the model in hand is a better or different model than a random one.
 
 ### Naive Bayes
 
-```{r, warning = FALSE}
+To fit our first model, namely Naive Bayes, we use the following code from the package `caret`:
+
+```{r, echo = TRUE, warning = FALSE, results = 'hide'}
 set.seed(1)
 
-trctrl <- trainControl(method = "cv", number=10)
-
-search_grid <- expand.grid(
+trctrl <- trainControl(method = "cv", number=10) # Cross-validation
+search_grid <- expand.grid( # Hypertuning parameters
   usekernel = c(TRUE, FALSE),
   laplace = c(1:5),
   adjust = seq(0, 5, by = 1)
 )
 
-naivebayesfit <- train(full_time_results ~.,
+naivebayesfit <- train(full_time_results ~., # Modelling
                  data = train_data1,
                  method = "naive_bayes",
                  trControl = trctrl,
                  tuneGrid = search_grid)
-
-naivebayespred <- predict(naivebayesfit, newdata = test_data1)
-
-confusionMatrix(data=as.factor(naivebayespred), reference = test_data1$full_time_results)
 ```
 
-For our first model, the accuracy is at 0.667 and the Kappa at 0.422. 
+```{r, results = 'hide'}
+naivebayespred <- predict(naivebayesfit, newdata = test_data1)
+
+cm <- confusionMatrix(data=as.factor(naivebayespred), reference = test_data1$full_time_results)
+
+# Store the metrics
+accuracy_nb <- cm$overall['Accuracy']
+kappa_nb <- cm$overall['Kappa']
+```
+
+We reach an accuracy of `r cm$overall['Accuracy']` and the Kappa of `r cm$overall['Kappa']`. 
 
 ### K-NN
 
-```{r}
+We proceed the same way for all the following models, meaning that we are always hypertuning the parameters to ensure that our models are the best possible. Here is the code for the K-Nearest Neighbors:
+
+```{r, echo = TRUE, results = 'hide'}
 set.seed(1)
 
-#Tuning hyperparameter
-ctrl <- trainControl(method = "cv", number=10)
-knngrid <- train(full_time_results ~., data = train_data1, method = "knn", trControl=ctrl, tuneGrid = data.frame(k=c(1,2,5,10,50,100,125,150)))
+ctrl <- trainControl(method = "cv", number=10) # Cross-validation
+search_grid <-  expand.grid(k = seq(from = 1, to = 150, by = 1)) # Hypertuning k
 
-knngrid
+knn <- train(full_time_results ~., # Modelling
+                 data = train_data1,
+                 method = "knn",
+                 trControl=ctrl, 
+                 tuneGrid = search_grid)
 ```
 
-```{r}
-knnfit <- knn3(full_time_results ~ ., data=train_data1, k=125)
+```{r, results = 'hide'}
+knnfit <- knn3(full_time_results ~ ., data=train_data1, k=knn$bestTune$k)
 
 knnpred <- predict(knnfit, newdata = test_data1, type="class")
 
-confusionMatrix(data=as.factor(knnpred), reference = test_data1$full_time_results)
+cm <- confusionMatrix(data=as.factor(knnpred), reference = test_data1$full_time_results)
+cm
+
+# Store the metrics
+accuracy_knn <- cm$overall['Accuracy']
+kappa_knn <- cm$overall['Kappa']
 ```
 
-After hypertuning the k parameter, AKA the number of closest neighbors, we fitted model with the optimal parameter k=125, gives a convenient prediction. We have an accuracy of 0.574 and a low Kappa : 0.227. This result is worse than the Naive Bayes model.
-
+After hypertuning the k parameter, AKA the number of closest neighbors, we fitted model with the optimal parameter k=`r knn$bestTune$k`, giving a convenient prediction. We have an accuracy of `r cm$overall['Accuracy']` and a low Kappa: `r cm$overall['Kappa']`. This result is worse than the Naive Bayes model.
 
 ### Classification Tree
 
-```{r}
+For the classification tree, we need to hypertune the cp as in the code below:
+
+```{r, echo = TRUE, results = 'hide'}
 set.seed(1)
 
-#Tuning hyperparameter
-ctrl <- trainControl(method = "cv", number=10)
+ctrl <- trainControl(method = "cv", number=10) # Cross validation
+search_grid <-  expand.grid(cp = seq(from = 0.005, to = 0.35, by = 0.005))
+# Hypertuning the parameter 
 
-treegrid <- train(full_time_results ~., data = train_data1, method = "rpart", trControl=ctrl, tuneGrid = data.frame(cp=c(0.005,0.01,0.015,0.02,0.025,0.03,0.35)))
-
-treegrid
+tree <- train(full_time_results ~., # Modelling
+              data = train_data1,
+              method = "rpart",
+              trControl=ctrl,
+              tuneGrid = search_grid)
 ```
 
-```{r}
-classtreefit <- rpart(full_time_results ~ ., data=train_data1)
+```{r, results = 'hide'}
+classtreepred <- predict(tree, newdata=test_data1)
 
-rpart.plot(classtreefit)
+cm <- confusionMatrix(data=as.factor(classtreepred), reference = test_data1$full_time_results)
+cm
 
-plotcp(classtreefit)
-classtreefit.pruned <- prune(classtreefit, cp=0.015)
-
-classtreepred <- predict(classtreefit.pruned, newdata=test_data1, type="class")
-
-confusionMatrix(data=as.factor(classtreepred), reference = test_data1$full_time_results)
+# Store the metrics
+accuracy_tree <- cm$overall['Accuracy']
+kappa_tree <- cm$overall['Kappa']
 ```
 
-After finding the optimal cp= 0.015 with hypertuning for pruning, the CART model gives a convenient prediction. We've got an accuracy of 0.639 and a moderate Kappa : 0.413. The performance of this model is actually closer to the Naive Bayes !
+After finding the optimal cp=`r tree$bestTune$cp` with hypertuning for pruning, the CART model gives a convenient prediction. We got an accuracy of `r cm$overall['Accuracy']` and a moderate Kappa: `r cm$overall['Kappa']`. The performance of this model is actually closer to the Naive Bayes!
 
 ### Neural Networks
 
-```{r}
-# Now that our sets are ready, let's apply the neural network with caret
+```{r, echo = TRUE, results = 'hide'}
 set.seed(1)
 
-fitControl <- trainControl(method = "cv", # cv stands for cross-validation 
-                           number = 10)
-
-nnetGrid <-  expand.grid(size = seq(from = 1, to = 10, by = 1),
+fitControl <- trainControl(method = "cv", number = 10) # cross-validation 
+nnetGrid <-  expand.grid(size = seq(from = 1, to = 10, by = 1), # Hyperparameters
                         decay = seq(from = 0.1, to = 0.5, by = 0.1))
 
-nnetFit <- train(full_time_results ~ ., 
+nnetFit <- train(full_time_results ~ .,  # Modelling
                  data = train_data1,
                  method = "nnet",
                  metric = "Accuracy",
                  tuneGrid = nnetGrid,
                  trControl = fitControl)
+```
 
+```{r, results = 'hide'}
 p1 <-  plot(nnetFit)
-p1
 
 pred_neural_network <-  predict(nnetFit, newdata = test_data1)
-confusionMatrix(data=pred_neural_network, reference = test_data1$full_time_results)
+cm <- confusionMatrix(data=pred_neural_network, reference = test_data1$full_time_results)
+
+# Store the metrics
+accuracy_nnet <- cm$overall['Accuracy']
+kappa_nnet <- cm$overall['Kappa']
 ```
 
-After tuning the hyperparameters for our neural network model (size of 1 and weight decay of 0.1), we get a pretty good model for predicting our outcomes. An accuracy of 0.685 and a moderate Cohen's Kappa of 0.457. Compared to the previous models, neural network provides the best model.
+After tuning the hyperparameters for our neural network model (size of `r nnetFit$bestTune$size` and weight decay of `r nnetFit$bestTune$decay`), we get a pretty good model for predicting our outcomes. An accuracy of `r cm$overall['Accuracy']` and a moderate Cohen's Kappa of `r cm$overall['Kappa']`. Compared to the previous models, neural network is the best model for now.
 
-## Support Vector Machines
+### Support Vector Machines
 
-The SVM model gives a convenient prediction, we've an accuracy of 0.648 and a pretty low Kappa: 0.373.
-
-```{r}
-# Tuning the hyperparameters
-trctrl <- trainControl(method = "cv", number=5)
-search_grid <- expand.grid(C = c(0.01, 0.1, 1, 10, 100, 1000))
-
-set.seed(143)
-svm_Linear_Grid <- train(full_time_results ~., 
-                         data = train_data1, 
-                         method = "svmLinear",
-                         trControl=trctrl,
-                         tuneGrid = search_grid)
-
-svm_Linear_Grid
-plot(svm_Linear_Grid)
-svm_Linear_Grid$bestTune
-```
-
-```{r}
-# Now that we know the tuning hyperparameters, let's apply it
-
-svm_tuned <- svm(full_time_results~., data = train_data1,
-                 kernel = "linear",
-                 cost = svm_Linear_Grid$bestTune$C)
-
-
-svm.tuned.pred <- predict(svm_tuned, newdata = test_data1)
-confusionMatrix(data=svm.tuned.pred, reference = test_data1$full_time_results)
-```
-
-## Random Forests
-
-```{r}
+```{r, echo = TRUE, results = 'hide'}
 set.seed(1)
 
-trctrl <- trainControl(method = "cv", number=5)
-search_grid <- expand.grid(.mtry=c(1:15)
-                           )
+trctrl <- trainControl(method = "cv", number=5) # Cross-validation
+search_grid <- expand.grid(C = c(0.01, 0.1, 1, 10, 100, 1000)) # Hyperparameters
+ 
+svm_tuned <- train(full_time_results ~.,# Modelling
+                   data = train_data1, 
+                   method = "svmLinear",
+                   trControl=trctrl,
+                   tuneGrid = search_grid)
+```
 
-rf <- train(full_time_results~., 
+```{r, results = 'hide'}
+svm.tuned.pred <- predict(svm_tuned, newdata = test_data1)
+cm <- confusionMatrix(data=svm.tuned.pred, reference = test_data1$full_time_results)
+
+# Store the metrics
+accuracy_svm <- cm$overall['Accuracy']
+kappa_svm <- cm$overall['Kappa']
+```
+
+We find that the best tune for C is equal to `r svm_tuned$bestTune$C`, and when we use this metric to fit the model, we obtain an accuracy of `r cm$overall['Accuracy']` and a pretty good Kappa: `r cm$overall['Kappa']`.
+
+### Random Forests
+
+Our last model is Random forests:
+
+```{r, echo = TRUE, results = 'hide'}
+set.seed(1)
+
+trctrl <- trainControl(method = "cv", number=5) # Cross-validation
+search_grid <- expand.grid(.mtry=c(1:15)) #Hyperparameters
+
+rf <- train(full_time_results~., # Modelling
             data=train_data1,
             method="rf",
             trControl=trctrl,
             tuneGrid=search_grid
 )
-
-pred_rf <-  predict(rf, newdata = test_data1)
-confusionMatrix(data=pred_rf, reference = test_data1$full_time_results)
-
-rf$bestTune$mtry
-rf$bestTune$splitrule
-rf$bestTune$min.node.size
 ```
 
-For our random forest model, the hyperparameters are:
-- Randomly selected predictors (mtry): 4
-- Splitting rule: extratrees
-- Minimal node size:7
+```{r}
+pred_rf <-  predict(rf, newdata = test_data1)
+cm <- confusionMatrix(data=pred_rf, reference = test_data1$full_time_results)
 
-After tuning our model, we got an accuracy of 0.694 and a Cohen's Kappa of 0.496.
+# Store the metrics
+accuracy_rf <- cm$overall['Accuracy']
+kappa_rf <- cm$overall['Kappa']
+```
 
-# Variable of Importance
+For our random forest model, the hyperparameter is `r rf$bestTune$mtry` for our randomly selected predictors (aka mtry). After hypertuning our model, we got an accuracy of `r cm$overall['Accuracy']` and a Cohen's Kappa of `r cm$overall['Kappa']`.
+
+### Summary of the models
+
+We tried to fit several models to have the best one to predict our desired outcomes. Before moving to the next step, we need to compare each model with their respective metrics to choose the best one:
+
+```{r}
+# Create a table to show the variables
+metrics = c(accuracy_nb, kappa_nb, accuracy_knn, kappa_knn, accuracy_tree, kappa_tree, accuracy_nnet, kappa_nnet, accuracy_svm, kappa_svm, accuracy_rf, kappa_rf)
+cnames = c("Accuracy", "Kappa")
+rnames = c("Naive Bayes", "K-nearest neighbors", "Tree", "Neural Network", "Support Vector Machines", "Random Forest")
+model_output <- matrix(metrics, ncol = 2, byrow=TRUE, dimnames=list(rnames,cnames))
+model_output <- model_output[order(model_output[,1],decreasing=TRUE),]
+
+kable(model_output, digits = 2)  %>% 
+  kable_styling(bootstrap_options = c("striped","condensed"), fixed_thead = T)
+```
+
+By having a look at the results, we see that Random Forest outperforms the other models by far, followed by Support Vector Machines and Neural Network. Therefore, we remove ? for the following parts, variable importance.
 
 
-Now that we found that our best models are Neural Networks and Random Forest models, we need to see if we can improve their prediction quality, so accuracy, by getting rid of the variables that do not contribute to the prediction. We use model-specific variable importance methods since the approaches are specific to the model that we decided to use.
+## Variable Importance
 
-After applying these methods, we see that ... Indeed, a change on this variable can drastically change the result of both models. Then, we have ... followed by ... and finally ...
-
-For each feature, the difference in entropy obtained by 10 permutations is shown by the following plot. It shows graphically the average importance variable according to the cross entropy loss.
-
-For each feature, the difference in entropy obtained by 10 permutations is shown by the following plot. It shows graphically the average importance of a variable according to the cross entropy loss.
+Now that we found that our best models are Neural Networks and Random Forest models, we need to see if we can improve their prediction quality, that we judge by accuracy and kappa, by getting rid of the variables that do not contribute to the prediction. to do this, we use model-specific variable importance methods.
 
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
-# Take the RF machine model 
-rf
-
-# Take the NN machine model 
-nnetFit
-
-# Take the CART machine model 
-classtreefit.pruned
-
-# Take the NB machine model 
-naivebayesfit
-
 #Creating an explain object
 x_train <- select(train_data1, -full_time_results)
 y_train <- pull(train_data1, full_time_results)
@@ -250,34 +262,15 @@ explainer_classif_rf <- DALEX::explain(rf, label = "rf",
                                        predict_function = p_fun, 
                                        verbose = FALSE)
 
-  #RF DOESNT WORK -->  Model info detected classification task but 'y' has more than two different values  (  WARNING  )
-
 explainer_nn <- DALEX::explain(model = nnetFit,
                                 is_multiclass = TRUE,
                                 data = x_train,
                                 y = y_train,
                                 label = "NN model")
-  #NN fonctionne
-
-explainer_cart <- DALEX::explain(model = classtreefit.pruned,
-                                is_multiclass = TRUE,
-                                data = x_train,
-                                y = y_train,
-                                label = "CART model ")
-  #CART fonctionne
-
-explainer_nb <- DALEX::explain(model = naivebayesfit,
-                                is_multiclass = TRUE,
-                                data = x_train,
-                                y = as.numeric(y_train),
-                                label = "NB model")
-
-  #NB WORK -->  model info detected multiclass task but 'y' is a numeric .  (  WARNING  )
 ```
 
-# Plotting the feature importance
-```{r, echo = FALSE, message = FALSE, warning = FALSE}
 
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
 calculate_importance <- function(your_model_explainer, n_permutations = 10) {
   imp <- model_parts(explainer = your_model_explainer,
                      B = n_permutations,
@@ -286,53 +279,60 @@ calculate_importance <- function(your_model_explainer, n_permutations = 10) {
   return(imp)
 }
 
-importance_nn <- calculate_importance(explainer_nn)
-importance_cart <- calculate_importance(explainer_cart)
-importance_nb <- calculate_importance(explainer_nb)
 importance_rf <- calculate_importance(explainer_classif_rf)
+importance_nn <- calculate_importance(explainer_nn)
 
 
-plot(importance_nn, importance_cart, importance_nb) +
+plot(importance_rf) +
  ggtitle("Mean variable-importance ratio over 10 permutations", "")
 
+plot(importance_nn) +
+ ggtitle("Mean variable-importance ratio over 10 permutations", "")
 ```
-We know that smaller the entropy is, better is the model. In term of cross entropy, ....
+#AMINA'S PART START
+After applying these methods and plotting the "importance" of variables, we see that variables ..., ..., ... and ... are the ones who contribute most to the predictions of the game results. Indeed, not including these x variables can cause a decrease of the cross-entropy for x model, ... 
 
-## We might not keep it, depend on the space and utility
-Once we’ve identified influential variables across all three models, next we likely want to understand how the relationship between these influential variables and the average prediction response differ between the models.
+In the plot for Neural Networks above, for each feature, we the difference in entropy obtained by 10 permutations. It shows graphically the average variable importance according to the cross entropy loss.
 
+.........
 
-#Refitting the model with the 5 most important variables
+##AMINA'S PART END
 
-```{r, echo=FALSE}
-# Naive Bayes --> 
+Once we’ve identified the most critical variables for prediction, we would like to verify that excluding all other variables increases the accuracy and kappa of our best 2 models, by refitting them.
+
+```{r, echo=TRUE, results = 'hide'}
+# Random Forest (RF)
 set.seed(1)
-trctrl <- trainControl(method = "cv", number=10)
+trctrl <- trainControl(method = "cv", number=5)
+search_grid <- expand.grid(.mtry=rf$bestTune$mtry)
+                           
 
-varImpgrid <- expand.grid(
-  usekernel = naivebayesfit$bestTune$usekernel,
-  laplace = naivebayesfit$bestTune$laplace,
-  adjust = naivebayesfit$bestTune$adjust
+VarImpRFfit <- train(full_time_results~ half_time_results + half_time_away_goals + half_time_home_goals + away_shots_ontarget, 
+            data=train_data1,
+            method="rf",
+            trControl=trctrl,
+            tuneGrid=search_grid
 )
 
-VarImpNBfit <- train(full_time_results ~ half_time_results + half_time_away_goals + away_shots_ontarget + half_time_home_goals,
-                 data = train_data1,
-                 method = "naive_bayes",
-                 trControl = trctrl,
-                 tuneGrid = varImpgrid
-)
-                 
-VarImpNBpred <- predict(VarImpNBfit, newdata = test_data1)
-```
-
-```{r, echo=FALSE}
-#Comparaison between the old cconufsion matrix and the refit confusion matrix 
-oldconfmatrixNB <- confusionMatrix(data=as.factor(naivebayespred), reference = test_data1$full_time_results)
-refitconfmatrixNB <- confusionMatrix(data=as.factor(VarImpNBpred), reference = test_data1$full_time_results)
+VarImpRFpred <-  predict(VarImpRFfit, newdata = test_data1)
+refitconfmatrixRF <- confusionMatrix(data=VarImpRFpred, reference = test_data1$full_time_results)
 
 ```
 
 ```{r, echo=FALSE}
+oldconfmatrixRF <- confusionMatrix(data=pred_rf, reference = test_data1$full_time_results)
+refitconfmatrixRF <- confusionMatrix(data=VarImpRFpred, reference = test_data1$full_time_results)
+
+oldconfmatrixRF$overall
+refitconfmatrixRF$overall
+```
+
+*!* Idk how to interpret graph, so not sure if variables I took are the "right" ones, but I think it's the extreme one on top and bottom.
+
+When we refit the Random Forest model with the 4 most "important" variables, accuracy and kappa decrease, from 0.713 to 0.639 and from 0.529 to 0.424 respectively. This is change can not be ignored, so it is probably better to keep the original model in this case.
+
+
+```{r, echo=TRUE, results = 'hide'}
 # NN
 set.seed(1)
 
@@ -342,7 +342,7 @@ fitControl <- trainControl(method = "cv", # cv stands for cross-validation
 VarImpGrid <-  expand.grid(size = nnetFit$bestTune$size,
                         decay = nnetFit$bestTune$decay)
 
-VarImpNNfit <- train(full_time_results ~ half_time_results + half_time_away_goals + away_shots_ontarget + half_time_home_goals,
+VarImpNNfit <- train(full_time_results ~ half_time_away_goals + half_time_home_goals + away_shots_ontarget + home_shots_ontarget, 
                  data = train_data1,
                  method = "nnet",
                  metric = "Accuracy",
@@ -351,59 +351,16 @@ VarImpNNfit <- train(full_time_results ~ half_time_results + half_time_away_goal
 
 VarImpNNpred <-  predict(VarImpNNfit, newdata = test_data1)
 ```
+
 ```{r, echo=FALSE}
 oldconfmatrixNN <-confusionMatrix(data=pred_neural_network, reference = test_data1$full_time_results)
 refitconfmatrixNN <- confusionMatrix(data=VarImpNNpred, reference = test_data1$full_time_results)
+
+oldconfmatrixNN$overall
+refitconfmatrixNN$overall
 ```
 
-```{r, echo=FALSE}
-# CART
-ctrl <- trainControl(method = "cv", number=10)
 
-#VarImptreegrid <- train(full_time_results ~half_time_results + half_time_away_goals + away_shots_ontarget + half_time_home_goals,
-                       # data = train_data1, 
-                       # method = "rpart", 
-                       # trControl=ctrl, 
-                       # tuneGrid = treegrid$bestTune$cp)
+As for the Neural Network model with the 4 most "important" variables, accuracy and kappa decrease again, from 0.685 to 0.676 and from 0.457 to 0.45 respectively. This is change is very marginal though, so it still encourages us to take fewer variables for our modeling as simpler is often better !
 
-VarImpCARTfit <- rpart(full_time_results ~ half_time_results + half_time_away_goals + away_shots_ontarget + half_time_home_goals, data=train_data1)
 
-rpart.plot(VarImpCARTfit)
-
-plotcp(VarImpCARTfit)
-VarImpCARTfit.pruned <- prune(VarImpCARTfit, cp=0.015)
-
-VarImpCARTpred <- predict(classtreefit.pruned, newdata=test_data1, type="class")
-```
-
-```{r, echo=FALSE}
-oldconfmatrixCART <- confusionMatrix(data=as.factor(classtreepred), reference = test_data1$full_time_results)
-refitconfmatrixCart <- confusionMatrix(data=as.factor(classtreepred), reference = test_data1$full_time_results)
-
-```
-
-```{r, echo=FALSE}
-# Random Forest (RF)
-
-set.seed(1)
-trctrl <- trainControl(method = "cv", number=5)
-search_grid <- expand.grid(.mtry=rf$bestTune$mtry)
-                           
-
-VarImpRFfit <- train(full_time_results~ half_time_results + half_time_away_goals + away_shots_ontarget + half_time_home_goals, 
-            data=train_data1,
-            method="rf",
-            trControl=trctrl,
-            tuneGrid=search_grid
-)
-
-VarImpRFpred <-  predict(VarImpRFfit, newdata = test_data1)
-refitconfmatrixFR <- confusionMatrix(data=VarImpRFpred, reference = test_data1$full_time_results)
-
-```
-
-```{r, echo=FALSE}
-oldconfmatrixRF <- confusionMatrix(data=pred_rf, reference = test_data1$full_time_results)
-refitconfmatrixFR <- confusionMatrix(data=VarImpRFpred, reference = test_data1$full_time_results)
-
-```

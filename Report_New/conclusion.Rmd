@@ -3,3 +3,6 @@
 ```{r, echo = FALSE, message = FALSE}
 source(here::here("scripts/setup.R"))
 ```
+
+
+- we have variables on what happens during a game, so we only can predict during the game --> bet during the game lol

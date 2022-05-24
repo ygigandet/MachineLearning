@@ -16,7 +16,8 @@ packages <- c(
   "rpart", "rpart.plot", #Classification Tree
   "ranger", "randomForest", # Random Forest
   "dendextend", "ggdendro", #for dendogram labels
-  "DALEX", "DALEXtra" #Creating an explain object
+  "DALEX", "DALEXtra", #Creating an explain object
+  "viridis"
 )
 
 purrr::walk(packages, library, character.only = TRUE)
