@@ -37,3 +37,6 @@ dendextend
 ggdendro
 DALEX
 DALEXtra
+randomForest
+viridisLite
+viridis

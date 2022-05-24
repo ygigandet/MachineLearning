@@ -12,18 +12,82 @@ premier_league_results <- read_csv("premier_league_results_clean.csv")
 
 ## Premier League Results
 
-### Single variable Analysis
+### Data Understanding and Cleaning
 
-Our EDA started with analysing each variable in our dataset inorder to gain an insight on what kind of data we have and what can be used in move forward with our analysis and model fitting. 
+For our EDA, we started with analysing each variable in our dataset inorder to gain an insight on what kind of data we have and what can be used when moving forward with our analysis and model fitting. 
 
-
-We started with graphing the total count of matches for each season, then to ensure that all chosen teams have played the same amount of games we plotted the number of matches per team.As shown below, all teams have played the same amount of matches.   
 ```{r, echo=FALSE, include=FALSE}
-#To be removed
+# We have chosen not to include this chunk in the final output since it will be too long and will take space
 str(premier_league_results) 
 ```
+Since our dataset is very rich, an extensive EDA can be easily done on it. However, we have chosen to include variables that are going to be of use when fitting our models. Therefore, our main variables will be the following:
 
-```{r}
+
+  +`full time home goals`
+  +`full time away goals`
+  +`half time home goals`
+  +`half time away goals`
+  +`full time results`
+  +`home shots`
+  +`away shots`
+  +`home red cards`
+  +`away red cards`
+  +`home yellow cards`
+  +`away red cards`
+
+
+We start with a general summary of the whole dataset. The table below shows the mean,standard deviation, median and several other factors for each variable explained in the dataset. 
+
+```{r, echo=FALSE}
+str(premier_league_results) %>% kable() %>%  kable_styling(bootstrap_options = c("striped","hover","condensed"), fixed_thead = T) %>% scroll_box(width = "100%", height = "400px")
+```
+
+<br>
+
+**_General Understanding_**
+
+The below graphs show some general information on the numerical variables of our dataset. 
+```{r, echo=FALSE, fig.dim=c(15, 6)}
+
+PLR_numeric <- cor(premier_league_results %>% dplyr::select(where(is.numeric)))
+
+corrplot(PLR_numeric, method = 'number', mar = c(0, 0, 0, 0), tl.cex = 0.5)
+```
+Based on the correlation graph shown above, we can conclude the following:
+
+
+  +`full time home goals is positively correlated with half time home goals and home shots on target%`
+  +`full time away goals is positively correlated with half time away goals and away shots on target%`
+  +`home shots is weakly negatively correlated with away shots `
+ 
+ 
+The results we see in the correlation plot make sense. We do not expect the full time home goals to be negatively correlated to home shots on target, it only makes sense that with more shots there's a better chance of getting a goal.  
+
+<br>
+
+```{r, echo=FALSE}
+#Histograms for home-related variables across all seasons
+PLR_Home <- premier_league_results %>% select(home_team, full_time_home_goals, half_time_home_goals, home_shots, home_shots_ontarget, home_fouls, home_corners, home_yellow_cards, home_red_cards) %>%
+  plot_histogram(ncol = 3, title = "Histograms of Home-related variables")
+```
+<br>
+```{r, echo=FALSE}
+#Histograms for away-related variables across all seasons
+PLR_Away <- premier_league_results %>% select (away_team, full_time_away_goals, half_time_away_goals, away_shots, away_shots_ontarget, away_fouls, away_corners, away_yellow_cards, away_red_cards) %>%
+  plot_histogram(ncol = 3, title = "Histograms of Away-related variables")
+```
+
+ 
+
+
+
+```{r, echo=FALSE, include=FALSE}
+#To be removed
+dfSummary(premier_league_results) 
+```
+
+
+```{r, echo=FALSE, include=FALSE}
 # match_date
 match_date <- premier_league_results %>% 
   select(match_date) %>% 
@@ -70,208 +134,105 @@ premier_league_results %>%
 
 <br>
 
-**_Outliers_**
+**_Variable Distribution and Outliers_**
 
-Below are osme boxplots to show if there exists any outliers in our data for each of `full time home goals`, `half time home goals`, `full time away goals` and `half time away goals`. Following that we studied the correlation between 
+Plotting the distribution of each variable pertaining to teams is a good way on getting an overview of what the dataset wants to tell us.
+We started by plotting the violin boxplots for the variable `full_time_home_goals` and `full_time_away_goals` for teams when they are playing as Home and Away.
 
-```{r}
-# Full-time home goals
-BP_FTHG <- premier_league_results %>% 
-  select(full_time_home_goals) %>% 
-  ggplot(aes(x = full_time_home_goals)) +
-  geom_boxplot() +
-  xlim(0,8)
 
-# half-time home goals
-BP_HTHG <- premier_league_results %>% 
-  select(half_time_home_goals) %>% 
-  ggplot(aes(x = half_time_home_goals)) +
-  geom_boxplot()+
-  xlim(0,5)
-
-BP_FTHG + BP_HTHG
-
-# Full-time against half-time - home team
-corr_home <- premier_league_results %>% 
-  select(full_time_home_goals, half_time_home_goals) %>% 
-  ggplot(aes(x = full_time_home_goals, y = half_time_home_goals)) +
-  geom_point() +
-  geom_abline(intercept = 0, slope = 1)
-
-# Full-time away goals
-BP_FTAG <- premier_league_results %>% 
-  select(full_time_away_goals) %>% 
-  ggplot(aes(x = full_time_away_goals)) +
-  geom_boxplot()+
-  xlim(0,8)
-
-# half-time away goals
-BP_HTAG <- premier_league_results %>% 
-  select(half_time_away_goals) %>% 
-  ggplot(aes(x = half_time_away_goals)) +
-  geom_boxplot()+
-  xlim(0,5)
-
-BP_FTAG + BP_HTAG
-
-# Full-time against half-time - away team
-
-corr_away <- premier_league_results %>% 
-  select(full_time_away_goals, half_time_away_goals) %>% 
-  ggplot(aes(x = full_time_away_goals, y = half_time_away_goals)) +
-  geom_point() +
-  geom_abline(intercept = 0, slope = 1)
-
-corr_home + corr_away
-```
-```{r}
-# full-time results
-premier_league_results %>% 
-  select(full_time_results) %>% 
-  ggplot(aes(x = full_time_results)) +
-  geom_bar()
-
-# half-time results
-premier_league_results %>% 
-  select(half_time_results) %>% 
-  ggplot(aes(x = half_time_results)) +
-  geom_bar()
-```
-
-```{r}
-# home shots
-premier_league_results %>% 
-  select(home_shots) %>% 
-  ggplot(aes(x = home_shots)) +
-  geom_boxplot() +
-  xlim(0,40)
-
-# home shots on target
-premier_league_results %>% 
-  select(home_shots_ontarget) %>% 
-  ggplot(aes(x = home_shots_ontarget)) +
-  geom_boxplot() +
-  xlim(0,40)
-
-# shots versus on target
-premier_league_results %>% 
-  select(home_shots, home_shots_ontarget) %>% 
-  ggplot(aes(x = home_shots, y = home_shots_ontarget)) +
-  geom_point() +
-  geom_abline(intercept = 0, slope = 1)
-```
-
-```{r}
-# home shots
-premier_league_results %>% 
-  select(away_shots) %>% 
-  ggplot(aes(x = away_shots)) +
-  geom_boxplot() +
-  xlim(0,40)
-
-# home shots on target
-premier_league_results %>% 
-  select(away_shots_ontarget) %>% 
-  ggplot(aes(x = away_shots_ontarget)) +
-  geom_boxplot() +
-  xlim(0,40)
-
-# shots versus on target
-premier_league_results %>% 
-  select(away_shots, away_shots_ontarget) %>% 
-  ggplot(aes(x = away_shots, y = away_shots_ontarget)) +
-  geom_point() +
-  geom_abline(intercept = 0, slope = 1)
-```
-
-```{r}
-# fouls
-premier_league_results %>% 
-  select(home_fouls) %>% 
-  ggplot(aes(x = home_fouls)) +
-  geom_boxplot() +
-  xlim(0,30)
-
-premier_league_results %>% 
-  select(away_fouls) %>% 
-  ggplot(aes(x = away_fouls)) +
-  geom_boxplot() +
-  xlim(0,30)
-```
-```{r}
-# corners
-premier_league_results %>% 
-  select(home_corners) %>% 
-  ggplot(aes(x = home_corners)) +
-  geom_boxplot() +
-  xlim(0,20)
-
-premier_league_results %>% 
-  select(away_corners) %>% 
-  ggplot(aes(x = away_corners)) +
-  geom_boxplot() +
-  xlim(0,20)
-```
-
-```{r}
-# yellow cards
-premier_league_results %>% 
-  select(home_yellow_cards) %>% 
-  ggplot(aes(x = home_yellow_cards)) +
-  geom_boxplot() +
-  xlim(0,8)
-
-premier_league_results %>% 
-  select(away_yellow_cards) %>% 
-  ggplot(aes(x = away_yellow_cards)) +
-  geom_boxplot() +
-  xlim(0,8)
-```
-
-```{r}
-# red cards
-premier_league_results %>% 
-  select(home_red_cards) %>% 
-  ggplot(aes(x = home_red_cards)) +
+```{r, echo=FALSE, fig.dim=c(15, 6)}
+violin.goalsH <- ggplot(premier_league_results, aes(x=home_team, y=full_time_home_goals, fill=home_team)) + 
+  ggtitle("Home teams and their Goals") +
+  theme(text = element_text(size = 13)) +
+  geom_violin() + 
   geom_boxplot()
 
-premier_league_results %>% 
-  select(away_red_cards) %>% 
-  ggplot(aes(x = away_red_cards)) +
+
+violin.goalsA <- ggplot(premier_league_results, aes(x=away_team, y=full_time_away_goals, fill=away_team)) +
+  ggtitle("Away teams and their Goals") +
+  theme(text = element_text(size = 13)) +
+  geom_violin() + 
   geom_boxplot()
+
+
+violin.goalsH 
 ```
-```{r, echo=FALSE}
-  # plot_boxplot(premier_league_results, , title = NULL, ggtheme = theme_gray(),
-  # theme_config = list(), ...)
+
+<br>
+```{r, echo=FALSE, fig.dim=c(15, 6)}
+violin.goalsA
 ```
-## Multivariate Analysis
+
+Comparing both boxplots, we can see that Liverpool and Man City are the highest scoring teams whether they were playing Home or Away. However, the performance of Arsenal decreases when it plays as Away  
+<br>
+```{r, echo=FALSE, fig.dim=c(15, 6)}
+violin.cardsH <- ggplot(premier_league_results, aes(x=home_team, y=home_red_cards, fill=home_team)) + 
+  theme(text = element_text(size = 13)) +
+  geom_violin() + 
+  geom_boxplot()
+
+violin.cardsA <- ggplot(premier_league_results, aes(x=away_team, y=away_red_cards, fill=away_team)) + 
+  theme(text = element_text(size = 13)) +
+  geom_violin() + 
+  geom_boxplot()
+
+violin.cardsH 
+```
+<br>
+```{r, echo=FALSE, fig.dim=c(15, 6)}
+violin.cardsA
+```
+<br>
+
+The density plots below show the distribution of the 
+```{r, fig.dim=c(15, 6)}
+library(viridis)
+density_home_shots <- ggplot(premier_league_results , aes(x = home_shots, y = home_team, fill = stat(x))) +
+  geom_density_ridges_gradient(scale = 3, rel_min_height = 0.01, ) +
+  scale_fill_viridis(name = "Home Shots", option = "A")+
+   theme(
+      legend.position="right",
+      panel.spacing = unit(0.1, "lines"),
+      strip.text.x = element_text(size = 8))
 
 
-### Premiere League Results 2017-2018
+density_away_shots <- ggplot(premier_league_results , aes(x = away_shots, y = away_team, fill = stat(x))) +
+  geom_density_ridges_gradient(scale = 3, rel_min_height = 0.01, ) +
+  scale_fill_viridis(name = "Away Shots", option = "E")+
+   theme(
+      legend.position="right",
+      panel.spacing = unit(0.1, "lines"),
+      strip.text.x = element_text(size = 8))
 
-```{r, echo=FALSE}
+
+
+density_home_shots
+density_away_shots
+```
+
+```{r, echo=FALSE, include=FALSE}
+premier_league_results %>%
+  group_by(home_team, full_time_results) %>% summarise(counts = n(), .groups = 'drop') %>%
+  plot_ly(x = ~home_team, y = ~counts, type = 'bar', color = ~full_time_results, height = 500, width = 1000) %>%
+  layout(title= 'Results for all seasons', barmode = 'stack' )
+```
+<br>
+
+
+<br>
+
+
+
+```{r, echo=FALSE, include=FALSE}
 PLR17 <- premier_league_results %>% filter(match_date <= as.Date("2018-05-13"))	
 ```
 
-```{r, echo=FALSE}
-data_frame(PLR17$full_time_home_goals, PLR17$full_time_away_goals, PLR17$full_time_results, PLR17$home_shots, PLR17$away_shots, PLR17$home_fouls, PLR17$away_fouls, PLR17$home_yellow_cards, PLR17$away_yellow_cards, PLR17$home_red_cards, PLR17$away_red_cards) %>%
-  plot_histogram(ncol = 3)
-```
 
 
 
-```{r, echo=FALSE}
-data_frame(PLR17$full_time_home_goals, PLR17$full_time_away_goals, PLR17$full_time_results, PLR17$home_shots, PLR17$away_shots, PLR17$home_fouls, PLR17$away_fouls, PLR17$home_yellow_cards, PLR17$away_yellow_cards, PLR17$home_red_cards, PLR17$away_red_cards) %>%
-  plot_density(ncol = 3)
-```
 
-```{r, echo=FALSE}
-#not sure if we should keep this
-data_frame(PLR17$full_time_home_goals, PLR17$full_time_away_goals, PLR17$full_time_results, PLR17$home_shots, PLR17$away_shots, PLR17$home_fouls, PLR17$away_fouls, PLR17$home_yellow_cards, PLR17$away_yellow_cards, PLR17$home_red_cards, PLR17$away_red_cards) %>%
-  plot_correlation()
-```
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, include=FALSE}
 PLR17 %>%
   group_by(home_team, full_time_results) %>% summarise(counts = n(), .groups = 'drop') %>%
   plot_ly(x = ~home_team, y = ~counts, type = 'bar', color = ~full_time_results, height = 500, width = 1000) %>%
@@ -279,7 +240,7 @@ PLR17 %>%
 ```
 
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, include=FALSE}
 # to discuss which type to keep
 PLR17 %>%
   group_by(away_team, full_time_results) %>% summarise(counts = n(), .groups = 'drop') %>%
@@ -288,7 +249,7 @@ PLR17 %>%
 ```
 
 
-```{r}
+```{r, echo=FALSE, include=FALSE}
 ggplot(PLR17, aes(x = full_time_home_goals, y = home_team, fill = home_team)) +
   geom_density_ridges() +
   theme_ridges() + 
@@ -296,7 +257,7 @@ ggplot(PLR17, aes(x = full_time_home_goals, y = home_team, fill = home_team)) +
 ```
 
 
-```{r}
+```{r, echo=FALSE, include=FALSE}
 ggplot(PLR17, aes(x = full_time_away_goals, y = away_team, fill = away_team)) +
   geom_density_ridges() +
   theme_ridges() + 
@@ -304,31 +265,28 @@ ggplot(PLR17, aes(x = full_time_away_goals, y = away_team, fill = away_team)) +
 ```
 
 
-### Premiere League Results 2017-2018
-
-
-```{r, echo=FALSE}
+```{r, echo=FALSE, include=FALSE}
 PLR18 <- premier_league_results %>% filter(match_date > as.Date("2018-05-13"))
 ```
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, include=FALSE}
 # data_frame(PLR18$full_time_home_goals, PLR18$full_time_away_goals, PLR18$full_time_results, PLR18$home_shots, PLR18$away_shots, PLR18$home_fouls, PLR18$away_fouls, PLR18$home_yellow_cards, PLR18$away_yellow_cards, PLR18$home_red_cards, PLR18$away_red_cards) %>%
 #   plot_histogram(ncol = 3)
 ```
 
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, include=FALSE}
 # data_frame(PLR18$full_time_home_goals, PLR18$full_time_away_goals, PLR18$full_time_results, PLR18$home_shots, PLR18$away_shots, PLR18$home_fouls, PLR18$away_fouls, PLR18$home_yellow_cards, PLR18$away_yellow_cards, PLR18$home_red_cards, PLR18$away_red_cards) %>%
 #   plot_density(ncol = 3)
 ```
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, include=FALSE}
 # data_frame(PLR18$full_time_home_goals, PLR18$full_time_away_goals, PLR18$full_time_results, PLR18$home_shots, PLR18$away_shots, PLR18$home_fouls, PLR18$away_fouls, PLR18$home_yellow_cards, PLR18$away_yellow_cards, PLR18$home_red_cards, PLR18$away_red_cards) %>%
 #   plot_correlation()
 ```
 
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, include=FALSE}
 PLR18 %>%
   group_by(home_team, full_time_results) %>% summarise(counts = n(), .groups = 'drop') %>%
   plot_ly(x = ~home_team, y = ~counts, type = 'bar', color = ~full_time_results, height = 500, width = 1000) %>%
@@ -336,7 +294,7 @@ PLR18 %>%
 ```
 
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, include=FALSE}
 PLR18 %>%
   group_by(away_team, full_time_results) %>% summarise(counts = n(), .groups = 'drop') %>%
   plot_ly(x = ~away_team, y = ~counts, type = 'bar', color = ~full_time_results, height = 500, width = 1000) %>%
@@ -345,7 +303,7 @@ PLR18 %>%
 
 
 
-```{r}
+```{r, include=FALSE}
 ggplot(PLR18, aes(x = full_time_home_goals, y = home_team, fill = home_team)) +
   geom_density_ridges() +
   theme_ridges() + 
@@ -353,7 +311,7 @@ ggplot(PLR18, aes(x = full_time_home_goals, y = home_team, fill = home_team)) +
 ```
 
 
-```{r}
+```{r, include=FALSE}
 ggplot(PLR18, aes(x = full_time_away_goals, y = away_team, fill = away_team)) +
   geom_density_ridges() +
   theme_ridges() + 
@@ -361,36 +319,33 @@ ggplot(PLR18, aes(x = full_time_away_goals, y = away_team, fill = away_team)) +
 ```
 
 
-#Premiere League Results
-
-
-```{r, echo=FALSE}
+```{r, echo=FALSE, include=FALSE}
 #might remove
 data_frame(premier_league_results$full_time_home_goals, premier_league_results$full_time_away_goals, premier_league_results$full_time_results, premier_league_results$home_shots, premier_league_results$away_shots, premier_league_results$home_fouls, premier_league_results$away_fouls, premier_league_results$home_yellow_cards, premier_league_results$away_yellow_cards, premier_league_results$home_red_cards, premier_league_results$away_red_cards) %>%
   plot_histogram(ncol = 3)
 ```
 
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, include=FALSE}
 #might remove
 data_frame(premier_league_results$full_time_home_goals, premier_league_results$full_time_away_goals, premier_league_results$full_time_results, premier_league_results$home_shots, premier_league_results$away_shots, premier_league_results$home_fouls, premier_league_results$away_fouls, premier_league_results$home_yellow_cards, premier_league_results$away_yellow_cards, premier_league_results$home_red_cards, premier_league_results$away_red_cards) %>%
   plot_density(ncol = 3)
 ```
 
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, include=FALSE}
 #might remove
 data_frame(premier_league_results$full_time_home_goals, premier_league_results$full_time_away_goals, premier_league_results$home_shots, premier_league_results$away_shots, premier_league_results$home_fouls, premier_league_results$away_fouls, premier_league_results$home_yellow_cards, premier_league_results$away_yellow_cards, premier_league_results$home_red_cards, premier_league_results$away_red_cards) %>%
   plot_correlation()
 ```
 
-```{r}
+```{r, include=FALSE}
 ggplot(premier_league_results, aes(x = full_time_home_goals, y = home_team, fill = home_team)) +
   geom_density_ridges() +
   theme_ridges() + 
   theme(legend.position = "none")
 ```
-```{r}
+```{r, include=FALSE}
 ggplot(premier_league_results, aes(x = full_time_away_goals, y = away_team, fill = away_team)) +
   geom_density_ridges() +
   theme_ridges() + 
