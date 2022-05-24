@@ -242,12 +242,12 @@ kable(model_output, digits = 2)  %>%
   kable_styling(bootstrap_options = c("striped","condensed"), fixed_thead = T)
 ```
 
-By having a look at the results, we see that Random Forest outperforms the other models by far, followed by Support Vector Machines and Neural Network. Therefore, we remove ? for the following parts, variable importance.
+By having a look at the results, we see that Random Forest outperforms the other models by far, followed by Support Vector Machines and Neural Network. Therefore, we will analyse the variable importance for the two best models.
 
 
 ## Variable Importance
 
-Now that we found that our best models are Neural Networks and Random Forest models, we need to see if we can improve their prediction quality, that we judge by accuracy and kappa, by getting rid of the variables that do not contribute to the prediction. to do this, we use model-specific variable importance methods.
+Now that we found that our best models are Random Forest models and Support Vector Machines, we need to see if we can improve their prediction quality, that we judge by accuracy and kappa, by getting rid of the variables that do not contribute to the prediction. To do this, we use model-specific variable importance methods.
 
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
 #Creating an explain object
@@ -262,15 +262,11 @@ explainer_classif_rf <- DALEX::explain(rf, label = "rf",
                                        predict_function = p_fun, 
                                        verbose = FALSE)
 
-explainer_nn <- DALEX::explain(model = nnetFit,
-                                is_multiclass = TRUE,
-                                data = x_train,
-                                y = y_train,
-                                label = "NN model")
-```
+explainer_svm <- DALEX::explain(model = svm_tuned,
+                                data = train_data1,
+                                y = train_data1$full_time_results,
+                                label = "SVM model")
 
-
-```{r, echo = FALSE, message = FALSE, warning = FALSE}
 calculate_importance <- function(your_model_explainer, n_permutations = 10) {
   imp <- model_parts(explainer = your_model_explainer,
                      B = n_permutations,
@@ -280,21 +276,21 @@ calculate_importance <- function(your_model_explainer, n_permutations = 10) {
 }
 
 importance_rf <- calculate_importance(explainer_classif_rf)
-importance_nn <- calculate_importance(explainer_nn)
+importance_svm <- calculate_importance(explainer_svm)
+```
 
 
-plot(importance_rf) +
- ggtitle("Mean variable-importance ratio over 10 permutations", "")
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+plot(importance_rf)
+```
 
-plot(importance_nn) +
- ggtitle("Mean variable-importance ratio over 10 permutations", "")
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+plot(importance_svm)
 ```
 #AMINA'S PART START
-After applying these methods and plotting the "importance" of variables, we see that variables ..., ..., ... and ... are the ones who contribute most to the predictions of the game results. Indeed, not including these x variables can cause a decrease of the cross-entropy for x model, ... 
+After applying these methods and plotting the "importance" of variables, we see that variables half time result,half time home goal, away shots on target and half time away goals are the ones who contribute most to the predictions of the game results. Indeed, not including theses variables can cause change either positively or negatively. Thus, in the 4 importance variables we have half time result and half time home goal which affect positively and we have away shots on target and half time away goals which affect negativly. 
 
-In the plot for Neural Networks above, for each feature, we the difference in entropy obtained by 10 permutations. It shows graphically the average variable importance according to the cross entropy loss.
-
-.........
+In the plot above, we have the difference in entropy obtained by 10 permutations for the SVM Model. It shows graphically the average variable importance according to the cross entropy loss. Here also, it is the same 4 important variables which are the most weight. Not including theses variables can cause a decrease of the cross-entropy for SVM models
 
 ##AMINA'S PART END
 
@@ -316,7 +312,6 @@ VarImpRFfit <- train(full_time_results~ half_time_results + half_time_away_goals
 
 VarImpRFpred <-  predict(VarImpRFfit, newdata = test_data1)
 refitconfmatrixRF <- confusionMatrix(data=VarImpRFpred, reference = test_data1$full_time_results)
-
 ```
 
 ```{r, echo=FALSE}
@@ -331,36 +326,31 @@ refitconfmatrixRF$overall
 
 When we refit the Random Forest model with the 4 most "important" variables, accuracy and kappa decrease, from 0.713 to 0.639 and from 0.529 to 0.424 respectively. This is change can not be ignored, so it is probably better to keep the original model in this case.
 
-
 ```{r, echo=TRUE, results = 'hide'}
-# NN
+# Support Vector Machine (SVM)
 set.seed(1)
 
-fitControl <- trainControl(method = "cv", # cv stands for cross-validation 
-                           number = 10)
+trctrl <- trainControl(method = "cv", number=5) # Cross-validation
+VarImpGrid <- expand.grid(C = svm_tuned$bestTune$C) # Hyperparameters
+ 
+VarImpSVMfit <- train(full_time_results ~half_time_away_goals + half_time_home_goals + away_shots_ontarget + home_shots_ontarget, # Modelling
+                   data = train_data1, 
+                   method = "svmLinear",
+                   trControl=trctrl,
+                   tuneGrid = VarImpGrid)
 
-VarImpGrid <-  expand.grid(size = nnetFit$bestTune$size,
-                        decay = nnetFit$bestTune$decay)
+VarImpSVM.tuned.pred <- predict(VarImpSVMfit, newdata = test_data1)
 
-VarImpNNfit <- train(full_time_results ~ half_time_away_goals + half_time_home_goals + away_shots_ontarget + home_shots_ontarget, 
-                 data = train_data1,
-                 method = "nnet",
-                 metric = "Accuracy",
-                 tuneGrid = VarImpGrid,
-                 trControl = fitControl)
-
-VarImpNNpred <-  predict(VarImpNNfit, newdata = test_data1)
 ```
 
 ```{r, echo=FALSE}
-oldconfmatrixNN <-confusionMatrix(data=pred_neural_network, reference = test_data1$full_time_results)
-refitconfmatrixNN <- confusionMatrix(data=VarImpNNpred, reference = test_data1$full_time_results)
+oldconfmatrixSVM <-confusionMatrix(data=svm.tuned.pred, reference = test_data1$full_time_results)
+refitconfmatrixSVM <- confusionMatrix(data=VarImpSVM.tuned.pred, reference = test_data1$full_time_results)
 
-oldconfmatrixNN$overall
-refitconfmatrixNN$overall
+oldconfmatrixSVM$overall
+refitconfmatrixSVM$overall
 ```
 
-
-As for the Neural Network model with the 4 most "important" variables, accuracy and kappa decrease again, from 0.685 to 0.676 and from 0.457 to 0.45 respectively. This is change is very marginal though, so it still encourages us to take fewer variables for our modeling as simpler is often better !
+As for the Support Vector Machine model with the 4 most "important" variables, accuracy and kappa decrease again, from 0.704 to 0.648 and from 0.512 to 0.381 respectively. This is change is very marginal though, so it still encourages us to take fewer variables for our modeling as simpler is often better !
 
 
