@@ -1,8 +1,5 @@
 # Introduction
 
-```{r, echo = FALSE, message = FALSE}
-source(here::here("scripts/setup.R"))
-```
 The goal of our Machine Learning project is to find the model that can best predict Premier League results.
 
 The Premier League, also known as the English Premier League, is the top level of the English football league system. Contested by 20 clubs, it operates on a system of promotion and relegation with the English Football League. Seasons typically run from August to May with each team playing 38 matches.
