@@ -38,7 +38,7 @@ Since our dataset is very rich, an extensive EDA can be easily done on it. Howev
 
 We start with a general summary of the whole dataset. The table below shows the mean,standard deviation, median and several other factors for each variable explained in the dataset. 
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, include = FALSE}
 str(premier_league_results) %>% kable() %>%  kable_styling(bootstrap_options = c("striped","hover","condensed"), fixed_thead = T) %>% scroll_box(width = "100%", height = "400px")
 ```
 
@@ -47,7 +47,7 @@ str(premier_league_results) %>% kable() %>%  kable_styling(bootstrap_options = c
 **_General Understanding_**
 
 The below graphs show some general information on the numerical variables of our dataset. 
-```{r, echo=FALSE, fig.dim=c(15, 6)}
+```{r, echo=FALSE, out.width="100%"}
 
 PLR_numeric <- cor(premier_league_results %>% dplyr::select(where(is.numeric)))
 
@@ -141,16 +141,18 @@ We started by plotting the violin boxplots for the variable `full_time_home_goal
 
 
 ```{r, echo=FALSE, fig.dim=c(15, 6)}
-violin.goalsH <- ggplot(premier_league_results, aes(x=home_team, y=full_time_home_goals, fill=home_team)) + 
+violin.goalsH <- ggplot(premier_league_results, aes(x=home_team, y=full_time_home_goals, fill=home_team)) +
   ggtitle("Home teams and their Goals") +
-  theme(text = element_text(size = 13)) +
+  theme(text = element_text(size = 13),
+        legend.position = "none") +
   geom_violin() + 
   geom_boxplot()
 
 
 violin.goalsA <- ggplot(premier_league_results, aes(x=away_team, y=full_time_away_goals, fill=away_team)) +
   ggtitle("Away teams and their Goals") +
-  theme(text = element_text(size = 13)) +
+  theme(text = element_text(size = 13),
+        legend.position = "none") +
   geom_violin() + 
   geom_boxplot()
 
@@ -167,12 +169,14 @@ Comparing both boxplots, we can see that Liverpool and Man City are the highest 
 <br>
 ```{r, echo=FALSE, fig.dim=c(15, 6)}
 violin.cardsH <- ggplot(premier_league_results, aes(x=home_team, y=home_red_cards, fill=home_team)) + 
-  theme(text = element_text(size = 13)) +
+  theme(text = element_text(size = 13),
+        legend.position = "none") +
   geom_violin() + 
   geom_boxplot()
 
 violin.cardsA <- ggplot(premier_league_results, aes(x=away_team, y=away_red_cards, fill=away_team)) + 
-  theme(text = element_text(size = 13)) +
+  theme(text = element_text(size = 13),
+        legend.position = "none") +
   geom_violin() + 
   geom_boxplot()
 
