@@ -310,7 +310,7 @@ rfProfile
 ```
 
 
-In the plot above, we have the difference in entropy obtained by 10 permutations for the SVM Model. It shows graphically the average variable importance according to the cross entropy loss. Here also, it is the same 4 important variables which are the most weight. Not including theses variables can cause a decrease of the cross-entropy for SVM models
+In the plot below, we have the difference in entropy obtained by 10 permutations for the SVM Model. It shows graphically the average variable importance according to the cross entropy loss. Here also, there are some variables which are of high importance and which are in common with the RF model as `half_time_results` and `away_shots_ontarget` . Other crucial variables for the prediction of the result with SVM are `away_team`, `home_team` and `half_time_away_goals`. Not including theses variables can cause a decrease of the cross-entropy for SVM models.
 
 <br>
 
@@ -369,7 +369,7 @@ kable(model_output_RF, digits = 2)  %>%
   kable_styling(bootstrap_options = c("striped","condensed"), fixed_thead = T)
 
 ```
-When we refit the Random Forest model with the 4 most "important" variables, accuracy and kappa decrease, from 0.713 to 0.639 and from 0.529 to 0.424 respectively. This is change can not be ignored and might be causes by variable dependency, hence it is probably better to keep the original model in this case and observe the source of the unexpected outcomes.
+When we refit the Random Forest model with the 4 most "important" variables, accuracy and kappa decrease, from `r oldconfmatrixRF$overall['Accuracy']` to `refitconfmatrixRF$overall['Accuracy']` and from `oldconfmatrixRF$overall['Kappa']` to `refitconfmatrixRF$overall['Kappa']` respectively. This reduction in accuracy and kappa metrics is not surprising, and we have a gain from reducing the complexity of the model. Hence the refitted model is still better than the original.
 
 **_Fitting the SVM model with its tops feature importance_**
 
@@ -419,6 +419,6 @@ kable(model_output_svm, digits = 2)  %>%
 
 ```
 
-For the Support Vector Machine model with the 5 most "important" variables, which is : `away_team`, `half_time_results`, `home_team`, `half_time_away_goals` and `away_shots_ontarget`. The accuracy doesn't change, we have `r oldconfmatrixSVM$overall['Accuracy']`  which is a really good sign, and kappa slightly decrease from `r oldconfmatrixSVM$overall['Kappa']` to `r refitconfmatrixSVM$overall['Kappa']`. This refit is reducing the complexity of our model since we are taking less variables and we have a high accuracy and a lower Cohen's Kappa metrics.
+For the Support Vector Machine model with the 5 most "important" variables, which is : `away_team`, `half_time_results`, `home_team`, `half_time_away_goals` and `away_shots_ontarget`. The accuracy doesn't change, we have `r oldconfmatrixSVM$overall['Accuracy']`  which is a really good sign, and kappa slightly decrease from `r oldconfmatrixSVM$overall['Kappa']` to `r refitconfmatrixSVM$overall['Kappa']`. This refit is reducing the complexity of our model since we are taking less variables and even though we have a lower Cohen's Kappa, this changes is marginal. Therefore, it is wiser to use the refitted model to make predictions.
 
 
