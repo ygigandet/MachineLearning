@@ -76,7 +76,7 @@ accuracy_nb <- cm$overall['Accuracy']
 kappa_nb <- cm$overall['Kappa']
 ```
 
-We reach an accuracy of `r cm$overall['Accuracy']` and the Kappa of `r cm$overall['Kappa']`. 
+We reach an accuracy of `r cm$overall['Accuracy']` and a Kappa of `r cm$overall['Kappa']`. 
 
 ### K-NN
 
@@ -91,7 +91,7 @@ search_grid <-  expand.grid(k = seq(from = 1, to = 150, by = 1)) # Hypertuning k
 knn <- train(full_time_results ~., # Modelling
                  data = train_data1,
                  method = "knn",
-                 trControl=ctrl, 
+                 trControl = ctrl, 
                  tuneGrid = search_grid)
 ```
 
@@ -128,7 +128,7 @@ search_grid <-  expand.grid(cp = seq(from = 0.005, to = 0.35, by = 0.005))
 tree <- train(full_time_results ~., # Modelling
               data = train_data1,
               method = "rpart",
-              trControl=ctrl,
+              trControl = ctrl,
               tuneGrid = search_grid)
 ```
 
@@ -143,7 +143,7 @@ accuracy_tree <- cm$overall['Accuracy']
 kappa_tree <- cm$overall['Kappa']
 ```
 
-After finding the optimal cp=`r tree$bestTune$cp` with hypertuning for pruning, the CART model gives a convenient prediction. We got an accuracy of `r cm$overall['Accuracy']` and a moderate Kappa: `r cm$overall['Kappa']`. The performance of this model is actually closer to the Naive Bayes!
+After finding the optimal cp=`r tree$bestTune$cp` with hypertuning for pruning, the CART model gives a convenient prediction. We got an accuracy of `r cm$overall['Accuracy']` and a moderate Kappa: `r cm$overall['Kappa']`. The performance of this model is actually better to the Naive Bayes!
 
 ### Neural Networks
 
@@ -186,7 +186,7 @@ search_grid <- expand.grid(C = c(0.01, 0.1, 1, 10, 100, 1000)) # Hyperparameters
 svm_tuned <- train(full_time_results ~.,# Modelling
                    data = train_data1, 
                    method = "svmLinear",
-                   trControl=trctrl,
+                   trControl = trctrl,
                    tuneGrid = search_grid)
 ```
 
@@ -199,7 +199,7 @@ accuracy_svm <- cm$overall['Accuracy']
 kappa_svm <- cm$overall['Kappa']
 ```
 
-We find that the best tune for C is equal to `r svm_tuned$bestTune$C`, and when we use this metric to fit the model, we obtain an accuracy of `r cm$overall['Accuracy']` and a pretty good Kappa: `r cm$overall['Kappa']`.
+We find that the best tune for C is equal to `r svm_tuned$bestTune$C`, and we obtain an accuracy of `r cm$overall['Accuracy']` and a pretty good Kappa: `r cm$overall['Kappa']`.
 
 ### Random Forests
 
@@ -209,13 +209,13 @@ Our last model is Random forests:
 set.seed(1)
 
 trctrl <- trainControl(method = "cv", number=5) # Cross-validation
-search_grid <- expand.grid(.mtry=c(1:15)) #Hyperparameters
+search_grid <- expand.grid(.mtry = c(1:15)) #Hyperparameters
 
 rf <- train(full_time_results~., # Modelling
-            data=train_data1,
-            method="rf",
-            trControl=trctrl,
-            tuneGrid=search_grid
+            data = train_data1,
+            method = "rf",
+            trControl = trctrl,
+            tuneGrid = search_grid
 )
 ```
 
