@@ -396,6 +396,6 @@ oldconfmatrixSVM$overall
 refitconfmatrixSVM$overall
 ```
 
-As for the Support Vector Machine model with the 4 most "important" variables, accuracy and kappa decrease again, from 0.704 to 0.648 and from 0.512 to 0.381 respectively. This is change is very marginal though, so it still encourages us to take fewer variables for our modeling as simpler is often better !
+As for the Support Vector Machine model with the 4 most "important" variables, accuracy and kappa decrease again, from 0.74 to 0.648 and from 0.512 to 0.381 respectively. This is change is very marginal though, so it still encourages us to take fewer variables for our modeling as simpler is often better !
 
 
