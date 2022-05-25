@@ -148,7 +148,7 @@ head(PLR_Away_Scale)%>% kable(caption = "**Scaled Premiere League Results for Aw
 
 For the clustering method, we calculated the Manhattan distance to form clusters of the Home and Away teams. To choose the optimal number of cluster, we have created dendrograms for both Home and Away. For the clustering, we also used Manhattan distance and complete linkage methods. Below is the graph that we used to select the number of clusters: 
 
-  + `Within sum of squares` 
+  + `Within sum of square` 
 
 ```{r, echo=FALSE, warning=FALSE, include=FALSE}
 # matrix of Manhattan distances 
@@ -288,15 +288,12 @@ PLR_Away_pca$eig %>% kable(caption = "Summary of Variables - Away") %>%
 <br>
 
 ```{r, echo=FALSE}
-ScreeHome <- fviz_eig(PLR_Home_pca, addlabels = TRUE, title ="Home",  ylim=c(0,60), label_size = 5 )# + theme(label.text = element_text(size = 8))
-
-#+ geom_label(label.size = 5)
+ScreeHome <- fviz_eig(PLR_Home_pca, addlabels = TRUE, title ="Home",  ylim=c(0,60), label_size = 5 )# + 
                                                                               
-ScreeAway <- fviz_eig(PLR_Away_pca, addlabels = TRUE, title ="Away", barfill = "#2EDFC7", ylim=c(0,60)) + theme(text = element_text(size = 0.55))
-#+ geom_label(label.size = 0.55)
+ScreeAway <- fviz_eig(PLR_Away_pca, addlabels = TRUE, title ="Away", barfill = "#2EDFC7", ylim=c(0,60))
+
 
 ScreeHome + ScreeAway
-
 ```
 
 <br>

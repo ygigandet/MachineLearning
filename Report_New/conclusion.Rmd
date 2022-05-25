@@ -12,3 +12,6 @@ To conclude, we observe that for both supervised and unsupervised learning, vari
 It seems like the prediction of results can be done by extrapolating the data that can be obtained from the previous matches, otherwise we have to predict during the match according to data observed. This is often what betting websites do.
 
 We could improve our 2 chosen machine learning models by including data on the specific characteristics of the players in these teams just like in “Moneyball”, whoever this could result in a very complex model. We unfortunately couldn’t find reliable and good enough data to do so, but it is our recommended idea for future works.
+
+<br>
+<br>
