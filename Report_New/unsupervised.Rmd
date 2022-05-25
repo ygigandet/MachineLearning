@@ -323,8 +323,8 @@ fviz_pca_biplot(PLR_Home_pca,
 When the team is playing in "Home", the three clusters are distinguished by the following: 
 
     
-  + `Cluster1` - Consists of _Man United_ and _Arsenal_; both of which have relatively a weak positive correlation to Dimension 2 and strong positive correlation to Dimension 1. This means that they relatively have more cards than other teams along with a good number of goals. 
-  + `Cluster2` - This is the largest cluster which includes 8 teams, including _Everton_, _Watford_, _Leicester_, _Bournemouth_, _Crystal Palace_, _Southampton_, _West Ham_, and _Burnley_; those teams are the ones who are negatively correlated with Dimension 2 meaning that they are the ones who scored fewer goals than the other teams.
+  + `Cluster1` - Consists of _Man United_ and _Arsenal_; both of which have relatively a strong positive correlation to Dimension 2 and weak positive correlation to Dimension 1. This means that they relatively have more cards than other teams along with a good number of goals. 
+  + `Cluster2` - This is the largest cluster which includes 8 teams, including _Everton_, _Watford_, _Leicester_, _Bournemouth_, _Crystal Palace_, _Southampton_, _West Ham_, and _Burnley_; those teams are the ones who are negatively correlated with Dimension 1 meaning that they are the ones who scored fewer goals than the other teams.
   + `Cluster3` - This cluster consists of the remaining 4 teams which include _Chelsea_, _Liverpool_, _Man City_ and _Tottenham_. This cluster is the cluster that has scored the most goals and obtained the least number of cards
 
   
@@ -344,9 +344,9 @@ fviz_pca_biplot(PLR_Away_pca,
 When teams are playing Away, the clusters are distinguished based on the following:
 
 
-  + `Cluster1` - This cluster here is the biggest cluster containing 8 teams including _Everton_, _Watford_, _Tottenham_, _Man United_, _Arsenal_, _Southampton_, _West Ham_, and _Leicester_. 
-  + `Cluster2` - Consisting of 4 teams, _Chelsea_, _Crystal Palace_, _Bournemouth_ and _Burnley_; those teams are negatively correlated with Dimension 1 meaning that they have received relatively fewer red/yellow cards than the other teams. From this cluster we can also see that Chelsea and Bournmouth have scored more goals than Crystal Palance and Burnley.
-  + `Cluster3` - It consists of the remaining 2 teams, _Liverpool_ and _Man City_. Located on the utmost right of the graph and being highly positively correlated with Dimension 2; those are the teams that have scored the most goals.
+  + `Cluster1` - This cluster here is the biggest cluster containing 8 teams including _Everton_, _Watford_, _Tottenham_, _Man United_, _Arsenal_, _Southampton_, _West Ham_, and _Leicester_; those are the teams that relatively to others have taken more yellow card and made more fouls. 
+  + `Cluster2` - Consisting of 4 teams, _Chelsea_, _Crystal Palace_, _Bournemouth_ and _Burnley_; those teams are negatively correlated with Dimension 2 meaning that they have received relatively fewer red/yellow cards than the other teams.They have alos scored a low number of goals. From this cluster we can also see that Chelsea and Bournmouth have scored more goals than Crystal Palance and Burnley.
+  + `Cluster3` - It consists of the remaining 2 teams, _Liverpool_ and _Man City_. Located on the utmost right of the graph and being highly positively correlated with Dimension 1; those are the teams that have scored the most goals.
 
   
 The plots also show the seed of each cluster denoted by a bigger label in the middle of the cluster.  
