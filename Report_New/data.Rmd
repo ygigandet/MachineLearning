@@ -129,7 +129,7 @@ any(is.na(premier_league_results))
 
 Now that we have a clean dataset, let's check out our data closer with a summary.
 
-```{r}
+```{r, results = 'asis'}
 dfSummary(premier_league_results, style = 'grid', plain.ascii = FALSE, tmp.img.dir = "/tmp")
 ```
 
