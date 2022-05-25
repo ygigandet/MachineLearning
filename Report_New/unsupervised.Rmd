@@ -5,7 +5,7 @@ source(here::here("scripts/setup.R"))
 ```
 
 
-In order to have a clearer view on the data, we decided to split the main dataset to two datasets; one for Home teams and another for Away teams. The goal is to study the performance of each team when they are both away or home. 
+In order to have a clearer view on the data, we decided to split the main dataset in to two; one for Home teams and another for Away teams. The goal is to study the performance of each team when they are playing as both Home and Away. 
 
 
 ```{r, echo=FALSE, warning=FALSE}
@@ -72,9 +72,8 @@ head(PLR_Away)%>% kable(caption = "**Median Premiere League Results for Away Tea
                 fixed_thead = T) %>% kable_paper() %>%  scroll_box(width = "100%", height = "300px")
 ```
 
-Our dataset contains eight (8) numeric variables, each of which has its own scale. As we can see below, the "Home_shots" variable has a scale ranging from around 10 to 18, while "Full_time_home_goals" has a scale ranging from around 0 to 3. Therefore, we will need to scale the data in order to give the same weight for all variables. 
+Our dataset contains 8 numeric variables, each of which has its own scale. As we can see below, the `home_shots` variable has a scale ranging from around 10 to 18, while `full_time_home_goals` has a scale ranging from around 0 to 3. Therefore, we will need to scale the data in order to give the same weight for all variables. 
 ```{r, echo=FALSE}
-
 # Scale features for home and away
 
 PLR_Home_Scale <- data.frame(scale(PLR_Home[,-1], center=FALSE)) # %>% as_data_frame()
@@ -169,34 +168,17 @@ fviz_nbclust(PLR_Home_Scale[,-1],
              kmeans,
              method = "wss", 
              k.max = 5, verbose = FALSE)
-fviz_nbclust(PLR_Home_Scale[,-1],
-             kmeans, 
-             method = "silhouette", 
-             k.max = 5, verbose = FALSE)
-fviz_nbclust(PLR_Home_Scale[,-1],
-             kmeans,
-             method = "gap", 
-             k.max = 5, verbose = FALSE)
 
 home.km <- kmeans(PLR_Home_Scale[,-1], centers=1)
 ```
 <br>
   
-Looking at the scree plot above and following the so-called "elbow method" we believe that the optimal number of clusters should be three(3) as this decreases the _within variance_ and increases the _between variance_ keeping in mind the complexity of the model.  
+Looking at the scree plot above and following the so-called "elbow method" we believe that the optimal number of clusters should be 3 as this decreases the _within variance_ and increases the _between variance_ keeping in mind the complexity of the model.  
 
 Below are the dendrograms that we have created. 
 
 
 ```{r, echo=FALSE, warning=FALSE}
-#code to try to change the labels
-
-# PLR_Home_hc <- hclust(PLR_Home_Mdistance, method = "complete")
-# plot(PLR_Home_hc, hang=-1, labels_col(value = c("skyblue", "orange", "grey"), k=3), branches_color(value = c("skyblue", "orange", "grey"), k = 3) ) 
-# 
-# PLR_Away_hc <- hclust(PLR_Away_Mdistance, method = "complete")
-# plot(PLR_Away_hc, hang=-1)
-
-
 
 ###HOME###
 
@@ -205,10 +187,10 @@ dend_home <- PLR_Home_Scale[,] %>%
   hclust(method = "complete") %>% 
   as.dendrogram()
 
-#par(mar=c(1,1,1,7))
 dend_home %>%
   set("labels_col", value = c("#5dc263", "#f86565", "#669af0"), k=3) %>%
   set("branches_k_color", value = c("#5dc263", "#f86565", "#669af0"), k = 3) %>%
+  set("labels_cex", 0.9) %>%  #change the font size
   plot(horiz=FALSE, axes=FALSE, main ="Home Dendrogram")
 abline(v = 350, lty = 2)
 
@@ -220,10 +202,11 @@ dend_away <- PLR_Away_Scale[,] %>%
   hclust(method = "complete") %>% 
   as.dendrogram() 
 
-#par(mar=c(1,1,1,7))
+
 dend_away %>%
   set("labels_col", value = c("#5dc263", "#f86565", "#669af0"), k=3) %>%
   set("branches_k_color", value = c("#5dc263", "#f86565", "#669af0"), k = 3) %>%
+  set("labels_cex", 0.9) %>%
   plot(horiz=FALSE, axes=FALSE, main ="Away Dendrogram")
 abline(v = 350, lty = 2)
 ```
@@ -251,8 +234,8 @@ PLR_Away_pca
 
 **_Graphing of Variables_**
 
-The below two graphs show the same eight (8) variables and for all of the teams when they are both Home and Away. Dimension 1 explains 54.3% of the variance of the data and Dimension 2 explains 21.4% making a total of 75.7% of the variance explained by these two components.  
-Both graphs make sense since they show that all variables related to "goals" and "shots" are correlated to Dimension 2 and variables related to "cards" are correlated with Dimension 1. Therefore, we can deduce that Dimension 1 relates to Goals and Dimension 2 related to Cards.                      
+The below two graphs show the same 8 variables and for all of the teams when they are both Home and Away. Dimension 1 explains 54.3% of the variance of the data and Dimension 2 explains 21.4% making a total of 75.7% of the variance explained by these two components.  
+Both graphs make sense since they show that all variables related to "goals" and "shots" are correlated to Dimension 2 and variables related to "cards" are correlated with Dimension 1. Therefore, we can deduce that Dimension 1 relates to attacking aspects and Dimension 2 relates to defending aspects                      
 
 ```{r, echo=FALSE}
 grid.arrange(fviz_pca_var(PLR_Home_pca, repel = TRUE, title = "Home Teams", col.var = "Blue"), fviz_pca_var(PLR_Away_pca, repel = TRUE, title = "Away Teams", col.var = "#2EDFC7"), ncol=2)
@@ -283,15 +266,13 @@ The summaries below represent the percentage of contribution of each principle c
 
 <br>
 <br>
-Summary of Variables - Home: 
 ```{r, echo=FALSE}
 PLR_Home_pca$eig %>% kable(caption = "Summary of Variables - Home") %>%
   kable_styling(bootstrap_options = c("striped","hover","condensed"),
                 fixed_thead = T) %>% kable_paper() %>%  scroll_box(width = "100%", height = "200px")
 ```
 <br>
-<br>
-Summary of Variables - Away: 
+
 ```{r, echo=FALSE}
 PLR_Away_pca$eig %>% kable(caption = "Summary of Variables - Away") %>%
   kable_styling(bootstrap_options = c("striped","hover","condensed"),
@@ -302,8 +283,12 @@ PLR_Away_pca$eig %>% kable(caption = "Summary of Variables - Away") %>%
 <br>
 
 ```{r, echo=FALSE}
-ScreeHome <- fviz_eig(PLR_Home_pca, addlabels = TRUE, ncp=11, title ="Home - Scree plot" )
-ScreeAway <- fviz_eig(PLR_Away_pca, addlabels = TRUE, ncp=11, title ="Away - Scree plot" )
+ScreeHome <- fviz_eig(PLR_Home_pca, addlabels = TRUE, title ="Home",  ylim=c(0,60), label_size = 5 )# + theme(label.text = element_text(size = 8))
+
+#+ geom_label(label.size = 5)
+                                                                              
+ScreeAway <- fviz_eig(PLR_Away_pca, addlabels = TRUE, title ="Away", barfill = "#2EDFC7", ylim=c(0,60)) + theme(text = element_text(size = 0.55))
+#+ geom_label(label.size = 0.55)
 
 ScreeHome + ScreeAway
 
@@ -313,7 +298,7 @@ ScreeHome + ScreeAway
 <br>
 **_Biplots_**
 
-Creating the biplots below, we can combine clustering and pca in order to see each individual, it's relationship with other individuals and variables and create clusters. We have decided to create three (3) clusters to decrease the _within variance_ and increase the _between variance_  keeping in mind the complexity of the model, we have created three clusters. 
+Creating the biplots below, we can combine clustering and pca in order to see each individual, it's relationship with other individuals and variables and create clusters. We have decided to create 3 clusters to decrease the _within variance_ and increase the _between variance_  keeping in mind the complexity of the model, we have created three clusters. 
 
 We can see that, for both Home and Away graphs, the clusters represented are separated by the strength of correlation with each Dimension.
 
@@ -337,8 +322,8 @@ When the team is playing in "Home", the three clusters are distinguished by the 
 
     
   + `Cluster1` - Consists of _Man United_ and _Arsenal_; both of which have relatively a weak positive correlation to Dimension 2 and strong positive correlation to Dimension 1. This means that they relatively have more cards than other teams along with a good number of goals. 
-  + `Cluster2` - This is the largest cluster which includes eight (8) teams, including _Everton_, _Watford_, _Leicester_, _Bournemouth_, _Crystal Palace_, _Southampton_, _West Ham_, and _Burnley_; those teams are the ones who are negatively correlated with Dimension 2 meaning that they are the ones who scored fewer goals than the other teams.
-  + `Cluster3` - This cluster consists of the remaining four(4) teams which include _Chelsea_, _Liverpool_, _Man City_ and _Tottenham_. This cluster is the cluster that has scored the most goals and obtained the least number of cards
+  + `Cluster2` - This is the largest cluster which includes 8 teams, including _Everton_, _Watford_, _Leicester_, _Bournemouth_, _Crystal Palace_, _Southampton_, _West Ham_, and _Burnley_; those teams are the ones who are negatively correlated with Dimension 2 meaning that they are the ones who scored fewer goals than the other teams.
+  + `Cluster3` - This cluster consists of the remaining 4 teams which include _Chelsea_, _Liverpool_, _Man City_ and _Tottenham_. This cluster is the cluster that has scored the most goals and obtained the least number of cards
 
   
 <br>
@@ -357,9 +342,9 @@ fviz_pca_biplot(PLR_Away_pca,
 When teams are playing Away, the clusters are distinguished based on the following:
 
 
-  + `Cluster1` - This cluster here is the biggest cluster containing eight(8) teams including _Everton_, _Watford_, _Tottenham_, _Man United_, _Arsenal_, _Southampton_, _West Ham_, and _Leicester_. 
-  + `Cluster2` - Consisting of four (4) teams, _Chelsea_, _Crystal Palace_, _Bournemouth_ and _Burnley_; those teams are negatively correlated with Dimension 1 meaning that they have received relatively fewer red/yellow cards than the other teams. From this cluster we can also see that Chelsea and Bournmouth have scored more goals than Crystal Palance and Burnley.
-  + `Cluster3` - It consists of the remaining two (2) teams, _Liverpool_ and _Man City_. Located on the utmost right of the graph and being highly positively correlated with Dimension 2; those are the teams that have scored the most goals.
+  + `Cluster1` - This cluster here is the biggest cluster containing 8 teams including _Everton_, _Watford_, _Tottenham_, _Man United_, _Arsenal_, _Southampton_, _West Ham_, and _Leicester_. 
+  + `Cluster2` - Consisting of 4 teams, _Chelsea_, _Crystal Palace_, _Bournemouth_ and _Burnley_; those teams are negatively correlated with Dimension 1 meaning that they have received relatively fewer red/yellow cards than the other teams. From this cluster we can also see that Chelsea and Bournmouth have scored more goals than Crystal Palance and Burnley.
+  + `Cluster3` - It consists of the remaining 2 teams, _Liverpool_ and _Man City_. Located on the utmost right of the graph and being highly positively correlated with Dimension 2; those are the teams that have scored the most goals.
 
   
 The plots also show the seed of each cluster denoted by a bigger label in the middle of the cluster.  
@@ -371,4 +356,4 @@ We can conclude from the graphs above that many of the teams' performance change
 
 ## Final Comments
 
-Looking at the two models descibed above, both of them provide us with the same clusters. From clustering we now know that the optimal number of clusters is three(3) which we have used to add to our biplots in our PCA model to better understand the performance of each team. Using PCA or dimension reduction, now we know that the the first 2 Dimensions explain more than 72% of the variance for both Home and Away which provides a good model.  
+Looking at the two models descibed above, both of them provide us with the same clusters. From clustering we now know that the optimal number of clusters is 3 which we have used to add to our biplots in our PCA model to better understand the performance of each team. Using PCA or dimension reduction, now we know that the the first 2 Dimensions explain more than 72% of the variance for both Home and Away which provides a good model.  
