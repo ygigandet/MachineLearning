@@ -80,11 +80,9 @@ The next step is to check if the same teams are present in all seasons.
 
 ```{r, echo=FALSE}
 # Checking if same teams are present in both seasons
-unique(premier_league_results_1718$HomeTeam) %>% knitr::kable(caption = "**Table 1: Premier League Teams 2017-18**", col.names = "Teams") %>% kable_styling(bootstrap_options = c("striped","hover","condensed"), fixed_thead = T) %>% kable_paper() %>%  scroll_box(width = "100%", height = "320px")
+uniqueteams <- cbind(unique(premier_league_results_1617$HomeTeam), unique(premier_league_results_1718$HomeTeam), unique(premier_league_results_1819$HomeTeam))
 
-unique(premier_league_results_1819$HomeTeam) %>% knitr::kable(caption = "**Table 2: Premier League Teams 2018-19**", col.names = "Teams") %>% kable_styling(bootstrap_options = c("striped","hover","condensed"), fixed_thead = T) %>% kable_paper() %>%  scroll_box(width = "100%", height = "320px")
-
-unique(premier_league_results_1617$HomeTeam) %>% knitr::kable(caption = "**Table 3: Premier League Teams 2016-17**", col.names = "Teams") %>% kable_styling(bootstrap_options = c("striped","hover","condensed"), fixed_thead = T) %>% kable_paper() %>%  scroll_box(width = "100%", height = "320px")
+uniqueteams %>% knitr::kable(caption = "**Table 1: Premier League Teams**", col.names = c("Teams 2016-17", "Teams 2017-18", "Teams 2018-19")) %>% kable_styling(bootstrap_options = c("striped","hover","condensed"), fixed_thead = T) %>% kable_paper() %>%  scroll_box(width = "100%", height = "320px")
 
 # Removing the unused datasets
 rm(premier_league_results_1718, premier_league_results_1819, premier_league_results_1617)
