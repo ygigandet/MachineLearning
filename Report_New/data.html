@@ -589,23 +589,93 @@ pre code {
 </div>
 
 
+<style>
+body {
+text-align: justify}
+</style>
 <div id="data" class="section level1">
 <h1>Data</h1>
-<div>
-<p>For our project, we will be providing a prediction of the Premier
-League rankings. We will be using datasets from xxx, called xxx
-containing the results of Premier League games for seasons 2016-17,
-2017-18 and 2018-19. Below are the variables in the datasets and their
-details:</p>
+<div id="data-sources" class="section level2">
+<h2>Data sources</h2>
+<p>For this report, we will be using datasets representing the details
+of the Premier League games for three consecutive seasons; 2016-17,
+2017-18, and 2018-19. Our reason for choosing three seasons is that we
+feel that the data for three years contains a sufficient number of
+observations without risking the change of non-quantitative data that is
+not captured in the datasets such as the players playing in the games
+and their skills. The source of our data was directly obtained from the
+data-hub website. The following are the links to each of the three
+datasets used:</p>
+<ol style="list-style-type: decimal">
+<li><a href="https://datahub.io/sports-data/english-premier-league#resource-season-1617" class="uri">https://datahub.io/sports-data/english-premier-league#resource-season-1617</a></li>
+<li><a href="https://datahub.io/sports-data/english-premier-league#resource-season-1718" class="uri">https://datahub.io/sports-data/english-premier-league#resource-season-1718</a></li>
+<li><a href="https://datahub.io/sports-data/english-premier-league#resource-season-1819" class="uri">https://datahub.io/sports-data/english-premier-league#resource-season-1819</a></li>
+</ol>
 </div>
+<div id="data-description" class="section level2">
+<h2>Data description</h2>
+<p>The Premier League, also known as the English Premier League, is the
+top level of the English football league system. Contested by 20 clubs,
+it operates on a system of promotion and relegation with the English
+Football League. Seasons typically run from August to May with each team
+playing 38 matches. Each of the three datasets contains 380
+observations, and each of them represents one match. The dataset for the
+season 2018-19 contains 62 variables, while the other two datasets
+contain 65 variables each. The variables are the following:</p>
 <ul>
-<li><code>xxx</code> - …</li>
-<li><code>xxx</code> - …</li>
-<li><code>xxx</code> - …</li>
-<li><code>xxx</code> - …</li>
-<li><code>xxx</code> - …</li>
-<li><code>xxx</code> - …</li>
+<li>general information like league division, match date and
+referee</li>
+<li><em>home team</em>: team playing at their “own” field, receiving
+team</li>
+<li>away team : team playing at another field than their “own”, visiting
+team</li>
+<li>full time home goals : the number of goals at the end of the match
+for the home team</li>
+<li>full time away goals : the number of goals at the end of the match
+for the away team</li>
+<li>full time results : match result at the end (H=Home win, A=away win,
+D=draw)</li>
+<li>half time home goals : the number of goals scored in the first part
+(45mins) of the game for the home team</li>
+<li>half time away goals : the number of goals scored in the first part
+(45mins) of the game for the away team</li>
+<li>half time results : match result for the first half of the game
+(H=Home win, A=away win, D=draw)</li>
+<li>home shots : ball hits as an attempt to score a goal by the home
+team</li>
+<li>away shots : ball hits as an attempt to score a goal by the away
+team</li>
+<li>home shots ontarget : home team shots that enters the goal or would
+have entered the goal if they had not been blocked by the goalkeeper or
+another defensive player</li>
+<li>away shots ontarget : away team shots that enters the goal or would
+have entered the goal if they had not been blocked by the goalkeeper or
+another defensive player,</li>
+<li>home fouls : inappropriate or unfair acts by a player of the home
+team as deemed by a referee, that often result in a penalty</li>
+<li>away fouls : inappropriate or unfair acts by a player of the away
+team as deemed by a referee, that often result in a penalty</li>
+<li>home corners : awarded when the whole of the ball passes over the
+goal line, on the ground or in the air, having last touched a player of
+the defending team, and a goal is not scored</li>
+<li>away corners : awarded when the whole of the ball passes over the
+goal line, on the ground or in the air, having last touched a player of
+the defending team, and a goal is not scored</li>
+<li>home yellow cards : given to the home team as a caution or warning,
+provide players with another chance to stay on the field for the
+remainder of the game</li>
+<li>away yellow cards : given to the away team as a caution or warning,
+provide players with another chance to stay on the field for the
+remainder of the game</li>
+<li>home red cards : used by the officials to remove a home team player
+from the match with immediate effect</li>
+<li>away red cards : used by the officials to remove an away team player
+from the match with immediate effect</li>
+<li>and others like odds coming from various betting websites.</li>
 </ul>
+</div>
+<div id="data-cleaning" class="section level2">
+<h2>Data cleaning</h2>
 <p>Before applying machine learning models to our dataset, we need to
 clean and transform it. We start by importing our data, taking out
 unknown variables, transforming non numerical variables to their correct
@@ -616,12 +686,18 @@ seasons.</p>
 <div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:320px; overflow-x: scroll; width:100%; ">
 <table class="table table-striped table-hover table-condensed lightable-paper" style="margin-left: auto; margin-right: auto; font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto;">
 <caption>
-<strong>Table 1: Premier League Teams 2017-18</strong>
+<strong>Table 1: Premier League Teams</strong>
 </caption>
 <thead>
 <tr>
 <th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;position: sticky; top:0; background-color: #FFFFFF;">
-Teams
+Teams 2016-17
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;position: sticky; top:0; background-color: #FFFFFF;">
+Teams 2017-18
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;position: sticky; top:0; background-color: #FFFFFF;">
+Teams 2018-19
 </th>
 </tr>
 </thead>
@@ -630,184 +706,174 @@ Teams
 <td style="text-align:left;">
 Arsenal
 </td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Brighton
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Chelsea
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Crystal Palace
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Everton
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Southampton
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Watford
-</td>
-</tr>
-<tr>
 <td style="text-align:left;">
 West Brom
 </td>
-</tr>
-<tr>
 <td style="text-align:left;">
-Man United
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Newcastle
+Arsenal
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
 Bournemouth
 </td>
-</tr>
-<tr>
 <td style="text-align:left;">
-Burnley
+Man United
 </td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Leicester
-</td>
-</tr>
-<tr>
 <td style="text-align:left;">
 Liverpool
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-Stoke
+Burnley
 </td>
-</tr>
-<tr>
 <td style="text-align:left;">
-Swansea
+Arsenal
 </td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Huddersfield
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Tottenham
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Man City
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-West Ham
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:320px; overflow-x: scroll; width:100%; ">
-<table class="table table-striped table-hover table-condensed lightable-paper" style="margin-left: auto; margin-right: auto; font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto;">
-<caption>
-<strong>Table 2: Premier League Teams 2018-19</strong>
-</caption>
-<thead>
-<tr>
-<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;position: sticky; top:0; background-color: #FFFFFF;">
-Teams
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
 <td style="text-align:left;">
 Man United
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
+Chelsea
+</td>
+<td style="text-align:left;">
+Newcastle
+</td>
+<td style="text-align:left;">
+Southampton
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Crystal Palace
+</td>
+<td style="text-align:left;">
+Brighton
+</td>
+<td style="text-align:left;">
 Bournemouth
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+Everton
+</td>
+<td style="text-align:left;">
+Chelsea
+</td>
 <td style="text-align:left;">
 Fulham
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
+Hull
+</td>
+<td style="text-align:left;">
+Crystal Palace
+</td>
+<td style="text-align:left;">
 Huddersfield
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+Leicester
+</td>
+<td style="text-align:left;">
+Burnley
+</td>
+<td style="text-align:left;">
+Chelsea
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Liverpool
+</td>
+<td style="text-align:left;">
+West Ham
+</td>
+<td style="text-align:left;">
+Crystal Palace
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Man City
+</td>
+<td style="text-align:left;">
+Everton
+</td>
 <td style="text-align:left;">
 Newcastle
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-Watford
+Man United
 </td>
-</tr>
-<tr>
 <td style="text-align:left;">
-Wolves
+Bournemouth
 </td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Arsenal
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Liverpool
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Southampton
-</td>
-</tr>
-<tr>
 <td style="text-align:left;">
 Cardiff
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-Chelsea
+Middlesbrough
+</td>
+<td style="text-align:left;">
+Southampton
+</td>
+<td style="text-align:left;">
+Watford
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+Southampton
+</td>
+<td style="text-align:left;">
+Watford
+</td>
+<td style="text-align:left;">
+Wolves
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Stoke
+</td>
+<td style="text-align:left;">
+Leicester
+</td>
 <td style="text-align:left;">
 Everton
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+Sunderland
+</td>
+<td style="text-align:left;">
+Tottenham
+</td>
+<td style="text-align:left;">
+Burnley
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Swansea
+</td>
+<td style="text-align:left;">
+Liverpool
+</td>
 <td style="text-align:left;">
 Leicester
 </td>
@@ -816,119 +882,9 @@ Leicester
 <td style="text-align:left;">
 Tottenham
 </td>
-</tr>
-<tr>
-<td style="text-align:left;">
-West Ham
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Brighton
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Burnley
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Man City
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Crystal Palace
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:320px; overflow-x: scroll; width:100%; ">
-<table class="table table-striped table-hover table-condensed lightable-paper" style="margin-left: auto; margin-right: auto; font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto;">
-<caption>
-<strong>Table 3: Premier League Teams 2016-17</strong>
-</caption>
-<thead>
-<tr>
-<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;position: sticky; top:0; background-color: #FFFFFF;">
-Teams
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-Burnley
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Crystal Palace
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Everton
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Hull
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Man City
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Middlesbrough
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Southampton
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Arsenal
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Bournemouth
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Chelsea
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Man United
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Leicester
-</td>
-</tr>
-<tr>
 <td style="text-align:left;">
 Stoke
 </td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Swansea
-</td>
-</tr>
-<tr>
 <td style="text-align:left;">
 Tottenham
 </td>
@@ -937,25 +893,33 @@ Tottenham
 <td style="text-align:left;">
 Watford
 </td>
-</tr>
-<tr>
 <td style="text-align:left;">
-West Brom
+Swansea
 </td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Sunderland
-</td>
-</tr>
-<tr>
 <td style="text-align:left;">
 West Ham
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-Liverpool
+West Brom
+</td>
+<td style="text-align:left;">
+Huddersfield
+</td>
+<td style="text-align:left;">
+Brighton
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+West Ham
+</td>
+<td style="text-align:left;">
+Man City
+</td>
+<td style="text-align:left;">
+Man City
 </td>
 </tr>
 </tbody>
@@ -196454,154 +196418,432 @@ J Moss
 referee and all the variables from the betting websites. These either
 have the same values for all observations, don’t necessarily contribute
 to the analysis or use past information on the variable we want to
-predict (match result) and therefore can bias our outcome.</p>
-<p>Finally, let’s check if our final dataset contains missing
-values.</p>
-<pre><code>#&gt; [1] FALSE</code></pre>
+predict (match result) and therefore can bias our outcome. Finally, we
+made sure that our final dataset doesn’t contain missing values.</p>
 <p>Now that we have a clean dataset, let’s check out our data closer
 with a summary.</p>
-<pre><code>#&gt; ### Data Frame Summary  
-#&gt; #### premier_league_results  
-#&gt; **Dimensions:** 1091 x 21  
-#&gt; **Duplicates:** 0  
-#&gt; 
-#&gt; +----+-----------------------+-------------------------+---------------------+----------------------+----------+---------+
-#&gt; | No | Variable              | Stats / Values          | Freqs (% of Valid)  | Graph                | Valid    | Missing |
-#&gt; +====+=======================+=========================+=====================+======================+==========+=========+
-#&gt; | 1  | match_date\           | min : 2016-08-13\       | 316 distinct values | ![](/tmp/ds0564.png) | 1091\    | 0\      |
-#&gt; |    | [Date]                | med : 2017-12-23\       |                     |                      | (100.0%) | (0.0%)  |
-#&gt; |    |                       | max : 2019-05-12\       |                     |                      |          |         |
-#&gt; |    |                       | range : 2y 8m 29d       |                     |                      |          |         |
-#&gt; +----+-----------------------+-------------------------+---------------------+----------------------+----------+---------+
-#&gt; | 2  | home_team\            | 1\. Chelsea\            | 57 ( 5.2%)\         | ![](/tmp/ds0565.png) | 1091\    | 0\      |
-#&gt; |    | [character]           | 2\. Everton\            | 57 ( 5.2%)\         |                      | (100.0%) | (0.0%)  |
-#&gt; |    |                       | 3\. Leicester\          | 57 ( 5.2%)\         |                      |          |         |
-#&gt; |    |                       | 4\. Southampton\        | 57 ( 5.2%)\         |                      |          |         |
-#&gt; |    |                       | 5\. West Ham\           | 57 ( 5.2%)\         |                      |          |         |
-#&gt; |    |                       | 6\. Arsenal\            | 56 ( 5.1%)\         |                      |          |         |
-#&gt; |    |                       | 7\. Bournemouth\        | 56 ( 5.1%)\         |                      |          |         |
-#&gt; |    |                       | 8\. Crystal Palace\     | 56 ( 5.1%)\         |                      |          |         |
-#&gt; |    |                       | 9\. Liverpool\          | 55 ( 5.0%)\         |                      |          |         |
-#&gt; |    |                       | 10\. Man City\          | 55 ( 5.0%)\         |                      |          |         |
-#&gt; |    |                       | [ 16 others ]           | 528 (48.4%)         |                      |          |         |
-#&gt; +----+-----------------------+-------------------------+---------------------+----------------------+----------+---------+
-#&gt; | 3  | away_team\            | 1\. Burnley\            | 57 ( 5.2%)\         | ![](/tmp/ds0566.png) | 1091\    | 0\      |
-#&gt; |    | [character]           | 2\. Chelsea\            | 57 ( 5.2%)\         |                      | (100.0%) | (0.0%)  |
-#&gt; |    |                       | 3\. Crystal Palace\     | 57 ( 5.2%)\         |                      |          |         |
-#&gt; |    |                       | 4\. Arsenal\            | 56 ( 5.1%)\         |                      |          |         |
-#&gt; |    |                       | 5\. Bournemouth\        | 56 ( 5.1%)\         |                      |          |         |
-#&gt; |    |                       | 6\. Everton\            | 56 ( 5.1%)\         |                      |          |         |
-#&gt; |    |                       | 7\. Leicester\          | 56 ( 5.1%)\         |                      |          |         |
-#&gt; |    |                       | 8\. Man United\         | 56 ( 5.1%)\         |                      |          |         |
-#&gt; |    |                       | 9\. Southampton\        | 56 ( 5.1%)\         |                      |          |         |
-#&gt; |    |                       | 10\. Liverpool\         | 55 ( 5.0%)\         |                      |          |         |
-#&gt; |    |                       | [ 16 others ]           | 529 (48.5%)         |                      |          |         |
-#&gt; +----+-----------------------+-------------------------+---------------------+----------------------+----------+---------+
-#&gt; | 4  | full_time_home_goals\ | Mean (sd) : 1.6 (1.3)\  | 0 : 253 (23.2%)\    | ![](/tmp/ds0567.png) | 1091\    | 0\      |
-#&gt; |    | [numeric]             | min &lt; med &lt; max:\       | 1 : 345 (31.6%)\    |                      | (100.0%) | (0.0%)  |
-#&gt; |    |                       | 0 &lt; 1 &lt; 6\              | 2 : 259 (23.7%)\    |                      |          |         |
-#&gt; |    |                       | IQR (CV) : 1 (0.8)      | 3 : 134 (12.3%)\    |                      |          |         |
-#&gt; |    |                       |                         | 4 :  66 ( 6.0%)\    |                      |          |         |
-#&gt; |    |                       |                         | 5 :  28 ( 2.6%)\    |                      |          |         |
-#&gt; |    |                       |                         | 6 :   6 ( 0.5%)     |                      |          |         |
-#&gt; +----+-----------------------+-------------------------+---------------------+----------------------+----------+---------+
-#&gt; | 5  | full_time_away_goals\ | Mean (sd) : 1.2 (1.2)\  | 0 : 368 (33.7%)\    | ![](/tmp/ds0568.png) | 1091\    | 0\      |
-#&gt; |    | [numeric]             | min &lt; med &lt; max:\       | 1 : 360 (33.0%)\    |                      | (100.0%) | (0.0%)  |
-#&gt; |    |                       | 0 &lt; 1 &lt; 7\              | 2 : 213 (19.5%)\    |                      |          |         |
-#&gt; |    |                       | IQR (CV) : 2 (1)        | 3 :  95 ( 8.7%)\    |                      |          |         |
-#&gt; |    |                       |                         | 4 :  42 ( 3.8%)\    |                      |          |         |
-#&gt; |    |                       |                         | 5 :   9 ( 0.8%)\    |                      |          |         |
-#&gt; |    |                       |                         | 6 :   3 ( 0.3%)\    |                      |          |         |
-#&gt; |    |                       |                         | 7 :   1 ( 0.1%)     |                      |          |         |
-#&gt; +----+-----------------------+-------------------------+---------------------+----------------------+----------+---------+
-#&gt; | 6  | full_time_results\    | 1\. A\                  | 330 (30.2%)\        | ![](/tmp/ds0569.png) | 1091\    | 0\      |
-#&gt; |    | [character]           | 2\. D\                  | 249 (22.8%)\        |                      | (100.0%) | (0.0%)  |
-#&gt; |    |                       | 3\. H                   | 512 (46.9%)         |                      |          |         |
-#&gt; +----+-----------------------+-------------------------+---------------------+----------------------+----------+---------+
-#&gt; | 7  | half_time_home_goals\ | Mean (sd) : 0.7 (0.8)\  | 0 : 577 (52.9%)\    | ![](/tmp/ds0570.png) | 1091\    | 0\      |
-#&gt; |    | [numeric]             | min &lt; med &lt; max:\       | 1 : 349 (32.0%)\    |                      | (100.0%) | (0.0%)  |
-#&gt; |    |                       | 0 &lt; 0 &lt; 4\              | 2 : 128 (11.7%)\    |                      |          |         |
-#&gt; |    |                       | IQR (CV) : 1 (1.3)      | 3 :  30 ( 2.7%)\    |                      |          |         |
-#&gt; |    |                       |                         | 4 :   7 ( 0.6%)     |                      |          |         |
-#&gt; +----+-----------------------+-------------------------+---------------------+----------------------+----------+---------+
-#&gt; | 8  | half_time_away_goals\ | Mean (sd) : 0.5 (0.8)\  | 0 : 658 (60.3%)\    | ![](/tmp/ds0571.png) | 1091\    | 0\      |
-#&gt; |    | [numeric]             | min &lt; med &lt; max:\       | 1 : 315 (28.9%)\    |                      | (100.0%) | (0.0%)  |
-#&gt; |    |                       | 0 &lt; 0 &lt; 4\              | 2 :  91 ( 8.3%)\    |                      |          |         |
-#&gt; |    |                       | IQR (CV) : 1 (1.4)      | 3 :  25 ( 2.3%)\    |                      |          |         |
-#&gt; |    |                       |                         | 4 :   2 ( 0.2%)     |                      |          |         |
-#&gt; +----+-----------------------+-------------------------+---------------------+----------------------+----------+---------+
-#&gt; | 9  | half_time_results\    | 1\. A\                  | 277 (25.4%)\        | ![](/tmp/ds0572.png) | 1091\    | 0\      |
-#&gt; |    | [character]           | 2\. D\                  | 448 (41.1%)\        |                      | (100.0%) | (0.0%)  |
-#&gt; |    |                       | 3\. H                   | 366 (33.5%)         |                      |          |         |
-#&gt; +----+-----------------------+-------------------------+---------------------+----------------------+----------+---------+
-#&gt; | 10 | home_shots\           | Mean (sd) : 13.9 (5.8)\ | 37 distinct values  | ![](/tmp/ds0573.png) | 1091\    | 0\      |
-#&gt; |    | [numeric]             | min &lt; med &lt; max:\       |                     |                      | (100.0%) | (0.0%)  |
-#&gt; |    |                       | 0 &lt; 13 &lt; 37\            |                     |                      |          |         |
-#&gt; |    |                       | IQR (CV) : 7 (0.4)      |                     |                      |          |         |
-#&gt; +----+-----------------------+-------------------------+---------------------+----------------------+----------+---------+
-#&gt; | 11 | away_shots\           | Mean (sd) : 11.1 (4.9)\ | 30 distinct values  | ![](/tmp/ds0574.png) | 1091\    | 0\      |
-#&gt; |    | [numeric]             | min &lt; med &lt; max:\       |                     |                      | (100.0%) | (0.0%)  |
-#&gt; |    |                       | 0 &lt; 11 &lt; 30\            |                     |                      |          |         |
-#&gt; |    |                       | IQR (CV) : 7 (0.4)      |                     |                      |          |         |
-#&gt; +----+-----------------------+-------------------------+---------------------+----------------------+----------+---------+
-#&gt; | 12 | home_shots_ontarget\  | Mean (sd) : 4.8 (2.7)\  | 17 distinct values  | ![](/tmp/ds0575.png) | 1091\    | 0\      |
-#&gt; |    | [numeric]             | min &lt; med &lt; max:\       |                     |                      | (100.0%) | (0.0%)  |
-#&gt; |    |                       | 0 &lt; 4 &lt; 17\             |                     |                      |          |         |
-#&gt; |    |                       | IQR (CV) : 3 (0.6)      |                     |                      |          |         |
-#&gt; +----+-----------------------+-------------------------+---------------------+----------------------+----------+---------+
-#&gt; | 13 | away_shots_ontarget\  | Mean (sd) : 3.9 (2.3)\  | 15 distinct values  | ![](/tmp/ds0576.png) | 1091\    | 0\      |
-#&gt; |    | [numeric]             | min &lt; med &lt; max:\       |                     |                      | (100.0%) | (0.0%)  |
-#&gt; |    |                       | 0 &lt; 4 &lt; 15\             |                     |                      |          |         |
-#&gt; |    |                       | IQR (CV) : 3 (0.6)      |                     |                      |          |         |
-#&gt; +----+-----------------------+-------------------------+---------------------+----------------------+----------+---------+
-#&gt; | 14 | home_fouls\           | Mean (sd) : 10.5 (3.4)\ | 22 distinct values  | ![](/tmp/ds0577.png) | 1091\    | 0\      |
-#&gt; |    | [numeric]             | min &lt; med &lt; max:\       |                     |                      | (100.0%) | (0.0%)  |
-#&gt; |    |                       | 0 &lt; 10 &lt; 23\            |                     |                      |          |         |
-#&gt; |    |                       | IQR (CV) : 5 (0.3)      |                     |                      |          |         |
-#&gt; +----+-----------------------+-------------------------+---------------------+----------------------+----------+---------+
-#&gt; | 15 | away_fouls\           | Mean (sd) : 10.9 (3.5)\ | 22 distinct values  | ![](/tmp/ds0578.png) | 1091\    | 0\      |
-#&gt; |    | [numeric]             | min &lt; med &lt; max:\       |                     |                      | (100.0%) | (0.0%)  |
-#&gt; |    |                       | 3 &lt; 11 &lt; 26\            |                     |                      |          |         |
-#&gt; |    |                       | IQR (CV) : 5 (0.3)      |                     |                      |          |         |
-#&gt; +----+-----------------------+-------------------------+---------------------+----------------------+----------+---------+
-#&gt; | 16 | home_corners\         | Mean (sd) : 5.7 (3)\    | 20 distinct values  | ![](/tmp/ds0579.png) | 1091\    | 0\      |
-#&gt; |    | [numeric]             | min &lt; med &lt; max:\       |                     |                      | (100.0%) | (0.0%)  |
-#&gt; |    |                       | 0 &lt; 5 &lt; 19\             |                     |                      |          |         |
-#&gt; |    |                       | IQR (CV) : 4 (0.5)      |                     |                      |          |         |
-#&gt; +----+-----------------------+-------------------------+---------------------+----------------------+----------+---------+
-#&gt; | 17 | away_corners\         | Mean (sd) : 4.6 (2.7)\  | 15 distinct values  | ![](/tmp/ds0580.png) | 1091\    | 0\      |
-#&gt; |    | [numeric]             | min &lt; med &lt; max:\       |                     |                      | (100.0%) | (0.0%)  |
-#&gt; |    |                       | 0 &lt; 4 &lt; 14\             |                     |                      |          |         |
-#&gt; |    |                       | IQR (CV) : 3 (0.6)      |                     |                      |          |         |
-#&gt; +----+-----------------------+-------------------------+---------------------+----------------------+----------+---------+
-#&gt; | 18 | home_yellow_cards\    | Mean (sd) : 1.6 (1.3)\  | 0 : 238 (21.8%)\    | ![](/tmp/ds0581.png) | 1091\    | 0\      |
-#&gt; |    | [numeric]             | min &lt; med &lt; max:\       | 1 : 321 (29.4%)\    |                      | (100.0%) | (0.0%)  |
-#&gt; |    |                       | 0 &lt; 1 &lt; 6\              | 2 : 290 (26.6%)\    |                      |          |         |
-#&gt; |    |                       | IQR (CV) : 1 (0.8)      | 3 : 163 (14.9%)\    |                      |          |         |
-#&gt; |    |                       |                         | 4 :  54 ( 4.9%)\    |                      |          |         |
-#&gt; |    |                       |                         | 5 :  19 ( 1.7%)\    |                      |          |         |
-#&gt; |    |                       |                         | 6 :   6 ( 0.5%)     |                      |          |         |
-#&gt; +----+-----------------------+-------------------------+---------------------+----------------------+----------+---------+
-#&gt; | 19 | away_yellow_cards\    | Mean (sd) : 1.7 (1.3)\  | 0 : 186 (17.0%)\    | ![](/tmp/ds0582.png) | 1091\    | 0\      |
-#&gt; |    | [numeric]             | min &lt; med &lt; max:\       | 1 : 333 (30.5%)\    |                      | (100.0%) | (0.0%)  |
-#&gt; |    |                       | 0 &lt; 2 &lt; 7\              | 2 : 297 (27.2%)\    |                      |          |         |
-#&gt; |    |                       | IQR (CV) : 2 (0.7)      | 3 : 172 (15.8%)\    |                      |          |         |
-#&gt; |    |                       |                         | 4 :  74 ( 6.8%)\    |                      |          |         |
-#&gt; |    |                       |                         | 5 :  26 ( 2.4%)\    |                      |          |         |
-#&gt; |    |                       |                         | 6 :   2 ( 0.2%)\    |                      |          |         |
-#&gt; |    |                       |                         | 7 :   1 ( 0.1%)     |                      |          |         |
-#&gt; +----+-----------------------+-------------------------+---------------------+----------------------+----------+---------+
-#&gt; | 20 | home_red_cards\       | Mean (sd) : 0 (0.2)\    | 0 : 1040 (95.3%)\   | ![](/tmp/ds0583.png) | 1091\    | 0\      |
-#&gt; |    | [numeric]             | min &lt; med &lt; max:\       | 1 :   49 ( 4.5%)\   |                      | (100.0%) | (0.0%)  |
-#&gt; |    |                       | 0 &lt; 0 &lt; 2\              | 2 :    2 ( 0.2%)    |                      |          |         |
-#&gt; |    |                       | IQR (CV) : 0 (4.6)      |                     |                      |          |         |
-#&gt; +----+-----------------------+-------------------------+---------------------+----------------------+----------+---------+
-#&gt; | 21 | away_red_cards\       | Mean (sd) : 0.1 (0.3)\  | 0 : 1021 (93.6%)\   | ![](/tmp/ds0584.png) | 1091\    | 0\      |
-#&gt; |    | [numeric]             | min &lt; med &lt; max:\       | 1 :   69 ( 6.3%)\   |                      | (100.0%) | (0.0%)  |
-#&gt; |    |                       | 0 &lt; 0 &lt; 2\              | 2 :    1 ( 0.1%)    |                      |          |         |
-#&gt; |    |                       | IQR (CV) : 0 (3.8)      |                     |                      |          |         |
-#&gt; +----+-----------------------+-------------------------+---------------------+----------------------+----------+---------+</code></pre>
-<p>Everything seems to be ok !</p>
+<div id="data-frame-summary" class="section level3">
+<h3>Data Frame Summary</h3>
+<div id="premier_league_results" class="section level4">
+<h4>premier_league_results</h4>
+<p><strong>Dimensions:</strong> 1091 x 21<br />
+<strong>Duplicates:</strong> 0</p>
+<table style="width:100%;">
+<colgroup>
+<col width="4%" />
+<col width="19%" />
+<col width="21%" />
+<col width="18%" />
+<col width="18%" />
+<col width="9%" />
+<col width="9%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>No</th>
+<th>Variable</th>
+<th>Stats / Values</th>
+<th>Freqs (% of Valid)</th>
+<th>Graph</th>
+<th>Valid</th>
+<th>Missing</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>match_date<br />
+[Date]</td>
+<td>min : 2016-08-13<br />
+med : 2017-12-23<br />
+max : 2019-05-12<br />
+range : 2y 8m 29d</td>
+<td>316 distinct values</td>
+<td><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJgAAABuCAQAAABxABKuAAAAAmJLR0QA/4ePzL8AAAAHdElNRQfmBRkIJjri+c50AAABnUlEQVR42u3cW07CUBRAUWqYo3PQ8eAcHKX+GFONELbQxyVr/WFC2uxw2mtbmD4OFE9b78BoBIsEi47zF9Omu3K6cDh9vduund/K+W3M33I87Mjzmb+/r7CVa7dhJCPBIsEiwSLBIsGiG5cV66yd9uTmddg6a6f9MJKRYJFgkWDRrv753taFM/7sfC/Yt+vO90YyGuQTdm5c1l8cDxLstot+92QkI8EiwSLBogUP+v+5obV/CwZ7zAs/RjISLLpyJE+eivpy9TFsP2vtbRnJSLBIsEiwSLBIsEiwSLBIsEiwSLBIsEiwaJD7ktVyl6MeNNhyF8iNZCRYJFgkWCRYJFgkWCRYJFgkWCRYJFgkWCRYJFgkWCRYJFgkWCRYNPhNkPUfVh482PpfnjCS0SafsJGf+t8k2MjP/BvJSLBIsEiwSLBIsEiwSLBIsEiwSLBIsEiwSLBIsEiwSLBIsEiwSLBIsEiwSLBIsEiw6Med75Fv4a/l16MCj/lTovdkJCPBIsEiwSLBomm+knizrPjTy+zX2SeNGiMZCRYJFn0CHg0leNJoqqcAAAAldEVYdGRhdGU6Y3JlYXRlADIwMjItMDUtMjVUMDg6Mzg6NTgrMDA6MDAZGtqCAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDIyLTA1LTI1VDA4OjM4OjU4KzAwOjAwaEdiPgAAAD10RVh0aWNjOmNvcHlyaWdodABDb3B5cmlnaHQgMjAwNyBBcHBsZSBJbmMuLCBhbGwgcmlnaHRzIHJlc2VydmVkLp5m3CkAAAAjdEVYdGljYzpkZXNjcmlwdGlvbgBHZW5lcmljIFJHQiBQcm9maWxlGqc4jgAAAABJRU5ErkJggg==" /></td>
+<td>1091<br />
+(100.0%)</td>
+<td>0<br />
+(0.0%)</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>home_team<br />
+[character]</td>
+<td>1. Chelsea<br />
+2. Everton<br />
+3. Leicester<br />
+4. Southampton<br />
+5. West Ham<br />
+6. Arsenal<br />
+7. Bournemouth<br />
+8. Crystal Palace<br />
+9. Liverpool<br />
+10. Man City<br />
+[ 16 others ]</td>
+<td>57 ( 5.2%)<br />
+57 ( 5.2%)<br />
+57 ( 5.2%)<br />
+57 ( 5.2%)<br />
+57 ( 5.2%)<br />
+56 ( 5.1%)<br />
+56 ( 5.1%)<br />
+56 ( 5.1%)<br />
+55 ( 5.0%)<br />
+55 ( 5.0%)<br />
+528 (48.4%)</td>
+<td><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFUAAAELCAQAAAACDwLiAAAAAmJLR0QA/4ePzL8AAAAHdElNRQfmBRkIJjri+c50AAABkklEQVR42u3csU0DURRFQYzcI0VQD/RAlZBZuwZM8p92j5iTWSQTPCP9G/jy+VTp+WgA6rFdtx/evx3u6+VY3hZ03f/pZffp41jnXaEDQEWthIpaCRW1EipqpRD17sFyrifKvsv2oXXwm++HtrrQAYSou1t9O90O8CvVDoB64lBRK6GiVkJFrYT6z6l2gFXZAaazA0wUOgBU1EqoqJVQUSuholYKUe0Aq7IDTGcHmCh0AKiolVBRK6GiVkJFreRxvSqPa9RbdoCJQgeAiloJFbUSKmolVNRKdoBV2QGme/i4PtPT+uHj+mxfsdABoKJWQkWthIpaCRW1UohqB1iVHWA6O8BEoQNARa2EiloJFbUSKmqlENUOsCo7wHR2gIlCB4CKWgkVtRIqaiVU1Eohqh1gVXaA6ewAE4UOABW1EipqJVTUSqiolUJUO8Cq7ADT2QEmCh0AKmolVNRKqKiVUFEreVyvyuMa9dYfP8J/eJuvz8Mf4T+6/f+j0AGgolZCRa2EiloJFbVSdQc4d6EDQJ3oC4h8QRl0Cz0nAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIyLTA1LTI1VDA4OjM4OjU4KzAwOjAwGRraggAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMi0wNS0yNVQwODozODo1OCswMDowMGhHYj4AAAA9dEVYdGljYzpjb3B5cmlnaHQAQ29weXJpZ2h0IDIwMDcgQXBwbGUgSW5jLiwgYWxsIHJpZ2h0cyByZXNlcnZlZC6eZtwpAAAAI3RFWHRpY2M6ZGVzY3JpcHRpb24AR2VuZXJpYyBSR0IgUHJvZmlsZRqnOI4AAAAASUVORK5CYII=" /></td>
+<td>1091<br />
+(100.0%)</td>
+<td>0<br />
+(0.0%)</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>away_team<br />
+[character]</td>
+<td>1. Burnley<br />
+2. Chelsea<br />
+3. Crystal Palace<br />
+4. Arsenal<br />
+5. Bournemouth<br />
+6. Everton<br />
+7. Leicester<br />
+8. Man United<br />
+9. Southampton<br />
+10. Liverpool<br />
+[ 16 others ]</td>
+<td>57 ( 5.2%)<br />
+57 ( 5.2%)<br />
+57 ( 5.2%)<br />
+56 ( 5.1%)<br />
+56 ( 5.1%)<br />
+56 ( 5.1%)<br />
+56 ( 5.1%)<br />
+56 ( 5.1%)<br />
+56 ( 5.1%)<br />
+55 ( 5.0%)<br />
+529 (48.5%)</td>
+<td><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFUAAAELCAQAAAACDwLiAAAAAmJLR0QA/4ePzL8AAAAHdElNRQfmBRkIJjri+c50AAABj0lEQVR42u3Yu00DURRFUYzcI0VQD/RAlZBZM3wmelczW6ydWU5WcG3pndvnU6XnswGo53bffnj/cbivt3N5W9B9/9XL7tPHuc5vhQ4AFbUSKmolVNRKqKiVQtRvD5ZrPVH23bYPrZPffL+01YUOIETd3erb5XaAP6l2ANQLh4paCRW1EipqJdR/TrUDrMoOMJ0dYKLQAaCiVkJFrYSKWgkVtVKIagdYlR1gusMd4EorwOEOcLWfWOgAUFEroaJWQkWthIpayeN6VR7XqI/sABOFDgAVtRIqaiVU1EqoqJXsAKuyA0zncT1R6ABQUSuholZCRa2EilopRLUDrMoOMJ0dYKLQAaCiVkJFrYSKWgkVtVKIagdYlR1gOjvARKEDQEWthIpaCRW1EipqpRDVDrAqO8B0doCJQgeAiloJFbUSKmolVNRKIaodYFV2gOnsABOFDgAVtRIqaiVU1EqoqJU8rlflcY366HAHuECbn8/BDnB++/+j0AGgolZCRa2EiloJFbVSdQe4dqEDQJ3oC4zQQRmO780eAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIyLTA1LTI1VDA4OjM4OjU4KzAwOjAwGRraggAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMi0wNS0yNVQwODozODo1OCswMDowMGhHYj4AAAA9dEVYdGljYzpjb3B5cmlnaHQAQ29weXJpZ2h0IDIwMDcgQXBwbGUgSW5jLiwgYWxsIHJpZ2h0cyByZXNlcnZlZC6eZtwpAAAAI3RFWHRpY2M6ZGVzY3JpcHRpb24AR2VuZXJpYyBSR0IgUHJvZmlsZRqnOI4AAAAASUVORK5CYII=" /></td>
+<td>1091<br />
+(100.0%)</td>
+<td>0<br />
+(0.0%)</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>full_time_home_goals<br />
+[numeric]</td>
+<td>Mean (sd) : 1.6 (1.3)<br />
+min &lt; med &lt; max:<br />
+0 &lt; 1 &lt; 6<br />
+IQR (CV) : 1 (0.8)</td>
+<td>0 : 253 (23.2%)<br />
+1 : 345 (31.6%)<br />
+2 : 259 (23.7%)<br />
+3 : 134 (12.3%)<br />
+4 : 66 ( 6.0%)<br />
+5 : 28 ( 2.6%)<br />
+6 : 6 ( 0.5%)</td>
+<td><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAACsCAQAAACNkwe6AAAAAmJLR0QA/4ePzL8AAAAHdElNRQfmBRkIJjri+c50AAABC0lEQVR42u3cWw7BQAAFUCPdo0VYD3uwSr7UFI2h84o590/a9ETuSK4PwnXXJvtG7oDwFL84Zyn8GNauxI+flpcOm9lL4n3jdQwGg8FgMHjO0wJJ3Q/bE+IdFH5+TFpia7yO+zhcp9JfpKJDlH1Xr2f5iRmvYzAYDAaDwXPs6mrpo+Nc8/aY0FmBeZt2QMfrGAwGg8FgcHvYrq6WPjpO29Upq/lLOGVX5zp+43UMBoPBYDC4PWxXV0sfHb/b1XlW9Af4dVeXO2zjdQwGg8FgMLg9bFdXSx8dP3Z1qTW9At93dY0jNl7HYDAYDAaD28N2dbX0AZ+uxX9A2Nk7BoPBYDAYDP5vOPifvb+Hb0DeKSAwUdTjAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIyLTA1LTI1VDA4OjM4OjU4KzAwOjAwGRraggAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMi0wNS0yNVQwODozODo1OCswMDowMGhHYj4AAAA9dEVYdGljYzpjb3B5cmlnaHQAQ29weXJpZ2h0IDIwMDcgQXBwbGUgSW5jLiwgYWxsIHJpZ2h0cyByZXNlcnZlZC6eZtwpAAAAI3RFWHRpY2M6ZGVzY3JpcHRpb24AR2VuZXJpYyBSR0IgUHJvZmlsZRqnOI4AAAAASUVORK5CYII=" /></td>
+<td>1091<br />
+(100.0%)</td>
+<td>0<br />
+(0.0%)</td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td>full_time_away_goals<br />
+[numeric]</td>
+<td>Mean (sd) : 1.2 (1.2)<br />
+min &lt; med &lt; max:<br />
+0 &lt; 1 &lt; 7<br />
+IQR (CV) : 2 (1)</td>
+<td>0 : 368 (33.7%)<br />
+1 : 360 (33.0%)<br />
+2 : 213 (19.5%)<br />
+3 : 95 ( 8.7%)<br />
+4 : 42 ( 3.8%)<br />
+5 : 9 ( 0.8%)<br />
+6 : 3 ( 0.3%)<br />
+7 : 1 ( 0.1%)</td>
+<td><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAD8AAADECAQAAACCAzGOAAAAAmJLR0QA/4ePzL8AAAAHdElNRQfmBRkIJjri+c50AAABCElEQVR42u3cwQ2CQBQEUNbYoz1oPdqDVeKNIAlGV/i74b+5ceGFzJLMgVDGoWVOTfXk/Hl+8Qg5CNeywg/DZXf8+XaVu3s8Ho/H4/HH5xdj61l3l+qU+bos1bf5JXNR91PuATv/9tZw8M5fHu3c3ePxeDwejz8+b+c3TE/d/7Pzb1XNbbTza49s7u7xeDwej8cHxNBumNz81zu/bsf/xK/v/L3eiNzd4/F4PB6PD4id3zC5+Q87f59l/4Gf7/yYdyB393g8Ho/H4wNi5zcMfsp9jPhCv9enx+PxeDwejz8cb+f3wkfP7L6eHo/H4/F4PB6/bez8Xng7H4/H4/F4PB6/XYr/56flXwSpKjLUrLL2AAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIyLTA1LTI1VDA4OjM4OjU4KzAwOjAwGRraggAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMi0wNS0yNVQwODozODo1OCswMDowMGhHYj4AAAA9dEVYdGljYzpjb3B5cmlnaHQAQ29weXJpZ2h0IDIwMDcgQXBwbGUgSW5jLiwgYWxsIHJpZ2h0cyByZXNlcnZlZC6eZtwpAAAAI3RFWHRpY2M6ZGVzY3JpcHRpb24AR2VuZXJpYyBSR0IgUHJvZmlsZRqnOI4AAAAASUVORK5CYII=" /></td>
+<td>1091<br />
+(100.0%)</td>
+<td>0<br />
+(0.0%)</td>
+</tr>
+<tr class="even">
+<td>6</td>
+<td>full_time_results<br />
+[character]</td>
+<td>1. A<br />
+2. D<br />
+3. H</td>
+<td>330 (30.2%)<br />
+249 (22.8%)<br />
+512 (46.9%)</td>
+<td><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFMAAABOCAQAAAD28+LOAAAAAmJLR0QA/4ePzL8AAAAHdElNRQfmBRkIJjri+c50AAAAwElEQVRo3u3ZUQqDMBBF0aZkj11E11P34Crt76R/QzLxPXrvn4hwYFQYbdfDoefdAJj76/HgKLxR3y17RcT08dSrCHlOXm8ydJgwVYMJUzWYMFWDCVM1E+bPkjG7DFTV4mKU3qpKizKToZswh3vzs2RPz2/kSeaKPb3mITQZOkyYqsGEqRpMmKrBhKmaCZM9fTb29D9nFnxOWFZ4VDb99s83vnNMhg4TpmowYaoGE6ZqMGGqZsJ0/Jygm8nQYa7sC50ZEjem3UcUAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIyLTA1LTI1VDA4OjM4OjU4KzAwOjAwGRraggAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMi0wNS0yNVQwODozODo1OCswMDowMGhHYj4AAAA9dEVYdGljYzpjb3B5cmlnaHQAQ29weXJpZ2h0IDIwMDcgQXBwbGUgSW5jLiwgYWxsIHJpZ2h0cyByZXNlcnZlZC6eZtwpAAAAI3RFWHRpY2M6ZGVzY3JpcHRpb24AR2VuZXJpYyBSR0IgUHJvZmlsZRqnOI4AAAAASUVORK5CYII=" /></td>
+<td>1091<br />
+(100.0%)</td>
+<td>0<br />
+(0.0%)</td>
+</tr>
+<tr class="odd">
+<td>7</td>
+<td>half_time_home_goals<br />
+[numeric]</td>
+<td>Mean (sd) : 0.7 (0.8)<br />
+min &lt; med &lt; max:<br />
+0 &lt; 0 &lt; 4<br />
+IQR (CV) : 1 (1.3)</td>
+<td>0 : 577 (52.9%)<br />
+1 : 349 (32.0%)<br />
+2 : 128 (11.7%)<br />
+3 : 30 ( 2.7%)<br />
+4 : 7 ( 0.6%)</td>
+<td><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFwAAAB9CAQAAACFFsxAAAAAAmJLR0QA/4ePzL8AAAAHdElNRQfmBRkIJjri+c50AAABCklEQVR42u3bQWoCQRRF0a6QPWYPyXp0D65SR0IrqIl0/3o/nDvriRykSugHjvPSs4/ZAPAufa4fjuEH/ns8gC/L12zbk043T22PCjg4eGjg4OChgYODh9YWfvcGdHrvUyY01q+Z4+2PqWltbXtUwKu7uZyH3XeVn82uUemusuVvVtujAg4OHho4OHho4ODgoYFXZxCqyCA0sz/vKtstIxvCX+8qOZe37VEBBwcPDRwcPDRwcPDQwKuzq1RkV5nZg10lZT35Jfy6q3S4om2PCjg4eGjg4OChgYODhwZenV2lIrtKDPxw3v+fQLvAOwUODh4aODh4aODg4KGBg/93+GjzdnxX228cvLoLuTMc0/4o8x0AAAAldEVYdGRhdGU6Y3JlYXRlADIwMjItMDUtMjVUMDg6Mzg6NTgrMDA6MDAZGtqCAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDIyLTA1LTI1VDA4OjM4OjU4KzAwOjAwaEdiPgAAAD10RVh0aWNjOmNvcHlyaWdodABDb3B5cmlnaHQgMjAwNyBBcHBsZSBJbmMuLCBhbGwgcmlnaHRzIHJlc2VydmVkLp5m3CkAAAAjdEVYdGljYzpkZXNjcmlwdGlvbgBHZW5lcmljIFJHQiBQcm9maWxlGqc4jgAAAABJRU5ErkJggg==" /></td>
+<td>1091<br />
+(100.0%)</td>
+<td>0<br />
+(0.0%)</td>
+</tr>
+<tr class="even">
+<td>8</td>
+<td>half_time_away_goals<br />
+[numeric]</td>
+<td>Mean (sd) : 0.5 (0.8)<br />
+min &lt; med &lt; max:<br />
+0 &lt; 0 &lt; 4<br />
+IQR (CV) : 1 (1.4)</td>
+<td>0 : 658 (60.3%)<br />
+1 : 315 (28.9%)<br />
+2 : 91 ( 8.3%)<br />
+3 : 25 ( 2.3%)<br />
+4 : 2 ( 0.2%)</td>
+<td><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGcAAAB9CAQAAAAVBbWPAAAAAmJLR0QA/4ePzL8AAAAHdElNRQfmBRkIJjri+c50AAABIElEQVR42u3bSw6CQBQFUdq4R/ag69E9sEqd0iBGiXTXe9aZMSFU+CTexPIYMjn1vgBz/ifnPD+4h3yRLmUjZxjG3tf2tak6SvawmUNmDpk5ZOaQmUNmDpk5ZOaQLX6NTvvOglHm80DZfZqe5gXJHjZzyKpPwe2gne3a7KVssLO1/Fome9jMITOHzBwyc8jMITOHzBwyc8iS5Tgb0jgbRvHhztZuKfthztbOFucDkexhM4fMHDJzyMwhM4fMHDJzyMwhS5bjzkbjzhbFy50tyqq2trg7Y8B/jr7Jic4cMnPIzCEzh8wcMnPIzCEzhyxZjjsbjTtbFFXOUf8b7ZQTnzlk5pCZQ2YOmTlk5pCZQ2YOmTlkyXJK+LWjkuzumEP2BMDbGutiHy6GAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIyLTA1LTI1VDA4OjM4OjU4KzAwOjAwGRraggAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMi0wNS0yNVQwODozODo1OCswMDowMGhHYj4AAAA9dEVYdGljYzpjb3B5cmlnaHQAQ29weXJpZ2h0IDIwMDcgQXBwbGUgSW5jLiwgYWxsIHJpZ2h0cyByZXNlcnZlZC6eZtwpAAAAI3RFWHRpY2M6ZGVzY3JpcHRpb24AR2VuZXJpYyBSR0IgUHJvZmlsZRqnOI4AAAAASUVORK5CYII=" /></td>
+<td>1091<br />
+(100.0%)</td>
+<td>0<br />
+(0.0%)</td>
+</tr>
+<tr class="odd">
+<td>9</td>
+<td>half_time_results<br />
+[character]</td>
+<td>1. A<br />
+2. D<br />
+3. H</td>
+<td>277 (25.4%)<br />
+448 (41.1%)<br />
+366 (33.5%)</td>
+<td><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEoAAABOCAQAAAAtSEjsAAAAAmJLR0QA/4ePzL8AAAAHdElNRQfmBRkIJjuV/v7iAAAAsUlEQVRo3u3ZQQ5AMBCFYRV3dAjn4Q5OyXZqQZs++iL/24mKL5k2mSEdg1/G3gBQLZnixSbdYEuqWR1fPeW3Zhlpb3jWsnygQIECBQoUKIOAAqXOpR1uaWJ1SbFhr+r0xYkOy/JZorI9tfb8sBD2zmtzX13yA2ZZPlCgQIECBQqUQUCBUoe57y7Mfb9BdRhGn39Ofj6Mlpxvy/KBAgUKFChQoAwCCpQ6/sOoSyzLB6o0J79zEjfFFIw1AAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIyLTA1LTI1VDA4OjM4OjU5KzAwOjAwv23RNgAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMi0wNS0yNVQwODozODo1OSswMDowMM4waYoAAAA9dEVYdGljYzpjb3B5cmlnaHQAQ29weXJpZ2h0IDIwMDcgQXBwbGUgSW5jLiwgYWxsIHJpZ2h0cyByZXNlcnZlZC6eZtwpAAAAI3RFWHRpY2M6ZGVzY3JpcHRpb24AR2VuZXJpYyBSR0IgUHJvZmlsZRqnOI4AAAAASUVORK5CYII=" /></td>
+<td>1091<br />
+(100.0%)</td>
+<td>0<br />
+(0.0%)</td>
+</tr>
+<tr class="even">
+<td>10</td>
+<td>home_shots<br />
+[numeric]</td>
+<td>Mean (sd) : 13.9 (5.8)<br />
+min &lt; med &lt; max:<br />
+0 &lt; 13 &lt; 37<br />
+IQR (CV) : 7 (0.4)</td>
+<td>37 distinct values</td>
+<td><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJgAAABuCAQAAABxABKuAAAAAmJLR0QA/4ePzL8AAAAHdElNRQfmBRkIJjuV/v7iAAABfUlEQVR42u3cUU7CQBRAUTHs0T3oenQPrlJ/q1GnF5Fp6zl/BFLgJlPC66SntzuK+9kfYG8EiwSLzssHp6sc8nnFafHpOm91I8svdL74KD94GDz/OrvAL1iSkWCRYJFgkWCRYJFgkWCRYJFgkWCRYJFgkWCRYFGeh60ZDx7ZBQPEI48HxyzJSLBIsEiwSLBIsEiwSLBIsEiwSLBIsEiwSLDoT/aHje13092kYKOZ2nanapZkJFgkWCRYJFgkWCRYJFgkWCRYJFgkWCRYJFgkWCRYJFgkWCRYJFgkWCRYJFgkWCRYJFgkWCRYJFgkWCRYJFgkWCRYJFgkWDRpU/Aa453WM/ZZbzjYNu9eYElGgkWCRYJFgkWCRYJFgkWCRYJFgkWCRYJFgkWCRYJFHwaI//0erWt8mrju934St2JJRoJFG74IMjbjutKug824rmRJRoJFgkWCRbs+6Y9d/3f04MHGv6Or/g4uop6Wr3/xX/JLj98FY8xJPxIsEix6B98tHLDFR+OLAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIyLTA1LTI1VDA4OjM4OjU5KzAwOjAwv23RNgAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMi0wNS0yNVQwODozODo1OSswMDowMM4waYoAAAA9dEVYdGljYzpjb3B5cmlnaHQAQ29weXJpZ2h0IDIwMDcgQXBwbGUgSW5jLiwgYWxsIHJpZ2h0cyByZXNlcnZlZC6eZtwpAAAAI3RFWHRpY2M6ZGVzY3JpcHRpb24AR2VuZXJpYyBSR0IgUHJvZmlsZRqnOI4AAAAASUVORK5CYII=" /></td>
+<td>1091<br />
+(100.0%)</td>
+<td>0<br />
+(0.0%)</td>
+</tr>
+<tr class="odd">
+<td>11</td>
+<td>away_shots<br />
+[numeric]</td>
+<td>Mean (sd) : 11.1 (4.9)<br />
+min &lt; med &lt; max:<br />
+0 &lt; 11 &lt; 30<br />
+IQR (CV) : 7 (0.4)</td>
+<td>30 distinct values</td>
+<td><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJgAAABuCAQAAABxABKuAAAAAmJLR0QA/4ePzL8AAAAHdElNRQfmBRkIJjuV/v7iAAABuUlEQVR42u3dW46CMBhAYTHukT3oenAPrlJfkR+Dh5TeON+bkwwZT2wpFZ3hfRFxLf0HtMZgkMGg2/zBkOyw08rU+Eh3+MzmT+a2+ygbxsXjV+lnnYhDEjIYZDDIYFCSSX860eVCorNkr+fE6LBlRdTH2ixjsDH8pMXXoZM+ZDDIYJDBIINBBoMyLivWxLVZ7SuzwsHau0JwSEIGgwwGGQwyGGQwaMey4kz7q9GudVh7q6d0HJKQwSCDQQaDDAYZDDIYZDDIYJDBIINBBoMMBhkMMhhkMMhgkMEgg0GF762Iar89pbpgtb/B4pCEDAYZDDIYZDDIYJDBIINBBoMMBlV3aRTVdXXZQLC6ri4dkpDBIINBBoMMBhkMMhhkMMhgkMEgg0EGgwwGGQza3N4598dJoz/2w+rajyrNIQkZDDIYZDDIYFAD7xpFJb8RtslgJb8R1iEJGQwyGGQwyGCQwSCDQQaDmly4rsl12103wXJtczokoa9XmPv32xZDso9/dHKkbuaw6JjTQMfB4mkgRcKOg0UpzqSeJSGDQacaktGfC6nZTDfMf+PpOmzV/VcwbXMOgwwGGQz6ANUvLfCfrK0UAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIyLTA1LTI1VDA4OjM4OjU5KzAwOjAwv23RNgAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMi0wNS0yNVQwODozODo1OSswMDowMM4waYoAAAA9dEVYdGljYzpjb3B5cmlnaHQAQ29weXJpZ2h0IDIwMDcgQXBwbGUgSW5jLiwgYWxsIHJpZ2h0cyByZXNlcnZlZC6eZtwpAAAAI3RFWHRpY2M6ZGVzY3JpcHRpb24AR2VuZXJpYyBSR0IgUHJvZmlsZRqnOI4AAAAASUVORK5CYII=" /></td>
+<td>1091<br />
+(100.0%)</td>
+<td>0<br />
+(0.0%)</td>
+</tr>
+<tr class="even">
+<td>12</td>
+<td>home_shots_ontarget<br />
+[numeric]</td>
+<td>Mean (sd) : 4.8 (2.7)<br />
+min &lt; med &lt; max:<br />
+0 &lt; 4 &lt; 17<br />
+IQR (CV) : 3 (0.6)</td>
+<td>17 distinct values</td>
+<td><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJgAAABuCAQAAABxABKuAAAAAmJLR0QA/4ePzL8AAAAHdElNRQfmBRkIJjuV/v7iAAABdklEQVR42u3cQU6DQABAUTG9Y++g59E7eErdYjQzeZFQwP92TSkpPxkCw4Tl8yni+dF/4GwKhgqGbusPy2Tjt8kJ73W2g5NaH/bNfnoffPfx6OPaRUMSFQwVDBUMFQwVDBUMFQwVDBUMFQwVDBUMFQwVDOF82Nh4gvEa04ubBvsP04sNSVQwVDBUMFQwVDBUMFQwVDBUMFQw9O1ecrY6Jz9uvu/Dja9yA/0XDUlUMFQwVDBUMFQwVDBUMFQwVDBUMFQwVDBUMFQwVDBUMFQwVDBUMFQwVDBUMFQwtOkq6rFrvPVix2DXeKrekEQFQwVDBUMFQwVDBUMFQwVDBUMFQwVDBUMFQwVDBUMFQwVDBUMFQwVDBUMFQzs+l5w5x9vHDhTsHG8fa0iigqGCoYKhgqGCoYKhA12HjR1l/eJpgh1l/WJDEhUMFQwVDBUMFQwVDJ3mOmxmr/naywQbz9dul3NZ7+m915L+6mUVdKmR6aSPCoYKhr4Azh4dhwXvgPAAAAAldEVYdGRhdGU6Y3JlYXRlADIwMjItMDUtMjVUMDg6Mzg6NTkrMDA6MDC/bdE2AAAAJXRFWHRkYXRlOm1vZGlmeQAyMDIyLTA1LTI1VDA4OjM4OjU5KzAwOjAwzjBpigAAAD10RVh0aWNjOmNvcHlyaWdodABDb3B5cmlnaHQgMjAwNyBBcHBsZSBJbmMuLCBhbGwgcmlnaHRzIHJlc2VydmVkLp5m3CkAAAAjdEVYdGljYzpkZXNjcmlwdGlvbgBHZW5lcmljIFJHQiBQcm9maWxlGqc4jgAAAABJRU5ErkJggg==" /></td>
+<td>1091<br />
+(100.0%)</td>
+<td>0<br />
+(0.0%)</td>
+</tr>
+<tr class="odd">
+<td>13</td>
+<td>away_shots_ontarget<br />
+[numeric]</td>
+<td>Mean (sd) : 3.9 (2.3)<br />
+min &lt; med &lt; max:<br />
+0 &lt; 4 &lt; 15<br />
+IQR (CV) : 3 (0.6)</td>
+<td>15 distinct values</td>
+<td><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJgAAABuCAQAAABxABKuAAAAAmJLR0QA/4ePzL8AAAAHdElNRQfmBRkIJjuV/v7iAAABnUlEQVR42u3dXYrCQBAA4Yx4R++g54l38JT6GtMDSQXN/NX3JmRBCnu33YmY3pOIS+kn0BqDQQaDrssHKXPBnPkl90jTUJYJrtuX31aPX6Wff1GOJGQwyGCQwSCDQQaDdqwV20ba1X4SbKRdzZGEDAYZDDIYZDDIYJDBoEN72DzwycmhYOOsqZEjCX29wkYetb1WI3kLF4w0bns4kpDBIINBBoMMBhkMMhhkMMhgkMEgg0EGgwwGGQwyGGQwyGCQwSCDQQaDfnRDXRRPoPq4J/FvwXo97HUkIYNBfxvJqI97rU8M1sepuiMJGQwyGGQwyGCQwSCDQQaDDAYZDDIYZDDIYJDBIINBBoMMBhkMMhh04v/0c9o77i0crL3jXkcSMhhkMMhgkMEgg0EGgwwGGQwyGGQwqPB7yaj2t+PVBav97bgjCRkMMhhkMMhgkMEgg0EGg6pbXKO6dv8GgtW1+zuSkMEgg0EGgwwGGQxqYK2ISn56vMlguU+Pn7XeNhksJ6632wmPvFLT8meefgFB1n0RMdmI8a8kZDDIYNAHNSErKYePLwYAAAAldEVYdGRhdGU6Y3JlYXRlADIwMjItMDUtMjVUMDg6Mzg6NTkrMDA6MDC/bdE2AAAAJXRFWHRkYXRlOm1vZGlmeQAyMDIyLTA1LTI1VDA4OjM4OjU5KzAwOjAwzjBpigAAAD10RVh0aWNjOmNvcHlyaWdodABDb3B5cmlnaHQgMjAwNyBBcHBsZSBJbmMuLCBhbGwgcmlnaHRzIHJlc2VydmVkLp5m3CkAAAAjdEVYdGljYzpkZXNjcmlwdGlvbgBHZW5lcmljIFJHQiBQcm9maWxlGqc4jgAAAABJRU5ErkJggg==" /></td>
+<td>1091<br />
+(100.0%)</td>
+<td>0<br />
+(0.0%)</td>
+</tr>
+<tr class="even">
+<td>14</td>
+<td>home_fouls<br />
+[numeric]</td>
+<td>Mean (sd) : 10.5 (3.4)<br />
+min &lt; med &lt; max:<br />
+0 &lt; 10 &lt; 23<br />
+IQR (CV) : 5 (0.3)</td>
+<td>22 distinct values</td>
+<td><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJgAAABuCAQAAABxABKuAAAAAmJLR0QA/4ePzL8AAAAHdElNRQfmBRkIJjuV/v7iAAABoElEQVR42u3cXU7CQBhAUTHs0T3oenAPrlJfq5lGLmD/POdNE01z0w+nzsDp84niee0L2BvBIsGi8/SL0woXcJl9EX1b43KGppd4vvm3PMzL8Lsfa1/WDCMZLXaHXQ6yfllwJPc1enOMZCRYJFgkWCRYJFgkWCRYJFgkWCRYJFgkWCRYJFgkWCRYJFgkWCRYJFgkWPQH22xH2YEc+5N9ydEO5N72H+cYyUiwSLBIsEiwSLBIsGgDRzbnjBfAa5983XCwbS5/jWQkWCRYJFgkWCRYJFgkWCRYJFgkWCRYJFgkWCRYJFgkWCRYJFgkWCRYdMeu0bHPgc25a5vtGJ9E0RjJSLBIsEiwSLBIsEiwSLBow+fDxuaeL5Y6aLe7YGs/XRjJSLBIsEiwSLBIsEiwSLBIsEiwSLBIsEiwSLBIsEiwaHf/QJyz1BueDxNsqTc8G8lIsEiwSLBIsOiqv5L/83Dm2JXLim1+SskajGR0mIXr2ONPYhw82ONPYnwL5sX9dz/usLXPxizl9kf10/Qn391hQ6+TkCeNGsuKSLBIsOgLUVEk4wF8NR0AAAAldEVYdGRhdGU6Y3JlYXRlADIwMjItMDUtMjVUMDg6Mzg6NTkrMDA6MDC/bdE2AAAAJXRFWHRkYXRlOm1vZGlmeQAyMDIyLTA1LTI1VDA4OjM4OjU5KzAwOjAwzjBpigAAAD10RVh0aWNjOmNvcHlyaWdodABDb3B5cmlnaHQgMjAwNyBBcHBsZSBJbmMuLCBhbGwgcmlnaHRzIHJlc2VydmVkLp5m3CkAAAAjdEVYdGljYzpkZXNjcmlwdGlvbgBHZW5lcmljIFJHQiBQcm9maWxlGqc4jgAAAABJRU5ErkJggg==" /></td>
+<td>1091<br />
+(100.0%)</td>
+<td>0<br />
+(0.0%)</td>
+</tr>
+<tr class="odd">
+<td>15</td>
+<td>away_fouls<br />
+[numeric]</td>
+<td>Mean (sd) : 10.9 (3.5)<br />
+min &lt; med &lt; max:<br />
+3 &lt; 11 &lt; 26<br />
+IQR (CV) : 5 (0.3)</td>
+<td>22 distinct values</td>
+<td><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJgAAABuCAQAAABxABKuAAAAAmJLR0QA/4ePzL8AAAAHdElNRQfmBRkIJjuV/v7iAAABlklEQVR42u3cS1LCQABAQWNxR+6g58E7eErdRitRnsR8oHsnixS8YoaJMzB8PFE8b/0EjkawSLDoNP5jWOSSl5lp8XWZy29g/IJOf77KD84Tj71v/aoXYkhGgkWCRYJFgkWCRYJFgkWCRYJFgkWCRYJFgkWCRYJFgkWCRYJFgkWCRf+yazTtPrbfVgx2nnz0aNtvhmQkWCRYJFgkWCRYJFgkWLTiwnXOse4AdhDsWHcANwS7POSJ9ZveYcd6byzDpB8JFgkWCRYJFgkWCRYJFgkWCRYJFgkWCRYJFgkWCRYJFgkWCRYJFgkWCRYJFgkWCRYJFgkW7eD0zpzpwy5bH4LacbB9/gqZIRkJFgkWCRYJFgkWCRZdtQ57zPPS065cuO5zEbkFQzISLBIsEiwSLBIsEiwSLBIsEiwSLNrxJsi0rb9Sf7hgW39t2pCMBIu+DEn/KPzdtzls6xli/wzJSLBIsOhw67A5ax2Ouptga+1rGZKRYJFg0d3MYdPavcs1HxHD+Ipvbo0mvYxCDho15rBIsEiw6BMvmSK5sQfRcQAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyMi0wNS0yNVQwODozODo1OSswMDowML9t0TYAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMjItMDUtMjVUMDg6Mzg6NTkrMDA6MDDOMGmKAAAAPXRFWHRpY2M6Y29weXJpZ2h0AENvcHlyaWdodCAyMDA3IEFwcGxlIEluYy4sIGFsbCByaWdodHMgcmVzZXJ2ZWQunmbcKQAAACN0RVh0aWNjOmRlc2NyaXB0aW9uAEdlbmVyaWMgUkdCIFByb2ZpbGUapziOAAAAAElFTkSuQmCC" /></td>
+<td>1091<br />
+(100.0%)</td>
+<td>0<br />
+(0.0%)</td>
+</tr>
+<tr class="even">
+<td>16</td>
+<td>home_corners<br />
+[numeric]</td>
+<td>Mean (sd) : 5.7 (3)<br />
+min &lt; med &lt; max:<br />
+0 &lt; 5 &lt; 19<br />
+IQR (CV) : 4 (0.5)</td>
+<td>20 distinct values</td>
+<td><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJgAAABuCAQAAABxABKuAAAAAmJLR0QA/4ePzL8AAAAHdElNRQfmBRkIJjuV/v7iAAABeElEQVR42u3cUU7CQBRAUWvYo3vQ9egeXKX+VkMnnCYyLd7zR6AEbjKlaV9Zvp4inmd/gLMpGCoYuqwfLIMXvu/e2b0te7c8ivVXv9y+2cvmM5/D5x5LSxIVDBUMFQwVDBUMFQwVDBUMFQwVDBUMFQwVDBUMFQwVDBUMwSnqvUZXA853vv8OwR7rfH9LEhUMFQwVDBUMFQwVDBUMFQwVDBUMFQwVDBUMFQwVDBUMFQwVDBUMFQwVDBUMFQwVDP248r3/Fr//49eowGNd1v8LLUlUMFQwVDBUMFQwdIcJxJHzjXNODna+476WJCoYKhgqGCoYKhgqGCoYKhgqGCoYKhgqGCoYKhgqGCoYKhgqGCoYKhgqGCoYKhgqGCoYKhgqGCoYmjy9M7I9CjVzEOrAwbZGoeYOQrUkUcFQwVDBUMFQwdCBDyu2zRxWP2WwmcPqLUlUMFQwVDB0yp3+yN4b/W/9dV3W7//Rvwpc9bqKudTItA9DBUMFQ997NxuFB8MKeAAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyMi0wNS0yNVQwODozODo1OSswMDowML9t0TYAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMjItMDUtMjVUMDg6Mzg6NTkrMDA6MDDOMGmKAAAAPXRFWHRpY2M6Y29weXJpZ2h0AENvcHlyaWdodCAyMDA3IEFwcGxlIEluYy4sIGFsbCByaWdodHMgcmVzZXJ2ZWQunmbcKQAAACN0RVh0aWNjOmRlc2NyaXB0aW9uAEdlbmVyaWMgUkdCIFByb2ZpbGUapziOAAAAAElFTkSuQmCC" /></td>
+<td>1091<br />
+(100.0%)</td>
+<td>0<br />
+(0.0%)</td>
+</tr>
+<tr class="odd">
+<td>17</td>
+<td>away_corners<br />
+[numeric]</td>
+<td>Mean (sd) : 4.6 (2.7)<br />
+min &lt; med &lt; max:<br />
+0 &lt; 4 &lt; 14<br />
+IQR (CV) : 3 (0.6)</td>
+<td>15 distinct values</td>
+<td><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJgAAABuCAQAAABxABKuAAAAAmJLR0QA/4ePzL8AAAAHdElNRQfmBRkIJjuV/v7iAAABtklEQVR42u3dUU4CMRRAUcewR/ag68E9uEr8rfQRegfK9LX3/KkJkZu+oVOIbtcPEZ9H/wLZGAwyGHQqv9ieeKBLeDH8fuYhh1E+tdPuR6mcq+/8Hv1MO3AkoReusEg0qLnHtHOw+cZ0V7DLwrvdnStsvpXTyos+ZDDIYJDBIINB/14lZ74ffJWbbcW624VWjiRkMMhgkMEgg0EGgxpOK1Y+zKk1BHNvVnIkIYNBBoMMBnV+1yiS+623A4LlftV1JCGDQQaDDAYZDDIYZDDIYJDBIINBBoMMBhkMMhhkMMhgkMGgA05cI3mOrQcJlufY2pGEDAYZDDIYZDDIYJDBIINBBoMMBhkMMhhkMMhgkMEgg0EGgwwGDXJEHanP+Uc45R842O05/xin/I4kZDDIYJDBIINBBoMG3lbURvgERqpgI3wCw5GEDAYZDDIYZDDIYJDBIINBBoMMBhkMSnUvGXn3DXn6YO++IU8fLNJz1U0ZrOeq86IPGQwyGGQwyGCQwSCDQVPuwyKtf4L80QZ3mWDRZnbPBteRhJZZYa3C0S3GdCt//uO/Ggh93Qumx7yGQQaDDAb9AX18LMaINI1hAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIyLTA1LTI1VDA4OjM4OjU5KzAwOjAwv23RNgAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMi0wNS0yNVQwODozODo1OSswMDowMM4waYoAAAA9dEVYdGljYzpjb3B5cmlnaHQAQ29weXJpZ2h0IDIwMDcgQXBwbGUgSW5jLiwgYWxsIHJpZ2h0cyByZXNlcnZlZC6eZtwpAAAAI3RFWHRpY2M6ZGVzY3JpcHRpb24AR2VuZXJpYyBSR0IgUHJvZmlsZRqnOI4AAAAASUVORK5CYII=" /></td>
+<td>1091<br />
+(100.0%)</td>
+<td>0<br />
+(0.0%)</td>
+</tr>
+<tr class="even">
+<td>18</td>
+<td>home_yellow_cards<br />
+[numeric]</td>
+<td>Mean (sd) : 1.6 (1.3)<br />
+min &lt; med &lt; max:<br />
+0 &lt; 1 &lt; 6<br />
+IQR (CV) : 1 (0.8)</td>
+<td>0 : 238 (21.8%)<br />
+1 : 321 (29.4%)<br />
+2 : 290 (26.6%)<br />
+3 : 163 (14.9%)<br />
+4 : 54 ( 4.9%)<br />
+5 : 19 ( 1.7%)<br />
+6 : 6 ( 0.5%)</td>
+<td><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADkAAACsCAQAAABrusz+AAAAAmJLR0QA/4ePzL8AAAAHdElNRQfmBRkIJjuV/v7iAAABCklEQVR42u3cSw6CQBAFQMd4Rw/BefQOnhIXbgaDAgPNiFNv5ydUSLfxacTUn/bOeXexEfKS37ivHmyXxu/PD3wZPnRdBT5mPauNWSKRSCQSeTjyrRXMe19fl5S3klR8mKnkShuzrL0+t7gPKNmabNpjP2X4OmhjlkgkEolEHo7UY4NSe5bbl8qxL0tDS+X4MrYxSyQSiUQikdPRY4NSe5bLemxXOIfiHlu+aG3MEolEIpFI5HT02KDUnuV7jy1tqgvIYY+NWqU2ZolEIpFIJHI6emxQas/y1WNj2uvHs4z5sepXco8gkUgkEok8AqnHbpXa5K0PvOzqZ84SiUQikUgkcs8k/7v1N+QTwkIoc7epoRkAAAAldEVYdGRhdGU6Y3JlYXRlADIwMjItMDUtMjVUMDg6Mzg6NTkrMDA6MDC/bdE2AAAAJXRFWHRkYXRlOm1vZGlmeQAyMDIyLTA1LTI1VDA4OjM4OjU5KzAwOjAwzjBpigAAAD10RVh0aWNjOmNvcHlyaWdodABDb3B5cmlnaHQgMjAwNyBBcHBsZSBJbmMuLCBhbGwgcmlnaHRzIHJlc2VydmVkLp5m3CkAAAAjdEVYdGljYzpkZXNjcmlwdGlvbgBHZW5lcmljIFJHQiBQcm9maWxlGqc4jgAAAABJRU5ErkJggg==" /></td>
+<td>1091<br />
+(100.0%)</td>
+<td>0<br />
+(0.0%)</td>
+</tr>
+<tr class="odd">
+<td>19</td>
+<td>away_yellow_cards<br />
+[numeric]</td>
+<td>Mean (sd) : 1.7 (1.3)<br />
+min &lt; med &lt; max:<br />
+0 &lt; 2 &lt; 7<br />
+IQR (CV) : 2 (0.7)</td>
+<td>0 : 186 (17.0%)<br />
+1 : 333 (30.5%)<br />
+2 : 297 (27.2%)<br />
+3 : 172 (15.8%)<br />
+4 : 74 ( 6.8%)<br />
+5 : 26 ( 2.4%)<br />
+6 : 2 ( 0.2%)<br />
+7 : 1 ( 0.1%)</td>
+<td><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADoAAADECAQAAABkKvrKAAAAAmJLR0QA/4ePzL8AAAAHdElNRQfmBRkIJjuV/v7iAAABEUlEQVR42u3cQQ6CMBAFUDHckUN4Hr2Dp9RtNUhKy4Bh3t8RDC/NdPElwPC67J/rAWYidCwPHg0Dvg11vysvPX6emlaSz6aV5pkpFAqFQqHQ/nzVlbb6sTZDWZgqO1ZTSifpTO+Rf2yK2XX23tp8btA8M4VCoVAoFNofvTc0x890+947fzc4tPf+2pZ5ZgqFQqFQ6MlQFTQ0edCu3lv7jMMiuq73tu/0PDOFQqFQKPRkqN4bmjxoRe9tbbeV6FzvjdjPeWYKhUKhUOjJUL03NHnQ2d67fdNdXOkU9oTvArpPoFAoFAqF9kfvDc3xaOgrZn+1UigUCoVCodD/Q/Xe/VC9FwqFQqFQKPQ4dPD93tOhb9YJKvo8XOUUAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIyLTA1LTI1VDA4OjM4OjU5KzAwOjAwv23RNgAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMi0wNS0yNVQwODozODo1OSswMDowMM4waYoAAAA9dEVYdGljYzpjb3B5cmlnaHQAQ29weXJpZ2h0IDIwMDcgQXBwbGUgSW5jLiwgYWxsIHJpZ2h0cyByZXNlcnZlZC6eZtwpAAAAI3RFWHRpY2M6ZGVzY3JpcHRpb24AR2VuZXJpYyBSR0IgUHJvZmlsZRqnOI4AAAAASUVORK5CYII=" /></td>
+<td>1091<br />
+(100.0%)</td>
+<td>0<br />
+(0.0%)</td>
+</tr>
+<tr class="even">
+<td>20</td>
+<td>home_red_cards<br />
+[numeric]</td>
+<td>Mean (sd) : 0 (0.2)<br />
+min &lt; med &lt; max:<br />
+0 &lt; 0 &lt; 2<br />
+IQR (CV) : 0 (4.6)</td>
+<td>0 : 1040 (95.3%)<br />
+1 : 49 ( 4.5%)<br />
+2 : 2 ( 0.2%)</td>
+<td><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJsAAABOCAQAAACdm6ybAAAAAmJLR0QA/4ePzL8AAAAHdElNRQfmBRkIJjuV/v7iAAABAklEQVR42u3bQQqCUBRA0X60x/ZQ66k9tMoa5g+Kug0qOmekCCIXv4IPx3nF69afvoDfJFsiW7JZ7hw96B7Yjev2Zj60/fS1fa3TtGeRJrIlsiWyJbIlsiWyJbIlsiWyJbIlsiWyJbIlsiWyJbIlsiU3H8VP7Sx/ZyynLiOf5h8sS1mkiWzJ9Gw7THPSvTV71905qZfDIxZpIlsiWyJbIlsiWyJbIlsiWyJbIlsiWyJbIlsiWyJbIlsiW2JOmpiTPs2c9G2yJbIlU7aD33Cf5G5LZEtkS2RLZEtkS2RLZEtkS2RLZEtkS2RLZEtkS2RLZEtkS2RLZEuGqUvhbktkS2RLLvSrD4fCFW6WAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIyLTA1LTI1VDA4OjM4OjU5KzAwOjAwv23RNgAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMi0wNS0yNVQwODozODo1OSswMDowMM4waYoAAAA9dEVYdGljYzpjb3B5cmlnaHQAQ29weXJpZ2h0IDIwMDcgQXBwbGUgSW5jLiwgYWxsIHJpZ2h0cyByZXNlcnZlZC6eZtwpAAAAI3RFWHRpY2M6ZGVzY3JpcHRpb24AR2VuZXJpYyBSR0IgUHJvZmlsZRqnOI4AAAAASUVORK5CYII=" /></td>
+<td>1091<br />
+(100.0%)</td>
+<td>0<br />
+(0.0%)</td>
+</tr>
+<tr class="odd">
+<td>21</td>
+<td>away_red_cards<br />
+[numeric]</td>
+<td>Mean (sd) : 0.1 (0.3)<br />
+min &lt; med &lt; max:<br />
+0 &lt; 0 &lt; 2<br />
+IQR (CV) : 0 (3.8)</td>
+<td>0 : 1021 (93.6%)<br />
+1 : 69 ( 6.3%)<br />
+2 : 1 ( 0.1%)</td>
+<td><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJkAAABOCAQAAACZbnymAAAAAmJLR0QA/4ePzL8AAAAHdElNRQfmBRkIJjuV/v7iAAABBklEQVR42u3bzU2EUBhAUZ+hR3vQepgeqHJcCqOT4eICf85ZQUgIueFBwhfG9Ynm+ewL+H0kyyTLpvXOxYPtjtfxsT1tD72cfW0/0rLZszAzyTLJMskyyTLJMskyyTLJMskyyTLJMskyyTLJMskyyTLJspsP2cuxs/wrYz0hGYdP89etK1mYmWTZ5lk2fzHHfLNabzyYY3odfGZhZpJlkmWSZZJlkmWSZZJlkmWSZZJlkmWSZZJlkmWSZZJlkmXmmJk55i7mmN8iWSZZtkk2+4V1B3dZJlkmWSZZJlkmWSZZJlkmWSZZJlkmWSZZJlkmWSZZJlkmWSZZJlk2TEgqd1kmWSZZ9g53gA+HstRAtwAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyMi0wNS0yNVQwODozODo1OSswMDowML9t0TYAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMjItMDUtMjVUMDg6Mzg6NTkrMDA6MDDOMGmKAAAAPXRFWHRpY2M6Y29weXJpZ2h0AENvcHlyaWdodCAyMDA3IEFwcGxlIEluYy4sIGFsbCByaWdodHMgcmVzZXJ2ZWQunmbcKQAAACN0RVh0aWNjOmRlc2NyaXB0aW9uAEdlbmVyaWMgUkdCIFByb2ZpbGUapziOAAAAAElFTkSuQmCC" /></td>
+<td>1091<br />
+(100.0%)</td>
+<td>0<br />
+(0.0%)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
 </div>
 
 

@@ -1,8 +1,9 @@
-# Conclusion
+<style>
+body {
+text-align: justify}
+</style>
 
-```{r, echo = FALSE, message = FALSE}
-source(here::here("scripts/setup.R"))
-```
+# Conclusion
 
 To conclude, we observe that for both supervised and unsupervised learning, variables that stand out the most and who are the most important are the ones related to goals and shots. This actually makes sense as they determine the final result. For supervised learning, they are important in order to predict the match result, and for clustering they characterize the different teams when they are either receiving or visiting.
 
