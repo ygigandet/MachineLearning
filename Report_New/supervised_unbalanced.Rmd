@@ -14,6 +14,8 @@ Next step is fitting models to the clean data, based on our EDA outcomes. But be
 
 ## Data Splitting
 
+Before splitting our data, we need to take out the full time goals variables for the home and away teams as it doesn’t make sense to include them in our models. Indeed, they will heavily influence the predictions. We also take out the match date, as it doesn’t bring anything to our model.
+
 For our splitting strategy, we took 80% of the original data for our training set and the remaining 20% for our test set. As we have a large amount of data, we then went on further with a cross validation (CV) strategy on our training set before fitting our models.
 
 Moreover, it is not necessary to balance the training set, because we are in a non-binary case, and the interpretation of the results will be more complex and the accuracies of the models are decreasing. For these reasons, we decided to keep original values without balancing.
