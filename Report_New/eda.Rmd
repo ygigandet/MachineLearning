@@ -64,6 +64,9 @@ Based on the correlation graph shown above, we can conclude the following:
 The results we see in the correlation plot make sense. We do not expect the full time home goals to be negatively correlated to home shots on target, it only makes sense that with more shots there's a better chance of getting a goal.  
 
 <br>
+**_ Frequency distributions of the variables_**
+In order to analyze frequency distributions of the variables, histograms of home-related and away-related variables were built.
+As it can be seen, the histograms for the same variables are similar for home and away, with little differences. For instance, full time goals histograms are right skewed, with most of the sample values being 0, 1 and 2. For the half time goals, the values are mostly split between 0 and 1, 0 being the most frequent value (around 300 observations). Home fouls and away fouls tend to follow a normal distribution, with values spreading from 0 to 20 and the peak being at around 10. It is interesting to notice that yellow cards follow a right skewed distribution, with most observations being split between 0, 1 and 2, while for red cards almost all values are 0. The shots on target distribution is similar to the fouls one, with values ranging from 0 to 15 and a low degree of right skewness. This is also true for home and away corners, which have similar distributions. Some variables that are slightly different from the others in terms of distribution are the home and away shots, in the sense that they follow a so-called multimodal distribution (several processes with normal distributions combined, multiple peaks). Overall, we can observe that there are not many differences between the histograms for home and away variables, suggesting that aggregated teams’ performance is similar, whether playing home or away.
 
 ```{r, echo=FALSE}
 #Histograms for home-related variables across all seasons
@@ -204,14 +207,6 @@ density_home_shots <- ggplot(premier_league_results , aes(x = home_shots, y = ho
       panel.spacing = unit(0.1, "lines"),
       strip.text.x = element_text(size = 8))
 
-
-# ggplot(HK_WQ_Analysis, aes(x = `Dissolved Oxygen (mg/L)`, y = Year, fill = 0.5 - abs(0.5 - stat(ecdf)))) +
-#   stat_density_ridges(scale = 0.9, geom = "density_ridges_gradient", calc_ecdf = TRUE, quantile_lines = TRUE, alpha = 0.75, quantiles = 2) +
-#   scale_fill_gradient(low= "#008a89", high = "yellow", name= "Tail probability") +
-#   scale_x_continuous(expand = c(0, 0)) +
-#   scale_y_discrete(expand = expansion(mult = c(0.01, 0.25))) +
-#   theme_ridges(font_size = 13, grid = TRUE) +
-#   theme(axis.title.y = element_blank())
 
 density_away_shots <- ggplot(premier_league_results , aes(x = away_shots, y = away_team, fill = stat(x))) +
   geom_density_ridges_gradient(scale = 3, rel_min_height = 0.01, ) +

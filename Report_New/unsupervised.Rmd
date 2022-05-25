@@ -279,7 +279,7 @@ fviz_pca_biplot(PLR_Away_pca, repel = TRUE, col.var = "#2EDFC7", col.ind = "#696
 <br>
 **_Dimension Analysis_**
 
-The summaries below show percentage of contribution of each principle component and the total percentage explained along with various details of each component and individual. The scree plots below show an easier and graphical representation of the same percentage of variance for all the Dimensions. As shown below, the first 3 components explain more than 80% of the variance. Considering the 80% rule-of-thumb, we can use the first three (3) components. However, if we wanted to follow the Kaiser-Guttman rule, which includes only dimensions with eigenvalues greater than 1, then we would only take the first 2 Dimensions.  Therefore, we can reduce the number of dimensions to 2 or 3 and more than 72% of the variance will be explained which is a good percentage. 
+The summaries below represent the percentage of contribution of each principle component and the total percentage explained along with various details of each component and individual. The scree plots show a graphical representation of the same percentage of variance for all the Dimensions. As shown in the tables, the first 3 components explain more than 80% of the variance. Considering the 80% rule-of-thumb, we can use the first 3 components. However, if we wanted to follow the Kaiser-Guttman rule, which favors including only dimensions with eigenvalues greater than 1, then we would only consider the first 2 Dimensions.  Therefore, we can reduce the number of dimensions to 2 or 3 and more than 72% of the variance will be explained which is a good percentage. 
 
 <br>
 <br>
@@ -371,4 +371,4 @@ We can conclude from the graphs above that many of the teams' performance change
 
 ## Final Comments
 
-Both models provide us with the same clusters. Using PCA, now we know that the the first 2 Dimensions explain more than 72% of the variance for both Home and Away which is provides a good model. From clustering we now know that the optimal number of clusters is three(3) which we have used to add to our biplots in our PCA model to better understand the performance of each team.  
+Looking at the two models descibed above, both of them provide us with the same clusters. From clustering we now know that the optimal number of clusters is three(3) which we have used to add to our biplots in our PCA model to better understand the performance of each team. Using PCA or dimension reduction, now we know that the the first 2 Dimensions explain more than 72% of the variance for both Home and Away which provides a good model.  
