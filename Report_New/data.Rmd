@@ -40,9 +40,20 @@ The Premier League, also known as the English Premier League, is the top level o
 - away yellow cards
 - home red cards
 - away red cards
-- and others like odds coming from various betting websites
+- and others like odds coming from various betting websites.
 
-As it can be seen, all the variables concern the performance of either the home or the away team during a specific match.
+As it can be seen, the variables concern the performance of either the home or the away team during a specific match. Before starting to analyze all these variables, we would like to provide a short explanation for each of them:
+
+- full time goals: when we talk about full time, we refer to the 90 minutes the rule says a football game should last. In our case, full time goals represent the number of goals at the end of the match.
+- half time goals: the number of goals scored in the first part of the game (first 45 minutes).
+- full time results: match result at the end (H=Home win, A=away win, D=draw).
+- half time results: match result for the first half of the game (H=Home win, A=away win, D=draw).
+- shots: ball hits as an attempt to score a goal.
+- shots on target: shots that enters the goal or would have entered the goal if they had not been blocked by the goalkeeper or another defensive player.
+- fouls: inappropriate or unfair acts by a player as deemed by a referee, usually violating the rules of the sport or game (may be intentional or accidental, and often result in a penalty).
+- corners: awarded when the whole of the ball passes over the goal line, on the ground or in the air, having last touched a player of the defending team, and a goal is not scored.
+- yellow cards: given as a caution or warning, provide players with another chance to stay on the field for the remainder of the game.
+- red cards: used by the officials to remove a player from the match with immediate effect. It means the automatic ejection of the player and that the player's team will remain shorthanded for the remainder of the match. Red cards can be given if the same player has received two yellow cards in the same match.
 
 
 ## Data cleaning
@@ -81,6 +92,8 @@ The next step is to check if the same teams are present in all seasons.
 ```{r, echo=FALSE}
 # Checking if same teams are present in both seasons
 uniqueteams <- cbind(unique(premier_league_results_1617$HomeTeam), unique(premier_league_results_1718$HomeTeam), unique(premier_league_results_1819$HomeTeam))
+
+uniqueteams <- uniqueteams[order(uniqueteams[,1], decreasing=FALSE),]
 
 uniqueteams %>% knitr::kable(caption = "**Table 1: Premier League Teams**", col.names = c("Teams 2016-17", "Teams 2017-18", "Teams 2018-19")) %>% kable_styling(bootstrap_options = c("striped","hover","condensed"), fixed_thead = T) %>% kable_paper() %>%  scroll_box(width = "100%", height = "320px")
 
