@@ -3,6 +3,8 @@ body {
 text-align: justify}
 </style>
 
+<br>
+
 # Supervised Learning
 
 ```{r, echo = FALSE, message = FALSE}
@@ -16,6 +18,8 @@ premier_league_results <- read_csv("premier_league_results_clean.csv")
 ```
 
 Next step is fitting models to the clean data, based on our EDA outcomes. But before, to avoid overfitting, we need to split our data into a training and a test sets.
+
+<br>
 
 ## Data Splitting
 
@@ -48,9 +52,13 @@ train_data1 = premier_league_results[train_indexes1,]
 test_data1 = premier_league_results[-train_indexes1,]
 ```
 
+<br>
+
 ## Model fitting
 
 Since we are trying to predict whether the result of a football match is either a win for the home team, a win for the away team or a draw, our models should be adapted to the case of a multiclass classification task. In this next part, we will fit multiple models and choose at the end the best 2 models, according to following metrics: accuracy and Cohen's Kappa. Therefore we are looking for models with high accuracy, meaning that the predicted variables match the observed variables as much as possible, and a high Cohen's Kappa, which is an indicator whether the model in hand is a better or different model than a random one.
+
+<br>
 
 ### Naive Bayes
 
@@ -85,6 +93,8 @@ kappa_nb <- cm$overall['Kappa']
 
 We reach an accuracy of `r cm$overall['Accuracy']` and a Kappa of `r cm$overall['Kappa']`. 
 
+<br>
+
 ### K-NN
 
 We proceed the same way for all the following models, meaning that we are always hypertuning the parameters to ensure that our models are the best possible. Here is the code for the K-Nearest Neighbors:
@@ -117,6 +127,8 @@ kappa_knn <- cm$overall['Kappa']
 
 After hypertuning the k parameter, AKA the number of closest neighbors, we fitted model with the optimal parameter k=`r knn$bestTune$k`, giving a convenient prediction. We have an accuracy of `r cm$overall['Accuracy']` and a low Kappa: `r cm$overall['Kappa']`. This result is worse than the Naive Bayes model.
 
+<br>
+
 ### Classification Tree
 
 For the classification tree, we need to hypertune the cp as in the code below:
@@ -148,6 +160,8 @@ kappa_tree <- cm$overall['Kappa']
 
 After finding the optimal cp=`r tree$bestTune$cp` with hypertuning for pruning, the CART model gives a convenient prediction. We got an accuracy of `r cm$overall['Accuracy']` and a moderate Kappa: `r cm$overall['Kappa']`. The performance of this model is actually better to the Naive Bayes!
 
+<br>
+
 ### Neural Networks
 
 ```{r, echo = TRUE, results = 'hide'}
@@ -178,6 +192,8 @@ kappa_nnet <- cm$overall['Kappa']
 
 After tuning the hyperparameters for our neural network model (size of `r nnetFit$bestTune$size` and weight decay of `r nnetFit$bestTune$decay`), we get a pretty good model for predicting our outcomes. An accuracy of `r cm$overall['Accuracy']` and a moderate Cohen's Kappa of `r cm$overall['Kappa']`. Compared to the previous models, neural network is the best model for now.
 
+<br>
+
 ### Support Vector Machines
 
 ```{r, echo = TRUE, results = 'hide'}
@@ -203,6 +219,8 @@ kappa_svm <- cm$overall['Kappa']
 ```
 
 We find that the best tune for C is equal to `r svm_tuned$bestTune$C`, and we obtain an accuracy of `r cm$overall['Accuracy']` and a pretty good Kappa: `r cm$overall['Kappa']`.
+
+<br>
 
 ### Random Forests
 
@@ -233,6 +251,8 @@ kappa_rf <- cm$overall['Kappa']
 
 For our random forest model, the hyperparameter is `r rf$bestTune$mtry` for our randomly selected predictors (aka mtry). After hypertuning our model, we got an accuracy of `r cm$overall['Accuracy']` and a Cohen's Kappa of `r cm$overall['Kappa']`.
 
+<br>
+
 ### Summary of the models
 
 We tried to fit several models to have the best one to predict our desired outcomes. Before moving to the next step, we need to compare each model with their respective metrics to choose the best one:
@@ -249,8 +269,11 @@ kable(model_output, digits = 2)  %>%
   kable_styling(bootstrap_options = c("striped","condensed"), fixed_thead = T)
 ```
 
+<br>
+
 By having a look at the results, we see that Random Forest and SVM outperform the other models, followed by Neural Network.
 
+<br>
 
 ## Variable Importance
 
@@ -283,6 +306,8 @@ calculate_importance <- function(your_model_explainer, n_permutations = 10) {
 importance_rf <- calculate_importance(explainer_classif_rf)
 importance_svm <- calculate_importance(explainer_svm)
 ```
+
+<br>
 
 **_Feature importance for Random forest_**
 
@@ -324,6 +349,7 @@ plot(importance_svm)
 ```
 <br>
 
+<br>
 
 **_Fitting the RF model with its tops feature importance_**
 
@@ -374,7 +400,12 @@ kable(model_output_RF, digits = 2)  %>%
   kable_styling(bootstrap_options = c("striped","condensed"), fixed_thead = T)
 
 ```
+
+<br>
+
 When we refit the Random Forest model with the 4 most "important" variables, accuracy and kappa decrease, from `r oldconfmatrixRF$overall['Accuracy']` to `refitconfmatrixRF$overall['Accuracy']` and from `oldconfmatrixRF$overall['Kappa']` to `refitconfmatrixRF$overall['Kappa']` respectively. This reduction in accuracy and kappa metrics is not surprising, and we have a gain from reducing the complexity of the model. Hence the refitted model is still better than the original.
+
+<br>
 
 **_Fitting the SVM model with its tops feature importance_**
 
@@ -423,6 +454,8 @@ kable(model_output_svm, digits = 2)  %>%
   kable_styling(bootstrap_options = c("striped","condensed"), fixed_thead = T)
 
 ```
+
+<br>
 
 For the Support Vector Machine model with the 5 most "important" variables, which is : `away_team`, `half_time_results`, `home_team`, `half_time_away_goals` and `away_shots_ontarget`. The accuracy doesn't change, we have `r oldconfmatrixSVM$overall['Accuracy']`  which is a really good sign, and kappa slightly decrease from `r oldconfmatrixSVM$overall['Kappa']` to `r refitconfmatrixSVM$overall['Kappa']`. This refit is reducing the complexity of our model since we are taking less variables and even though we have a lower Cohen's Kappa, this changes is marginal. Therefore, it is wiser to use the refitted model to make predictions.
 

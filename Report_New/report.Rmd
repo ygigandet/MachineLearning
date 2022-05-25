@@ -1,6 +1,6 @@
 ---
-title: "ML Project"
-author: "Alpbaz Alesya, Gigandet Yooby, Amina Mohammed, Obeid Nadine, Saranciuc Camelia"
+title: "Machine Learning Project"
+author: "Alpbaz Alesya (17406406), Gigandet Yooby (16410425), Amina Mohammed (17301920), Obeid Nadine (216644) and Saranciuc Camelia (204540)"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: html_document
 ---

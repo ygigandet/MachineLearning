@@ -3,6 +3,8 @@ body {
 text-align: justify}
 </style>
 
+<br>
+
 # Unsupervised Learning
 
 ```{r, echo = FALSE, message = FALSE}

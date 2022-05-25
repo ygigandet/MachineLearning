@@ -3,6 +3,8 @@ body {
 text-align: justify}
 </style>
 
+<br>
+
 # Data
 
 ```{r, echo = FALSE, include = FALSE, message = FALSE}
@@ -17,6 +19,7 @@ For this report, we will be using datasets representing the details of the Premi
 2. https://datahub.io/sports-data/english-premier-league#resource-season-1718
 3. https://datahub.io/sports-data/english-premier-league#resource-season-1819
 
+<br>
 
 ## Data description 
 
@@ -45,6 +48,7 @@ The Premier League, also known as the English Premier League, is the top level o
 - **away red cards**: used by the officials to remove an away team player from the match with immediate effect
 - and others like odds coming from various betting websites.
 
+<br>
 
 ## Data cleaning
 
@@ -79,6 +83,8 @@ premier_league_results <- full_join(premier_league_results, premier_league_resul
 
 The next step is to check if the same teams are present in all seasons.
 
+<br>
+
 ```{r, echo=FALSE}
 # Checking if same teams are present in both seasons
 uniqueteams <- cbind(unique(premier_league_results_1617$HomeTeam), unique(premier_league_results_1718$HomeTeam), unique(premier_league_results_1819$HomeTeam))
@@ -90,6 +96,8 @@ uniqueteams %>% knitr::kable(caption = "**Table 1: Premier League Teams**", col.
 # Removing the unused datasets
 rm(premier_league_results_1718, premier_league_results_1819, premier_league_results_1617)
 ```
+
+<br>
 
 We see that the teams Swansea, Stoke and West Brom are not playing in the 2018-19 season. Additionally, the teams Fulham, Wolves and Cardiff are not playing in the 2017-18 neither. We should take them out. In the remaining teams, Brighton, Huddersfield, Newcastle were not playing in the 2016-17 season. Additionally, the teams Hull, Middlesbrough and Sunderland were not playing in the following seasons neither. We should take them out.
 
@@ -104,6 +112,8 @@ premier_league_results <- subset(premier_league_results, AwayTeam!='Swansea' & A
 
 Now we rename the columns to make them more easily understandable.
 
+<br>
+
 ```{r, echo=FALSE}
 colnames(premier_league_results) <- c("league_division", "match_date", "home_team", "away_team", "full_time_home_goals", "full_time_away_goals", "full_time_results", "half_time_home_goals", "half_time_away_goals", "half_time_results", "referee", "home_shots", "away_shots", "home_shots_ontarget", "away_shots_ontarget", "home_fouls", "away_fouls", "home_corners", "away_corners", "home_yellow_cards", "away_yellow_cards", "home_red_cards", "away_red_cards", "bet365_home_win_odds", "bet365_draw_odds", "bet365_away_win_odds", "bet&win_home_win_odds", "bet&win_draw_odds", "bet&win_away_win_odds", "interwetten_home_win_odds", "interwetten_draw_odds", "interwetten_away_win_odds", "pinnacle_home_win_odds", "pinnacle_draw_odds", "pinnacle_away_win_odds", "williamhill_home_win_odds", "williamhill_draw_odds", "williamhill_away_win_odds", "vcbet_home_win_odds", "vcbet_draw_odds", "vcbet_away_win_odds", "no_betbrain_bookmarkers_odds", "betbrain_max_home_win_odds", "betbrain_avg_home_win_odds", "betbrain_max_draw_odds", "betbrain_avg_draw_win_odds", "betbrain_max_away_win_odds", "betbrain_avg_away_win_odds", "no_betbrain_bookmarkers_goals", "betbrain_max_over_2.5goals", "betbrain_avg_over_2.5goals", "betbrain_max_under_2.5goals", "betbrain_avg_under_2.5goals", "no_betbrain_bookmarkers_asianhandicap", "betbrain_size_handicap", "betbrain_max_home_asianhandicap_odds", "betbrain_avg_home_asianhandicap_odds", "betbrain_max_away_asianhandicap_odds", "betbrain_avg_away_asianhandicap_odds")
 
@@ -111,6 +121,8 @@ premier_league_results %>% kable(caption = "**Table 4: Premier League results (s
   kable_styling(bootstrap_options = c("striped","hover","condensed"),
                 fixed_thead = T) %>% kable_paper() %>%  scroll_box(width = "100%", height = "320px")
 ```
+
+<br>
 
 For our analysis, we will also take out variables league_division, referee and all the variables from the betting websites. These either have the same values for all observations, don't necessarily contribute to the analysis or use past information on the variable we want to predict (match result) and therefore can bias our outcome. Finally, we made sure that our final dataset doesn't contain missing values.
 
@@ -129,6 +141,8 @@ any(is.na(premier_league_results))
 ```
 
 Now that we have a clean dataset, let's check out our data closer with a summary.
+
+<br>
 
 ```{r, results = 'asis'}
 dfSummary(premier_league_results, style = 'grid', plain.ascii = FALSE, tmp.img.dir = "/tmp")
