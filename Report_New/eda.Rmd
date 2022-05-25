@@ -57,7 +57,7 @@ The below graph shows some general information on the numerical variables of our
 
 PLR_numeric <- cor(premier_league_results %>% dplyr::select(where(is.numeric)))
 
-corrplot(PLR_numeric, method = 'number', mar = c(0, 0, 0, 0), tl.cex = 0.5)
+corrplot(PLR_numeric, method = 'color', mar = c(0, 0, 0, 0), tl.cex = 0.5)
 ```
 Based on the correlation graph shown above, we can conclude the following:
 

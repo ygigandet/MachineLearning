@@ -23,26 +23,26 @@ For this report, we will be using datasets representing the details of the Premi
 The Premier League, also known as the English Premier League, is the top level of the English football league system. Contested by 20 clubs, it operates on a system of promotion and relegation with the English Football League. Seasons typically run from August to May with each team playing 38 matches. Each of the three datasets contains 380 observations, and each of them represents one match. The dataset for the season 2018-19 contains 62 variables, while the other two datasets contain 65 variables each. The variables are the following:
 
 - general information like league division, match date and referee
-- home team : team playing at their "own" field, receiving team
-- away team : team playing at another field than their "own", visiting team
-- full time home goals : the number of goals at the end of the match for the home team
-- full time away goals : the number of goals at the end of the match for the away team
-- full time results : match result at the end (H=Home win, A=away win, D=draw)
-- half time home goals : the number of goals scored in the first part (45mins) of the game for the home team
-- half time away goals : the number of goals scored in the first part (45mins) of the game for the away team
-- half time results : match result for the first half of the game (H=Home win, A=away win, D=draw)
-- home shots : ball hits as an attempt to score a goal by the home team
-- away shots : ball hits as an attempt to score a goal by the away team
-- home shots ontarget : home team shots that enters the goal or would have entered the goal if they had not been blocked by the goalkeeper or another defensive player
-- away shots ontarget : away team shots that enters the goal or would have entered the goal if they had not been blocked by the goalkeeper or another defensive player, 
-- home fouls : inappropriate or unfair acts by a player of the home team as deemed by a referee, that often result in a penalty
-- away fouls : inappropriate or unfair acts by a player of the away team as deemed by a referee, that often result in a penalty
-- home corners : awarded when the whole of the ball passes over the goal line, on the ground or in the air, having last touched a player of the defending team, and a goal is not scored
-- away corners : awarded when the whole of the ball passes over the goal line, on the ground or in the air, having last touched a player of the defending team, and a goal is not scored
-- home yellow cards : given to the home team as a caution or warning, provide players with another chance to stay on the field for the remainder of the game
-- away yellow cards : given to the away team as a caution or warning, provide players with another chance to stay on the field for the remainder of the game
-- home red cards : used by the officials to remove a home team player from the match with immediate effect
-- away red cards : used by the officials to remove an away team player from the match with immediate effect
+- **home team**: team playing at their "own" field, receiving team
+- **away team**: team playing at another field than their "own", visiting team
+- **full time home goals**: the number of goals at the end of the match for the home team
+- **full time away goals**: the number of goals at the end of the match for the away team
+- **full time results**: match result at the end (H=Home win, A=away win, D=draw)
+- **half time home goals**: the number of goals scored in the first part (45mins) of the game for the home team
+- **half time away goals**: the number of goals scored in the first part (45mins) of the game for the away team
+- **half time results**: match result for the first half of the game (H=Home win, A=away win, D=draw)
+- **home shots**: ball hits as an attempt to score a goal by the home team
+- **away shots**: ball hits as an attempt to score a goal by the away team
+- **home shots ontarget**: home team shots that enters the goal or would have entered the goal if they had not been blocked by the goalkeeper or another defensive player
+- **away shots ontarget**: away team shots that enters the goal or would have entered the goal if they had not been blocked by the goalkeeper or another defensive player, 
+- **home fouls**: inappropriate or unfair acts by a player of the home team as deemed by a referee, that often result in a penalty
+- **away fouls**: inappropriate or unfair acts by a player of the away team as deemed by a referee, that often result in a penalty
+- **home corners**: awarded when the whole of the ball passes over the goal line, on the ground or in the air, having last touched a player of the defending team, and a goal is not scored
+- **away corners**: awarded when the whole of the ball passes over the goal line, on the ground or in the air, having last touched a player of the defending team, and a goal is not scored
+- **home yellow cards**: given to the home team as a caution or warning, provide players with another chance to stay on the field for the remainder of the game
+- **away yellow cards**: given to the away team as a caution or warning, provide players with another chance to stay on the field for the remainder of the game
+- **home red cards**: used by the officials to remove a home team player from the match with immediate effect
+- **away red cards**: used by the officials to remove an away team player from the match with immediate effect
 - and others like odds coming from various betting websites.
 
 
