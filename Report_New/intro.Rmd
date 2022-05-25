@@ -1,3 +1,8 @@
+<style>
+body {
+text-align: justify}
+</style>
+
 # Introduction
 
 The amount of data available in the sports world thanks to technology is constantly increasing. Teams are more and more eager to use this data to their advantage and when speaking about it, we instantly think about the movie "Moneyball". In the movie, a manager of a baseball team picks out undervalued players that should perform well regarding to their statistics. As a result, they win the American League West. Nowadays, this is not an isolated case anymore. 

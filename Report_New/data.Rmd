@@ -1,3 +1,8 @@
+<style>
+body {
+text-align: justify}
+</style>
+
 # Data
 
 ```{r, echo = FALSE, include = FALSE, message = FALSE}

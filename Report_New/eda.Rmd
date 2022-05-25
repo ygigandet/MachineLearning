@@ -1,3 +1,8 @@
+<style>
+body {
+text-align: justify}
+</style>
+
 # Exploratory Data Analysis (EDA)
 
 ```{r, echo = FALSE, message = FALSE}
