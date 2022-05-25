@@ -6,9 +6,7 @@ source(here::here("scripts/setup.R"))
 
 ## Data sources
 
-We will be using datasets containing the results of Premier League games for seasons 2016-17, 2017-18 and 2018-19.
-
-The sources are the following:
+For this report, we will be using datasets representing the details of the Premier League games for three consecutive seasons; 2016-17, 2017-18, and 2018-19. Our reason for choosing three seasons is that we feel that the data for three years contains a sufficient number of observations without risking the change of non-quantitative data that is not captured in the datasets such as the players playing in the games and their skills. The source of our data was directly obtained from the data-hub website. The following are the links to each of the three datasets used:
 
 1. https://datahub.io/sports-data/english-premier-league#resource-season-1617
 2. https://datahub.io/sports-data/english-premier-league#resource-season-1718
@@ -17,8 +15,9 @@ The sources are the following:
 
 ## Data description 
 
-Each of the three datasets contains 380 observations, and each of them represents one match. The dataset for the season 2018-19 contains 62 variables, while the other two datasets contain 65 variables each. The most important variables that we are going to use in this project are the following:
+The Premier League, also known as the English Premier League, is the top level of the English football league system. Contested by 20 clubs, it operates on a system of promotion and relegation with the English Football League. Seasons typically run from August to May with each team playing 38 matches. Each of the three datasets contains 380 observations, and each of them represents one match. The dataset for the season 2018-19 contains 62 variables, while the other two datasets contain 65 variables each. The variables are the following:
 
+- general information like league division, match date and referee
 - home team
 - away team
 - full time home goals
@@ -40,7 +39,8 @@ Each of the three datasets contains 380 observations, and each of them represent
 - home yellow cards
 - away yellow cards
 - home red cards
-- away red cards.
+- away red cards
+- and others like odds coming from various betting websites
 
 As it can be seen, all the variables concern the performance of either the home or the away team during a specific match.
 
@@ -111,7 +111,7 @@ premier_league_results %>% kable(caption = "**Table 4: Premier League results (s
                 fixed_thead = T) %>% kable_paper() %>%  scroll_box(width = "100%", height = "320px")
 ```
 
-For our analysis, we will also take out variables league_division, referee and all the variables from the betting websites. These either have the same values for all observations, don't necessarily contribute to the analysis or use past information on the variable we want to predict (match result) and therefore can bias our outcome.
+For our analysis, we will also take out variables league_division, referee and all the variables from the betting websites. These either have the same values for all observations, don't necessarily contribute to the analysis or use past information on the variable we want to predict (match result) and therefore can bias our outcome. Finally, we made sure that our final dataset doesn't contain missing values.
 
 ```{r}
 premier_league_results <- premier_league_results %>% 
@@ -123,9 +123,7 @@ premier_league_results <- premier_league_results %>%
 premier_league_results <- premier_league_results[,1:21]
 ```
 
-Finally, let's check if our final dataset contains missing values.
-
-```{r}
+```{r include=FALSE}
 any(is.na(premier_league_results))
 ```
 
@@ -134,8 +132,6 @@ Now that we have a clean dataset, let's check out our data closer with a summary
 ```{r}
 dfSummary(premier_league_results, style = 'grid', plain.ascii = FALSE, tmp.img.dir = "/tmp")
 ```
-
-Everything seems to be ok !
 
 ```{r}
 # Write CSV files
