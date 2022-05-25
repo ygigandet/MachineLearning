@@ -146,11 +146,9 @@ head(PLR_Away_Scale)%>% kable(caption = "**Scaled Premiere League Results for Aw
 ## Clustering
 
 
-For the clustering method, we calculated the Manhattan distance to form clusters of the Home and Away teams. To choose the optimal number of cluster, we have created dendrograms for both Home and Away. For the clustering, we also used Manhattan distance and complete linkage methods. Below are three graphs that we used to select the number of clusters: 
+For the clustering method, we calculated the Manhattan distance to form clusters of the Home and Away teams. To choose the optimal number of cluster, we have created dendrograms for both Home and Away. For the clustering, we also used Manhattan distance and complete linkage methods. Below is the graph that we used to select the number of clusters: 
 
   + `Within sum of squares` 
-  + `GAP statistics`
-  + `Sihouette graph`
 
 ```{r, echo=FALSE, warning=FALSE, include=FALSE}
 # matrix of Manhattan distances 

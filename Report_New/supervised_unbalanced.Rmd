@@ -403,7 +403,7 @@ kable(model_output_RF, digits = 2)  %>%
 
 <br>
 
-When we refit the Random Forest model with the 4 most "important" variables, accuracy and kappa decrease, from `r oldconfmatrixRF$overall['Accuracy']` to `refitconfmatrixRF$overall['Accuracy']` and from `oldconfmatrixRF$overall['Kappa']` to `refitconfmatrixRF$overall['Kappa']` respectively. This reduction in accuracy and kappa metrics is not surprising, and we have a gain from reducing the complexity of the model. Hence the refitted model is still better than the original.
+When we refit the Random Forest model with the 4 most "important" variables, accuracy and kappa decrease, from `r oldconfmatrixRF$overall['Accuracy']` to `r refitconfmatrixRF$overall['Accuracy']` and from `r oldconfmatrixRF$overall['Kappa']` to `r refitconfmatrixRF$overall['Kappa']` respectively. This reduction in accuracy and kappa metrics is not surprising, and we have a gain from reducing the complexity of the model. Hence the refitted model is still better than the original.
 
 <br>
 
