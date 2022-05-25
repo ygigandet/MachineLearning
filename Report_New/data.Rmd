@@ -82,6 +82,8 @@ The next step is to check if the same teams are present in all seasons.
 # Checking if same teams are present in both seasons
 uniqueteams <- cbind(unique(premier_league_results_1617$HomeTeam), unique(premier_league_results_1718$HomeTeam), unique(premier_league_results_1819$HomeTeam))
 
+uniqueteams <- uniqueteams[order(uniqueteams[,1], decreasing=FALSE),]
+
 uniqueteams %>% knitr::kable(caption = "**Table 1: Premier League Teams**", col.names = c("Teams 2016-17", "Teams 2017-18", "Teams 2018-19")) %>% kable_styling(bootstrap_options = c("striped","hover","condensed"), fixed_thead = T) %>% kable_paper() %>%  scroll_box(width = "100%", height = "320px")
 
 # Removing the unused datasets
