@@ -300,7 +300,7 @@ ScreeHome + ScreeAway
 <br>
 **_Biplots_**
 
-Creating the biplots below, we can combine clustering and pca in order to see each individual, it's relationship with other individuals and variables and create clusters. We have decided to create 3 clusters to decrease the _within variance_ and increase the _between variance_  keeping in mind the complexity of the model, we have created three clusters. 
+Creating the biplots below, we can combine clustering and pca in order to see each individual, its relationship with other individuals and variables and create clusters. We have decided to create 3 clusters to decrease the _within variance_ and increase the _between variance_  keeping in mind the complexity of the model, we have created three clusters. 
 
 We can see that, for both Home and Away graphs, the clusters represented are separated by the strength of correlation with each Dimension.
 
@@ -345,7 +345,7 @@ When teams are playing Away, the clusters are distinguished based on the followi
 
 
   + `Cluster1` - This cluster here is the biggest cluster containing 8 teams including _Everton_, _Watford_, _Tottenham_, _Man United_, _Arsenal_, _Southampton_, _West Ham_, and _Leicester_; those are the teams that relatively to others have taken more yellow card and made more fouls. 
-  + `Cluster2` - Consisting of 4 teams, _Chelsea_, _Crystal Palace_, _Bournemouth_ and _Burnley_; those teams are negatively correlated with Dimension 2 meaning that they have received relatively fewer red/yellow cards than the other teams.They have alos scored a low number of goals. From this cluster we can also see that Chelsea and Bournmouth have scored more goals than Crystal Palance and Burnley.
+  + `Cluster2` - Consisting of 4 teams, _Chelsea_, _Crystal Palace_, _Bournemouth_ and _Burnley_; those teams are negatively correlated with Dimension 2 meaning that they have received relatively fewer red/yellow cards than the other teams.They have also scored a low number of goals. From this cluster we can also see that Chelsea and Bournmouth have scored more goals than Crystal Palace and Burnley.
   + `Cluster3` - It consists of the remaining 2 teams, _Liverpool_ and _Man City_. Located on the utmost right of the graph and being highly positively correlated with Dimension 1; those are the teams that have scored the most goals.
 
   
