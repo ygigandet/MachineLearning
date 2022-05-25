@@ -115,10 +115,6 @@ After hypertuning the k parameter, AKA the number of closest neighbors, we fitte
 ### Classification Tree
 
 For the classification tree, we need to hypertune the cp as in the code below:
-```{r, echo = TRUE, results = 'hide'}
-saveRDS(train_data1, "train_data.rds")
-saveRDS(test_data1, "test_data.rds")
-```
 
 ```{r, echo = TRUE, results = 'hide'}
 set.seed(1)
@@ -248,12 +244,12 @@ kable(model_output, digits = 2)  %>%
   kable_styling(bootstrap_options = c("striped","condensed"), fixed_thead = T)
 ```
 
-By having a look at the results, we see that Random Forest outperforms the other models by far, followed by Support Vector Machines and Neural Network. Therefore, we will analyse the variable importance for the two best models.
+By having a look at the results, we see that Random Forest and SVM outperform the other models, followed by Neural Network.
 
 
 ## Variable Importance
 
-Now that we found that our best models are Random Forest models and Support Vector Machines, we need to see if we can improve their prediction quality, that we judge by accuracy and kappa, by getting rid of the variables that do not contribute to the prediction. To do this, we use model-specific variable importance methods.
+Now that we found that our best models are Random Forest and Support Vector Machines models, we need to see if we can improve their prediction quality, that we judge by accuracy and kappa, by getting rid of the variables that do not contribute that much to the prediction. To do this, we use model-specific variable importance method.
 
 ```{r, echo = FALSE, message = FALSE, warning = FALSE, results = 'hide'}
 #Creating an explain object
@@ -283,15 +279,22 @@ importance_rf <- calculate_importance(explainer_classif_rf)
 importance_svm <- calculate_importance(explainer_svm)
 ```
 
-*Feature importance for Random forest *
+**_Feature importance for Random forest_**
 
 A feature is “important” if shuffling its values increases the model error, because in this case the model relied on the feature for the prediction. In our case we measure the error increase by 1-AUC (1 minus the area under the ROC curve). Features associated with a model error increase by a factor of 1. Indeed, it means that there is no change when we’re at 1 and variables were not important for predicting full time result.
-In our case, variables which are not important are away corners and home corners. In opposite, the most important feature is half time results permuting full time result in an increase in 1-AUC by a factor of approximately 1.05.
+In our case, variables which are not important are away corners and home corners. In opposite, the most important feature is `half_time_results` permuting `full_time_results` in an increase in 1-AUC by a factor of approximately 1.05.
+
+<br>
+
 
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
 plot(importance_rf)
+
 ```
-By running a recursive feature elimination on the RF model, we can see that the top 5 variables (out of 18) are full_time_results, half_time_results, away_shots_ontarget, half_time_home_goals and half_time_away_goals . We are going to use these features in order to refit the model to see if we can improve the accuracy and Kappa.
+<br>
+
+
+By running a recursive feature elimination on the RF model, we can see that the top 5 variables (out of 18) are `full_time_results`, `half_time_results`, `away_shots_ontarget`, `half_time_home_goals` and `half_time_away_goals`. We are going to use these features in order to refit the model to see if we can improve the accuracy and Kappa.
 
 ```{r, echo=FALSE, warning=FALSE, results = 'hide'}
 #Recursive feature elimination
@@ -309,12 +312,15 @@ rfProfile
 
 In the plot above, we have the difference in entropy obtained by 10 permutations for the SVM Model. It shows graphically the average variable importance according to the cross entropy loss. Here also, it is the same 4 important variables which are the most weight. Not including theses variables can cause a decrease of the cross-entropy for SVM models
 
+<br>
+
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
 plot(importance_svm)
 ```
+<br>
 
 
-*Fitting the RF model with its tops feature importance*
+**_Fitting the RF model with its tops feature importance_**
 
 Once we’ve identified the most critical variables for prediction, we would like to verify that excluding all other variables increases the accuracy and kappa of our best 2 models, by refitting them.
 
@@ -339,16 +345,34 @@ oldconfmatrixRF <- confusionMatrix(data=pred_rf, reference = test_data1$full_tim
 ```
 
 ```{r, echo=FALSE,message = FALSE, warning = FALSE, out.width="100%"}
-oldconfmatrixRF$overall %>%
-  kbl(caption = "Metrics of the original model") %>%
-  kable_classic_2(full_width = F)
-refitconfmatrixRF$overall %>%
-  kbl(caption = "Metrics of the refit models")%>%
-  kable_classic_2(full_width = F)
+# oldconfmatrixRF$overall %>%
+#   kbl(caption = "Metrics of the original model") %>%
+#   kable_classic_2(full_width = F)
+# refitconfmatrixRF$overall %>%
+#   kbl(caption = "Metrics of the refit models")%>%
+#   kable_classic_2(full_width = F)
+
+oldaccuracy_rf <- oldconfmatrixRF$overall['Accuracy']
+oldkappa_rf<- oldconfmatrixRF$overall['Kappa']
+
+newaccuracy_rf<-  refitconfmatrixRF$overall['Accuracy']
+newkappa_rf <- refitconfmatrixRF$overall['Kappa']
+
+
+metrics_rf = c(oldaccuracy_rf , oldkappa_rf, newaccuracy_rf, newkappa_rf)
+cnames = c("Accuracy", "Kappa") 
+rnames =  c("Original RF", "Refit RF")
+model_output_RF <- matrix(metrics_rf, ncol = 2, byrow=TRUE, dimnames=list(rnames,cnames))
+model_output_RF <- model_output_RF[order(model_output_RF[,1],decreasing=TRUE),]
+
+kable(model_output_RF, digits = 2)  %>% 
+  kable_styling(bootstrap_options = c("striped","condensed"), fixed_thead = T)
+
 ```
 When we refit the Random Forest model with the 4 most "important" variables, accuracy and kappa decrease, from 0.713 to 0.639 and from 0.529 to 0.424 respectively. This is change can not be ignored and might be causes by variable dependency, hence it is probably better to keep the original model in this case and observe the source of the unexpected outcomes.
 
-*Fitting the SVM model with its tops feature importance*
+**_Fitting the SVM model with its tops feature importance_**
+
 ```{r, echo=FALSE,message = FALSE, warning = FALSE, out.width="50%", results = 'hide'}
 # Support Vector Machine (SVM)
 set.seed(1)
@@ -356,7 +380,7 @@ set.seed(1)
 trctrl <- trainControl(method = "cv", number=5, classProbs = T) # Cross-validation
 VarImpGrid <- expand.grid(C = svm_tuned$bestTune$C) # Hyperparameters
  
-VarImpSVMfit <- train(full_time_results ~half_time_away_goals + half_time_home_goals + away_shots_ontarget + home_shots_ontarget, # Modelling
+VarImpSVMfit <- train(full_time_results ~ away_team + half_time_results + home_team + half_time_away_goals + away_shots_ontarget, # Modelling
                    data = train_data1, 
                    method = "svmLinear",
                    trControl=trctrl,
@@ -370,20 +394,31 @@ VarImpSVM.tuned.pred <- predict(VarImpSVMfit, newdata = test_data1)
 oldconfmatrixSVM <-confusionMatrix(data=svm.tuned.pred, reference = test_data1$full_time_results)
 refitconfmatrixSVM <- confusionMatrix(data=VarImpSVM.tuned.pred, reference = test_data1$full_time_results)
 
-oldconfmatrixSVM$overall %>%
-  kbl(caption = "Metrics of the original model") %>%
-  kable_classic_2(full_width = F)
-refitconfmatrixSVM$overall %>%
-  kbl(caption = "Metrics of the refit models")%>%
-  kable_classic_2(full_width = F)
+# oldconfmatrixSVM$overall %>%
+#   kbl(caption = "Metrics of the original model") %>%
+#   kable_classic_2(full_width = F)
+# refitconfmatrixSVM$overall %>%
+#   kbl(caption = "Metrics of the refit models")%>%
+#   kable_classic_2(full_width = F)
 
 oldaccuracy_svm <- oldconfmatrixSVM$overall['Accuracy']
 oldkappa_svm<- oldconfmatrixSVM$overall['Kappa']
 
+newaccuracy_svm <-  refitconfmatrixSVM$overall['Accuracy']
 newkappa_svm <- refitconfmatrixSVM$overall['Kappa']
+
+
+metrics_svm = c(oldaccuracy_svm , oldkappa_svm, newaccuracy_svm, newkappa_svm)
+cnames = c("Accuracy", "Kappa") 
+rnames =  c("Original SVM ", "Refit SVM")
+model_output_svm <- matrix(metrics_svm, ncol = 2, byrow=TRUE, dimnames=list(rnames,cnames))
+model_output_svm <- model_output_svm[order(model_output_svm[,1],decreasing=TRUE),]
+
+kable(model_output_svm, digits = 2)  %>% 
+  kable_styling(bootstrap_options = c("striped","condensed"), fixed_thead = T)
 
 ```
 
-As for the Support Vector Machine model with the 4 most "important" variables, accuracy doesn't change, we have `r oldconfmatrixSVM$overall['Accuracy']`  which is a really good sign, and kappa slightly increase from `r oldconfmatrixSVM$overall['Kappa']` to `r refitconfmatrixSVM$overall['Kappa']`. This refit is reducing the complexity of our model since we are taking less variables and we have a high accuracy and Cohen's Kappa output.
+For the Support Vector Machine model with the 5 most "important" variables, which is : `away_team`, `half_time_results`, `home_team`, `half_time_away_goals` and `away_shots_ontarget`. The accuracy doesn't change, we have `r oldconfmatrixSVM$overall['Accuracy']`  which is a really good sign, and kappa slightly decrease from `r oldconfmatrixSVM$overall['Kappa']` to `r refitconfmatrixSVM$overall['Kappa']`. This refit is reducing the complexity of our model since we are taking less variables and we have a high accuracy and a lower Cohen's Kappa metrics.
 
 
