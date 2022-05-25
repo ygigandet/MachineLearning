@@ -257,8 +257,6 @@ Now that we found that our best models are Random Forest models and Support Vect
 
 ```{r, echo = FALSE, message = FALSE, warning = FALSE, results = 'hide'}
 #Creating an explain object
-x_train <- select(train_data1, -full_time_results)
-y_train <- pull(train_data1, full_time_results)
 
 p_fun <- function(object, newdata){predict(object, newdata=newdata, type="prob")[,2]}
 
@@ -309,11 +307,10 @@ rfProfile
 ```
 
 
+In the plot above, we have the difference in entropy obtained by 10 permutations for the SVM Model. It shows graphically the average variable importance according to the cross entropy loss. Here also, it is the same 4 important variables which are the most weight. Not including theses variables can cause a decrease of the cross-entropy for SVM models
+
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
 plot(importance_svm)
-
-# In the plot above, we have the difference in entropy obtained by 10 permutations for the SVM Model. It shows graphically the average variable importance according to the cross entropy loss. Here also, it is the same 4 important variables which are the most weight. Not including theses variables can cause a decrease of the cross-entropy for SVM models
-
 ```
 
 
@@ -351,27 +348,6 @@ refitconfmatrixRF$overall %>%
 ```
 When we refit the Random Forest model with the 4 most "important" variables, accuracy and kappa decrease, from 0.713 to 0.639 and from 0.529 to 0.424 respectively. This is change can not be ignored and might be causes by variable dependency, hence it is probably better to keep the original model in this case and observe the source of the unexpected outcomes.
 
-
-*Variable dependency*
-
-The correlation between 5 variables might be a reason to our unexpected results. For instance we can see a high correlation between half time result and half time home goal. Such correlation can create inter-dependency and the way we train our models has to integreate the different correlation.  
-
-```{r, echo=FALSE,message = FALSE, warning = FALSE}
-train_data1$half_time_results <- as.numeric(train_data1$half_time_results)
-train_data1$full_time_results <-as.numeric(train_data1$full_time_results)
-
-M <- train_data1 %>% dplyr::select(half_time_results, half_time_away_goals, half_time_home_goals, away_shots_ontarget, full_time_results)
-
-MM <- cor(M %>% dplyr::select(where(is.numeric)))
-
-corrplot(MM, method = 'number', tl.cex = 0.8)
-
-# Using randomForest's partialPlot function
-#partialPlot(VarImpRFfit, pred.data = VarImpRFpred, x.var = full_time_results)
-
-```
-
-
 *Fitting the SVM model with its tops feature importance*
 ```{r, echo=FALSE,message = FALSE, warning = FALSE, out.width="50%", results = 'hide'}
 # Support Vector Machine (SVM)
@@ -394,10 +370,20 @@ VarImpSVM.tuned.pred <- predict(VarImpSVMfit, newdata = test_data1)
 oldconfmatrixSVM <-confusionMatrix(data=svm.tuned.pred, reference = test_data1$full_time_results)
 refitconfmatrixSVM <- confusionMatrix(data=VarImpSVM.tuned.pred, reference = test_data1$full_time_results)
 
-oldconfmatrixSVM$overall
-refitconfmatrixSVM$overall
+oldconfmatrixSVM$overall %>%
+  kbl(caption = "Metrics of the original model") %>%
+  kable_classic_2(full_width = F)
+refitconfmatrixSVM$overall %>%
+  kbl(caption = "Metrics of the refit models")%>%
+  kable_classic_2(full_width = F)
+
+oldaccuracy_svm <- oldconfmatrixSVM$overall['Accuracy']
+oldkappa_svm<- oldconfmatrixSVM$overall['Kappa']
+
+newkappa_svm <- refitconfmatrixSVM$overall['Kappa']
+
 ```
 
-As for the Support Vector Machine model with the 4 most "important" variables, accuracy and kappa decrease again, from 0.74 to 0.648 and from 0.512 to 0.381 respectively. This is change is very marginal though, so it still encourages us to take fewer variables for our modeling as simpler is often better !
+As for the Support Vector Machine model with the 4 most "important" variables, accuracy doesn't change, we have `r oldconfmatrixSVM$overall['Accuracy']`  which is a really good sign, and kappa slightly increase from `r oldconfmatrixSVM$overall['Kappa']` to `r refitconfmatrixSVM$overall['Kappa']`. This refit is reducing the complexity of our model since we are taking less variables and we have a high accuracy and Cohen's Kappa output.
 
 

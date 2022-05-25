@@ -113,3 +113,22 @@ rfProfile <- rfe(x = train_data1,
                 rfeControl = rfeCtrl)
 rfProfile
 ```
+
+*Variable dependency*
+
+The correlation between 5 variables might be a reason to our unexpected results. For instance we can see a high correlation between half time result and half time home goal. Such correlation can create inter-dependency and the way we train our models has to integreate the different correlation.  
+
+```{r, echo=FALSE,message = FALSE, warning = FALSE}
+train_data1$half_time_results <- as.numeric(train_data1$half_time_results)
+train_data1$full_time_results <-as.numeric(train_data1$full_time_results)
+
+M <- train_data1 %>% dplyr::select(half_time_results, half_time_away_goals, half_time_home_goals, away_shots_ontarget, full_time_results)
+
+MM <- cor(M %>% dplyr::select(where(is.numeric)))
+
+corrplot(MM, method = 'number', tl.cex = 0.8)
+
+# Using randomForest's partialPlot function
+#partialPlot(VarImpRFfit, pred.data = VarImpRFpred, x.var = full_time_results)
+
+```
