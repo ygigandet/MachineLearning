@@ -356,9 +356,4 @@ The plots also show the seed of each cluster denoted by a bigger label in the mi
  
 We can conclude from the graphs above that many of the teams' performance changes depending on whether they are playing Home or Away. For example, Arsenal has scored fewer goals and getting less red cards when playing Away. However, some teams' performance has not change much such as Man City and Liverpool. 
 
-
-<br>
-
-## Final Comments
-
-Looking at the two models descibed above, both of them provide us with the same clusters. From clustering we now know that the optimal number of clusters is 3 which we have used to add to our biplots in our PCA model to better understand the performance of each team. Using PCA or dimension reduction, now we know that the the first 2 Dimensions explain more than 72% of the variance for both Home and Away which provides a good model.  
+Looking at the two models described above, both of them provide us with the same clusters. From clustering we now know that the optimal number of clusters is 3 which we have used to add to our biplots in our PCA model to better understand the performance of each team. Using PCA or dimension reduction, now we know that the the first 2 Dimensions explain more than 72% of the variance for both Home and Away which provides a good model.  
