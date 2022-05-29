@@ -290,6 +290,11 @@ explainer_classif_rf <- DALEX::explain(rf, label = "rf",
                                        predict_function = p_fun, 
                                        verbose = FALSE)
 
+explainer_classif_rf_forcrossentropy <- DALEX::explain(rf, label = "rf",
+                                       data = train_data1, 
+                                       y = train_data1$full_time_results,
+                                       verbose = FALSE)
+
 explainer_svm <- DALEX::explain(model = svm_tuned,
                                 data = train_data1,
                                 y = train_data1$full_time_results,
@@ -303,7 +308,17 @@ calculate_importance <- function(your_model_explainer, n_permutations = 10) {
   return(imp)
 }
 
+calculate_importance_for_RFcrossentropy <- function(your_model_explainer, n_permutations = 10) {
+  imp <- model_parts(explainer = your_model_explainer,
+                     loss_function = loss_cross_entropy,
+                     B = n_permutations,
+                     type = "ratio",
+                     N = NULL)
+  return(imp)
+}
+
 importance_rf <- calculate_importance(explainer_classif_rf)
+importance_rf_cross <- calculate_importance_for_RFcrossentropy(explainer_classif_rf_forcrossentropy)
 importance_svm <- calculate_importance(explainer_svm)
 ```
 
@@ -319,6 +334,7 @@ In our case, variables which are not important are away corners and home corners
 
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
 plot(importance_rf)
+plot(importance_rf_cross)
 
 ```
 <br>
